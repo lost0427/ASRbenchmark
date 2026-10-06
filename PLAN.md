@@ -8,23 +8,23 @@
 - 首版面向 arm64-v8a 手机，建议最低 Android 8.0（API 26）；最终版本要求依据依赖兼容性确定。
 - 本地导入模型与音频，离线完成推理和结果查看。
 - 使用简洁的英文界面与英文 Git 提交标题。
-- 对比入口固定为 sherpa-onnx、直接调用 ONNX Runtime、MNN、ncnn、LiteRT 五项，每项寻找并接入 INT8 CPU 与 FP16 GPU 两种配置。
+- 首版对比 sherpa-onnx、直接调用 ONNX Runtime、MNN、ncnn、LiteRT 五个 CPU 入口，使用已找到的 INT8／Q8 模型。GPU 留待后续版本。
 - sherpa-onnx 与直接调用 ONNX Runtime 单独显示，用于比较封装、前后处理与调度开销；报告同时注明两者共用 ONNX Runtime 计算内核。
-- 本文件为实施计划；当前阶段仅提交计划，不创建应用代码。
+- 当前进入 CPU 应用实施阶段，固定使用用户提供的 LibriSpeech test-clean 压缩包中的单个完整短样本。
 
 ## 2. 推理框架与精度矩阵
 
-| 对比入口 | INT8 CPU 模型来源 | FP16 GPU 模型与后端路径 | 当前证据 |
-| --- | --- | --- | --- |
-| sherpa-onnx | k2-fsa 官方 SenseVoice INT8 ONNX 包 | 同源浮点 ONNX 转换或 FP16 relaxation，接入 NNAPI；必须确认 GPU 设备 | INT8 包已找到；Android FP16 GPU 未验证，可能需要修改原生构建 |
-| ONNX Runtime | 与 sherpa-onnx 共用官方 `model.int8.onnx` | 同源 ONNX 转 FP16，或 FP32 图加 NNAPI FP16 relaxation；确认 GPU 设备 | INT8 包已找到，社区 FP16 ONNX 已找到；NNAPI 不保证 GPU |
-| MNN | PocketASR 已发布同源 Q8 `model.mnn`，8 位权重量化 | 同源浮点模型转 MNN，OpenCL 优先、Vulkan 备选，低精度模式 | Q8 成品与转换记录已找到；PocketASR 仅支持 CPU，GPU 使用独立运行时 |
-| ncnn | k2-fsa 官方 SenseVoice INT8 ncnn 包 | k2-fsa 官方 FP16 ncnn 包，Vulkan 与 FP16 存储／算术配置 | 两种模型包与导出工作流均已找到；Android GPU 算子覆盖待验证 |
-| LiteRT | 社区 `sensevoice_small_q8.tflite`，CPU/XNNPACK | 从同源 PyTorch 经 litert-torch 导出，生成 FP16 权重 `.tflite`，接入 GPU delegate | 动态 INT8 包已找到；未找到已确认的 SenseVoice FP16 GPU 成品 |
+| 对比入口 | CPU 模型来源 | 执行路径 |
+| --- | --- | --- |
+| sherpa-onnx | k2-fsa 官方动态 UINT8 MatMul 量化 ONNX | sherpa-onnx + ORT CPU |
+| ONNX Runtime | 与 sherpa-onnx 共用 `model.int8.onnx` | ORT CPU EP，直接调用 |
+| MNN | PocketASR Q8 `model.mnn`，block 64 | MNN 3.6.1 + sherpa-mnn CPU |
+| ncnn | k2-fsa 官方 INT8 ncnn 包 | ncnn + sherpa-ncnn CPU |
+| LiteRT | `sensevoice_small_q8.tflite` | LiteRT 2.1.6，CPU/XNNPACK |
 
 模型链接、证据和转换要求见 [docs/MODEL_SOURCES.md](docs/MODEL_SOURCES.md)。现阶段核实了在线模型清单、发布资源、说明与源码，没有下载大型权重或执行真机推理。
 
-五项均纳入实施范围，MNN、ncnn、LiteRT 不互相替代。为十个目标组合建立状态：`source_found`、`needs_conversion`、`needs_device_validation`、`verified`、`unsupported`。目标是完成全部可行组合；确有算子或后端障碍的组合保留入口、证据和原因，不隐藏或冒充可运行结果。
+五项均纳入 CPU 首版，MNN、ncnn、LiteRT 不互相替代。分别显示模型未导入、可运行、执行错误与取消状态。实际可用性和性能需要 Android 真机验证。
 
 FP32 作为识别质量参考。优先锁定 2024-07-17 FunAudioLLM SenseVoiceSmall 路线，避免与 2025-09-09 WSYue-ASR 路线混用。不同导出图和静态 bucket 的性能差异需要记录。
 
@@ -43,8 +43,8 @@ FP32 作为识别质量参考。优先锁定 2024-07-17 FunAudioLLM SenseVoiceSm
 - Android：Kotlin、Jetpack Compose、单 Activity 架构。
 - 任务执行：协程在后台顺序执行，同一时刻只运行一个 benchmark。
 - 推理接口：统一的 `InferenceEngine`，包含模型加载、预热、单次执行和资源释放。
-- 原生接入：sherpa-onnx Android/JNI、ONNX Runtime Android API、MNN/ncnn JNI 与 CMake、独立打包的 LiteRT 与 GPU delegate；首版无需 Google Play 服务。
-- GPU 任务固定到专用线程，保证 delegate 创建、运行与释放的线程要求；计时包含实际完成与同步。
+- 原生接入：sherpa-onnx JNI、ONNX Runtime Android API、MNN/ncnn JNI 与 CMake、独立打包的 LiteRT。CPU 首版无需 GPU delegate 或 Google Play 服务。
+- 固定 ORT 1.23.2，共用 AAR 内的原生库；MNN 与 ncnn 使用固定源码构建独立桥接库。
 - 前处理与解码：统一音频读取、特征参数、token 词表和文本规范化；可共用的部分只实现一份。
 - 文件访问：使用 Android Storage Access Framework 导入模型与音频、导出报告。
 - 数据保存：应用私有目录存储模型清单和 benchmark 历史，首版采用结构化 JSON。
@@ -69,9 +69,11 @@ docs/                        模型兼容性、使用方法、测量定义
 - 模型清单描述框架、文件路径、精度、输入输出名称、张量形状、前处理参数与校验和。
 - 清单增加模型来源 revision、量化类型、GPU backend、转换版本和支持的音频长度；外部 ONNX 权重、ncnn param/bin、词表与 CMVN 一起导入。
 - 量化转换记录工具版本、命令与量化配置；需要校准时记录校准集来源及规模。
-- 不把大型模型提交进 Git；首版通过文件导入，后续可增加带校验和的下载入口。
+- 不把大型模型提交进 Git；通过 `tools/prepare_models.py` 在电脑生成模型目录和 manifest，然后在手机导入并校验 SHA-256。
 - 首版支持 16 kHz 单声道 PCM WAV。其他格式或采样率显示明确提示，后续再增加解码与重采样。
-- 提供许可证允许分发的小型示例音频；用户也可导入自己的样本与参考转写。
+- 固定样本 `6930-75918-0000`，来自本地 `test-clean.tar.gz`；时长 3.505 秒，16 kHz 单声道 PCM16，完整保留不裁剪。
+- 参考转写：`CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS`。音频 SHA-256：`103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8`。
+- 使用 `tools/prepare_audio.py` 可复现提取；WAV、转写、来源与 CC BY 4.0 许可放入 APK assets，整个压缩包保持本地并忽略。
 - 性能对比使用相同音频集；有参考转写时同时评估精度，防止仅比较速度而忽略识别退化。
 
 ## 5. Benchmark 方法与指标
@@ -97,8 +99,8 @@ docs/                        模型兼容性、使用方法、测量定义
 
 ## 6. 应用界面
 
-1. **Models**：导入模型包，查看框架、精度、大小与可用状态。
-2. **Benchmark**：选择模型组合与音频，配置线程和重复次数，开始或取消任务。
+1. **Models**：导入模型目录，校验清单，查看框架、量化方式与可用状态。
+2. **Benchmark**：选择 CPU 入口，使用固定音频，配置线程和重复次数，开始或取消任务。
 3. **Results**：表格比较耗时、RTF、内存、识别文本与 CER/WER，查看单次执行记录。
 4. **Export**：导出包含配置和设备信息的 JSON，以及便于整理的 CSV。
 
@@ -108,10 +110,9 @@ docs/                        模型兼容性、使用方法、测量定义
 
 - `android-build.yml`：由 push、pull request 和手动触发运行。
 - 在 GitHub 托管 Linux runner 上安装固定 JDK、SDK 和 NDK，配置 Gradle 缓存。
-- 运行项目静态检查、单元测试与 `assembleDebug`，上传 APK、构建日志及必要报告。
+- 构建所有 CPU 原生库，运行 `assembleDebug` 与 lint，上传 APK。首版不额外增加自动测试。
 - 默认 APK 为可直接安装的 debug 产物，保留期在工作流中明确设置。
-- `android-release.yml`：由版本标签触发构建 Release APK，并创建 GitHub Release。
-- Release 签名通过 GitHub Secrets 提供；签名密钥不进入仓库或构建日志。未配置签名时仅产出明确标记的未签名文件。
+- 首版交付 debug 签名 APK；后续增加版本标签发布和通过 GitHub Secrets 配置的 Release 签名。
 - 工作流只验证构建与逻辑；真机性能 benchmark 在手机上执行，不用 CI 模拟器代替性能结论。
 - 启用工作流需要将仓库推送到 GitHub；当前本地仓库未配置远程地址，实施阶段补齐。
 
@@ -119,27 +120,31 @@ docs/                        模型兼容性、使用方法、测量定义
 
 ### 阶段一：模型可行性
 
-确定同源 SenseVoiceSmall，下载并校验已找到的 ONNX、ncnn、LiteRT 与 PocketASR MNN Q8 包。逐项核对五个入口的 INT8 CPU 和 FP16 GPU 路线，完成缺失模型的导出／量化方案与 GPU 算子覆盖调查。GPU 优先使用 ncnn 现有 FP16 模型和 MNN 现有 GPU benchmark 工具进行可行性测量，再接入应用。输出十组合清单及转换说明。
+锁定五个 CPU 入口的同源模型与版本，完成模型准备脚本、manifest、导入校验和固定 LibriSpeech 音频提取。
 
-验收：十个组合均有具体模型来源或可复现转换步骤；缺失或不兼容项记录证据，已有模型与转换模型注明实际量化方式，不能仅凭文件名认定精度。
+验收：五项有模型来源与校验记录，固定音频和转写可复现，明确动态量化与权重量化差别。
 
 ### 阶段二：Android 基线应用
 
-创建 Gradle 工程、Compose 页面、模型和 WAV 导入、统一引擎接口，先接入 sherpa-onnx 与直接调用 ONNX Runtime 的 INT8 CPU，使用同一模型，完成单配置 benchmark 与 JSON 导出。
+创建 Gradle 工程、Compose 页面、模型导入、统一引擎接口，先接入 sherpa-onnx 与直接调用 ONNX Runtime 的 CPU，使用同一模型，完成固定样本 benchmark 与 JSON 导出。
 
 验收：arm64 Android 真机可安装、离线识别、显示有效时间与 RTF，并能导出可复查的数据。
 
-### 阶段三：多框架与多精度
+### 阶段三：五项 CPU 对比
 
-接入 MNN、ncnn、LiteRT，补齐五个入口的 INT8 CPU 与 FP16 GPU 配置、批量比较、质量指标与 CSV 导出。增加 GPU 类型、委托覆盖、CPU 回退与 bucket 长度展示。
+接入 MNN、ncnn、LiteRT，完成五个 CPU 入口的顺序执行、首次推理、预热、重复测量、PSS 采样、WER/CER、取消及 CSV 导出。记录 LiteRT 63 帧 bucket 与其他动态长度的差别。
 
-验收：五个入口均能呈现十组合状态；可行组合有真机输出与性能记录，不可行组合有明确原因。INT8 CPU 与 FP16 GPU 分表比较，未证实 GPU 执行的结果不计入 GPU 排名。
+验收：五项可选择，已有模型可执行，缺失／失败项明确显示状态，导出保留完整设备、模型与单次样本信息。
 
 ### 阶段四：自动构建与交付
 
-完成 GitHub Actions、APK artifact、标签发布流程和使用文档。补充指标计算、错误处理与报告序列化的单元测试，并执行真机检查。
+完成 GitHub Actions、APK artifact 和使用文档。构建检查与真实手机 benchmark 分别记录；没有真机结果时不宣称性能已验证。
 
-验收：GitHub push 自动生成可安装 APK；文档说明模型准备、运行方法、结果含义与已知限制。Release 发布在具备签名配置时提供已签名 APK。
+验收：GitHub push 自动生成 debug APK；文档说明模型准备、运行方法、结果含义与已知限制。
+
+### 后续版本：GPU
+
+CPU 版本完成后再接入 FP16 GPU：ncnn Vulkan、MNN OpenCL／Vulkan 优先，再评估 LiteRT GPU 和 ORT／sherpa-onnx NNAPI GPU。首版不包含这些后端，之前的 GPU 模型调查保留在来源文档中。
 
 ## 9. 提交约定
 

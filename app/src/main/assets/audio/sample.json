@@ -1,0 +1,13 @@
+{
+  "dataset": "LibriSpeech test-clean",
+  "utterance": "6930-75918-0000",
+  "sourceEntry": "LibriSpeech/test-clean/6930/75918/6930-75918-0000.flac",
+  "reference": "CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS",
+  "sampleRate": 16000,
+  "frames": 56080,
+  "durationSeconds": 3.505,
+  "sha256": "103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8",
+  "license": "CC BY 4.0",
+  "source": "https://www.openslr.org/12/",
+  "selection": "Complete fixed utterance; no trimming, denoising or normalization"
+}
