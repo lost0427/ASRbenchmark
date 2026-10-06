@@ -6,7 +6,7 @@
 
 - 应用名称：SenseVoice Benchmark。
 - 首版面向 arm64-v8a 手机，建议最低 Android 8.0（API 26）；最终版本要求依据依赖兼容性确定。
-- 本地导入模型与音频，离线完成推理和结果查看。
+- 本地导入模型，使用 APK 内置固定音频，离线完成推理和结果查看。
 - 使用简洁的英文界面与英文 Git 提交标题。
 - 首版对比 sherpa-onnx、直接调用 ONNX Runtime、MNN、ncnn、LiteRT 五个 CPU 入口，使用已找到的 INT8／Q8 模型。GPU 留待后续版本。
 - sherpa-onnx 与直接调用 ONNX Runtime 单独显示，用于比较封装、前后处理与调度开销；报告同时注明两者共用 ONNX Runtime 计算内核。
@@ -46,8 +46,8 @@ FP32 作为识别质量参考。优先锁定 2024-07-17 FunAudioLLM SenseVoiceSm
 - 原生接入：sherpa-onnx JNI、ONNX Runtime Android API、MNN/ncnn JNI 与 CMake、独立打包的 LiteRT。CPU 首版无需 GPU delegate 或 Google Play 服务。
 - 固定 ORT 1.23.2，共用 AAR 内的原生库；MNN 与 ncnn 使用固定源码构建独立桥接库。
 - 前处理与解码：统一音频读取、特征参数、token 词表和文本规范化；可共用的部分只实现一份。
-- 文件访问：使用 Android Storage Access Framework 导入模型与音频、导出报告。
-- 数据保存：应用私有目录存储模型清单和 benchmark 历史，首版采用结构化 JSON。
+- 文件访问：使用 Android Storage Access Framework 导入模型目录、导出报告；音频读取内置 assets。
+- 数据保存：应用私有目录存储模型清单和最近一次 benchmark 报告，首版采用结构化 JSON。
 - 版本管理：固定 Gradle、JDK、Android SDK、NDK 与推理依赖版本，提交 Gradle Wrapper。
 
 建议目录：
@@ -113,10 +113,12 @@ docs/                        模型兼容性、使用方法、测量定义
 - 构建所有 CPU 原生库，运行 `assembleDebug` 与 lint，上传 APK。首版不额外增加自动测试。
 - 默认 APK 为可直接安装的 debug 产物，保留期在工作流中明确设置。
 - 首版交付 debug 签名 APK；后续增加版本标签发布和通过 GitHub Secrets 配置的 Release 签名。
-- 工作流只验证构建与逻辑；真机性能 benchmark 在手机上执行，不用 CI 模拟器代替性能结论。
-- 启用工作流需要将仓库推送到 GitHub；当前本地仓库未配置远程地址，实施阶段补齐。
+- 工作流执行编译、打包和 lint；真机性能 benchmark 在手机上执行，不用 CI 模拟器代替性能结论。
+- 本地代码整理提交后，由用户通过 GitHub Desktop 的 Publish repository 发布；首次推送触发构建。
 
 ## 8. 实施阶段与验收
+
+本地实施状态（2026-10-06）：五项 CPU 接入、模型准备脚本、固定音频、结果导出和 GitHub Actions 已实现。Windows 本地原生库编译、APK 打包和 lint 已通过；未执行 Android 真机识别或性能测量。GitHub 上的首次构建待用户发布仓库后触发。
 
 ### 阶段一：模型可行性
 

@@ -1,0 +1,7 @@
+add_library(benchmark_ncnn SHARED ${CMAKE_CURRENT_LIST_DIR}/bridge.cc)
+target_include_directories(benchmark_ncnn PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(benchmark_ncnn PRIVATE sherpa-ncnn-core log)
+target_link_options(benchmark_ncnn PRIVATE -Wl,--exclude-libs,ALL -Wl,-z,max-page-size=16384)
+add_library(benchmark_features SHARED ${CMAKE_CURRENT_LIST_DIR}/features.cc)
+target_link_libraries(benchmark_features PRIVATE kaldi-native-fbank-core log)
+target_link_options(benchmark_features PRIVATE -Wl,--exclude-libs,ALL -Wl,-z,max-page-size=16384)
