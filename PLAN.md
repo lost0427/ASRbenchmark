@@ -8,25 +8,32 @@
 - 首版面向 arm64-v8a 手机，建议最低 Android 8.0（API 26）；最终版本要求依据依赖兼容性确定。
 - 本地导入模型与音频，离线完成推理和结果查看。
 - 使用简洁的英文界面与英文 Git 提交标题。
-- 首版完成至少两种独立推理框架的有效对比；不把同一框架的不同封装计作不同框架。
+- 对比入口固定为 sherpa-onnx、直接调用 ONNX Runtime、MNN、ncnn、LiteRT 五项，每项寻找并接入 INT8 CPU 与 FP16 GPU 两种配置。
+- sherpa-onnx 与直接调用 ONNX Runtime 单独显示，用于比较封装、前后处理与调度开销；报告同时注明两者共用 ONNX Runtime 计算内核。
 - 本文件为实施计划；当前阶段仅提交计划，不创建应用代码。
 
 ## 2. 推理框架与精度矩阵
 
-| 框架 | 角色 | FP32 | FP16 | INT8 | 接入前提 |
-| --- | --- | --- | --- | --- | --- |
-| ONNX Runtime | 第一套基线 | 优先支持 | 评估转换与执行支持 | 优先评估量化模型 | 明确 SenseVoice ONNX 输入输出、前处理与解码 |
-| MNN | 第二套框架优先候选 | 转换后验证 | 按后端能力验证 | 按量化工具链验证 | 模型成功转换，关键算子与动态长度可运行 |
-| ncnn | 第二套框架备选及后续扩展 | 转换后验证 | 按存储与算术配置验证 | 按算子与量化支持验证 | 图转换、形状与算子兼容性满足要求 |
+| 对比入口 | INT8 CPU 模型来源 | FP16 GPU 模型与后端路径 | 当前证据 |
+| --- | --- | --- | --- |
+| sherpa-onnx | k2-fsa 官方 SenseVoice INT8 ONNX 包 | 同源浮点 ONNX 转换或 FP16 relaxation，接入 NNAPI；必须确认 GPU 设备 | INT8 包已找到；Android FP16 GPU 未验证，可能需要修改原生构建 |
+| ONNX Runtime | 与 sherpa-onnx 共用官方 `model.int8.onnx` | 同源 ONNX 转 FP16，或 FP32 图加 NNAPI FP16 relaxation；确认 GPU 设备 | INT8 包已找到，社区 FP16 ONNX 已找到；NNAPI 不保证 GPU |
+| MNN | 同源 FP32 ONNX 转 MNN 后做 CPU INT8 量化 | 同源模型转 MNN，OpenCL 优先、Vulkan 备选，低精度模式 | 社区 `.mnn` 已找到但精度未注明；目标精度包需转换与验证 |
+| ncnn | k2-fsa 官方 SenseVoice INT8 ncnn 包 | k2-fsa 官方 FP16 ncnn 包，Vulkan 与 FP16 存储／算术配置 | 两种模型包与导出工作流均已找到；Android GPU 算子覆盖待验证 |
+| LiteRT | 社区 `sensevoice_small_q8.tflite`，CPU/XNNPACK | 从同源 PyTorch 经 litert-torch 导出，生成 FP16 权重 `.tflite`，接入 GPU delegate | 动态 INT8 包已找到；未找到已确认的 SenseVoice FP16 GPU 成品 |
 
-兼容性需要实际模型与设备验证，不能提前承诺所有组合可运行。先评估 MNN；若存在无法解决的模型转换或算子障碍，再评估 ncnn，并记录原因。第二套独立框架未完成之前，不宣称多框架版本完成。
+模型链接、证据和转换要求见 [docs/MODEL_SOURCES.md](docs/MODEL_SOURCES.md)。现阶段核实了在线模型清单、发布资源、说明与源码，没有下载大型权重或执行真机推理。
 
-sherpa-onnx 可作为 SenseVoice 前处理、模型接口和解码的参考，也可用于核对识别结果；使用其 ONNX Runtime 后端时，不另列为独立推理框架。
+五项均纳入实施范围，MNN、ncnn、LiteRT 不互相替代。为十个目标组合建立状态：`source_found`、`needs_conversion`、`needs_device_validation`、`verified`、`unsupported`。目标是完成全部可行组合；确有算子或后端障碍的组合保留入口、证据和原因，不隐藏或冒充可运行结果。
+
+FP32 作为识别质量参考。优先锁定 2024-07-17 FunAudioLLM SenseVoiceSmall 路线，避免与 2025-09-09 WSYue-ASR 路线混用。不同导出图和静态 bucket 的性能差异需要记录。
 
 精度记录规则：
 
 - 分开记录权重存储类型、请求的计算精度、量化方式与执行后端。
 - FP16 权重不保证所有算子使用 FP16；INT8 模型可能混合执行浮点算子。
+- 区分动态 INT8、权重量化和静态 W8A8；LiteRT 已找到的包明确为 `dynamic_wi8_afp32`，不能标为全 INT8。
+- FP16 GPU 必须记录实际 GPU 后端与 CPU 回退；NNAPI 的 GPU、NPU 和 CPU 分配分别标注，未确认 GPU 的结果不进入 GPU 排名。
 - 无法确认实际算子执行精度时标记为 unknown，不作推断。
 - 后端回退需要记录；无法检测的回退明确标记为未验证。
 - 不支持的组合显示具体原因，不返回零耗时或伪造结果。
@@ -36,7 +43,8 @@ sherpa-onnx 可作为 SenseVoice 前处理、模型接口和解码的参考，�
 - Android：Kotlin、Jetpack Compose、单 Activity 架构。
 - 任务执行：协程在后台顺序执行，同一时刻只运行一个 benchmark。
 - 推理接口：统一的 `InferenceEngine`，包含模型加载、预热、单次执行和资源释放。
-- 原生接入：ONNX Runtime Android API；MNN/ncnn 根据接口需求使用 JNI、C++ 和 CMake。
+- 原生接入：sherpa-onnx Android/JNI、ONNX Runtime Android API、MNN/ncnn JNI 与 CMake、独立打包的 LiteRT 与 GPU delegate；首版无需 Google Play 服务。
+- GPU 任务固定到专用线程，保证 delegate 创建、运行与释放的线程要求；计时包含实际完成与同步。
 - 前处理与解码：统一音频读取、特征参数、token 词表和文本规范化；可共用的部分只实现一份。
 - 文件访问：使用 Android Storage Access Framework 导入模型与音频、导出报告。
 - 数据保存：应用私有目录存储模型清单和 benchmark 历史，首版采用结构化 JSON。
@@ -47,8 +55,8 @@ sherpa-onnx 可作为 SenseVoice 前处理、模型接口和解码的参考，�
 ```text
 app/                         Compose 界面、任务配置、结果展示
 benchmark/                   指标计算、运行调度、报告结构
-inference/                   统一接口与 ONNX Runtime 适配
-native/                      MNN/ncnn JNI 与原生构建配置
+inference/                   统一接口与五项适配
+native/                      sherpa-onnx、MNN/ncnn JNI 与原生构建配置
 tools/model-conversion/      模型导出、转换、量化说明与脚本
 docs/                        模型兼容性、使用方法、测量定义
 .github/workflows/           APK 自动构建与发布工作流
@@ -59,6 +67,7 @@ docs/                        模型兼容性、使用方法、测量定义
 - 以同一来源、同一版本的 SenseVoiceSmall 为起点，登记来源、许可证、版本及 SHA-256。
 - 为每种框架准备独立模型文件，但保持相同参数来源、词表、语言参数与音频处理设置。
 - 模型清单描述框架、文件路径、精度、输入输出名称、张量形状、前处理参数与校验和。
+- 清单增加模型来源 revision、量化类型、GPU backend、转换版本和支持的音频长度；外部 ONNX 权重、ncnn param/bin、词表与 CMVN 一起导入。
 - 量化转换记录工具版本、命令与量化配置；需要校准时记录校准集来源及规模。
 - 不把大型模型提交进 Git；首版通过文件导入，后续可增加带校验和的下载入口。
 - 首版支持 16 kHz 单声道 PCM WAV。其他格式或采样率显示明确提示，后续再增加解码与重采样。
@@ -110,21 +119,21 @@ docs/                        模型兼容性、使用方法、测量定义
 
 ### 阶段一：模型可行性
 
-确定 SenseVoiceSmall 来源和基线模型，核对输入输出、音频特征与解码。完成 ONNX Runtime 基线及 MNN 转换评估；必要时评估 ncnn。输出兼容性矩阵、可运行模型组合与转换说明。
+确定同源 SenseVoiceSmall，下载并校验已找到的 ONNX、ncnn、LiteRT 与 MNN 候选包。逐项核对五个入口的 INT8 CPU 和 FP16 GPU 路线，完成缺失模型的导出／量化方案与 GPU 算子覆盖调查。输出十组合清单及转换说明。
 
-验收：至少两个独立框架有可执行的模型与真实识别输出；明确各精度组合的支持情况和质量差异。
+验收：十个组合均有具体模型来源或可复现转换步骤；缺失或不兼容项记录证据，已有模型与转换模型注明实际量化方式，不能仅凭文件名认定精度。
 
 ### 阶段二：Android 基线应用
 
-创建 Gradle 工程、Compose 页面、模型和 WAV 导入、统一引擎接口，接入 ONNX Runtime，完成单配置 benchmark 与 JSON 导出。
+创建 Gradle 工程、Compose 页面、模型和 WAV 导入、统一引擎接口，先接入 sherpa-onnx 与直接调用 ONNX Runtime 的 INT8 CPU，使用同一模型，完成单配置 benchmark 与 JSON 导出。
 
 验收：arm64 Android 真机可安装、离线识别、显示有效时间与 RTF，并能导出可复查的数据。
 
 ### 阶段三：多框架与多精度
 
-接入通过阶段一验证的第二套框架，加入有效的 FP32、FP16、INT8 配置、批量比较、质量指标与 CSV 导出。
+接入 MNN、ncnn、LiteRT，补齐五个入口的 INT8 CPU 与 FP16 GPU 配置、批量比较、质量指标与 CSV 导出。增加 GPU 类型、委托覆盖、CPU 回退与 bucket 长度展示。
 
-验收：同一音频可在两种框架上完成对比；至少一种框架具备两种有效精度配置，所有未支持组合有清楚说明。
+验收：五个入口均能呈现十组合状态；可行组合有真机输出与性能记录，不可行组合有明确原因。INT8 CPU 与 FP16 GPU 分表比较，未证实 GPU 执行的结果不计入 GPU 排名。
 
 ### 阶段四：自动构建与交付
 
@@ -139,7 +148,10 @@ docs/                        模型兼容性、使用方法、测量定义
 - `Add benchmark plan`
 - `Create Android app`
 - `Add ONNX Runtime inference`
+- `Add sherpa-onnx inference`
 - `Add MNN inference`
+- `Add ncnn inference`
+- `Add LiteRT inference`
 - `Add precision benchmarks`
 - `Add GitHub APK builds`
 
