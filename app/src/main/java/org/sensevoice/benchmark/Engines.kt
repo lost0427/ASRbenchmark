@@ -44,6 +44,16 @@ val engineSpecs = listOf(
 
 interface Engine : Closeable { fun recognize(samples: FloatArray): String }
 
+// 25 ms windows, 10 ms shift, snip_edges=true, followed by LFR(7,6).
+fun lfrFrameCount(sampleCount: Int): Int {
+    val fbankFrames = if (sampleCount < 400) 0 else 1 + (sampleCount - 400) / 160
+    return (fbankFrames + 5) / 6
+}
+
+fun liteRtBucket(frameCount: Int): Int =
+    listOf(63, 125, 250, 500).firstOrNull { it >= frameCount }
+        ?: error("Audio exceeds LiteRT bucket limit")
+
 fun createEngine(spec: EngineSpec, root: File, threads: Int): Engine {
     val folder = File(root, spec.folder)
     val tokens = File(folder, "tokens.txt").absolutePath
@@ -142,7 +152,7 @@ private class LiteRtEngine(folder: File, threads: Int) : Engine {
 
     override fun recognize(samples: FloatArray): String {
         val frames = features(samples, shift, scale)
-        val bucket = listOf(63, 125, 250, 500).firstOrNull { it >= frames.size } ?: error("Audio exceeds LiteRT bucket limit")
+        val bucket = liteRtBucket(frames.size)
         val signature = "sv_$bucket"
         val data = arrayOf(Array(bucket) { row -> if (row < frames.size) frames[row] else FloatArray(560) })
         val inputs = mapOf<String, Any>("args_0" to data, "args_1" to intArrayOf(frames.size), "args_2" to intArrayOf(4), "args_3" to intArrayOf(15))

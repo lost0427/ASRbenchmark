@@ -1,12 +1,12 @@
 {
   "dataset": "LibriSpeech test-clean",
-  "utterance": "6930-75918-0000",
-  "sourceEntry": "LibriSpeech/test-clean/6930/75918/6930-75918-0000.flac",
-  "reference": "CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS",
+  "utterance": "3729-6852-0008",
+  "sourceEntry": "LibriSpeech/test-clean/3729/6852/3729-6852-0008.flac",
+  "reference": "SHE WAS HONOURABLY BURIED IN THE CHURCH OF SAINT SAUVEUR WITHOUT THE SLIGHTEST OPPOSITION FROM THE VENERABLE PRIEST WHO FAR FROM SHARING THE ANTI CHRISTAIN INTOLERANCY OF THE CLERGY IN GENERAL SAID THAT HER PROFESSION AS AN ACTRESS HAD NOT HINDERED HER FROM BEING A GOOD CHRISTIAN AND THAT THE EARTH WAS THE COMMON MOTHER OF ALL HUMAN BEINGS AS JESUS CHRIST HAD BEEN THE SAVIOUR OF ALL MANKIND",
   "sampleRate": 16000,
-  "frames": 56080,
-  "durationSeconds": 3.505,
-  "sha256": "103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8",
+  "frames": 381760,
+  "durationSeconds": 23.86,
+  "sha256": "2804546b51efe2de0eeb0702c0ada9c5b9fde806dcf39c278bcb3ef6e29b66a7",
   "license": "CC BY 4.0",
   "source": "https://www.openslr.org/12/",
   "selection": "Complete fixed utterance; no trimming, denoising or normalization"

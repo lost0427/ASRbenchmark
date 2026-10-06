@@ -71,8 +71,8 @@ docs/                        模型兼容性、使用方法、测量定义
 - 量化转换记录工具版本、命令与量化配置；需要校准时记录校准集来源及规模。
 - 不把大型模型提交进 Git；通过 `tools/prepare_models.py` 在电脑生成模型目录和 manifest，然后在手机导入并校验 SHA-256。
 - 首版支持 16 kHz 单声道 PCM WAV。其他格式或采样率显示明确提示，后续再增加解码与重采样。
-- 固定样本 `6930-75918-0000`，来自本地 `test-clean.tar.gz`；时长 3.505 秒，16 kHz 单声道 PCM16，完整保留不裁剪。
-- 参考转写：`CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS`。音频 SHA-256：`103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8`。
+- 固定样本 `3729-6852-0008`，来自本地 `test-clean.tar.gz`；时长 23.86 秒，16 kHz 单声道 PCM16，完整保留不裁剪。
+- 参考转写：`SHE WAS HONOURABLY BURIED IN THE CHURCH OF SAINT SAUVEUR WITHOUT THE SLIGHTEST OPPOSITION FROM THE VENERABLE PRIEST WHO FAR FROM SHARING THE ANTI CHRISTAIN INTOLERANCY OF THE CLERGY IN GENERAL SAID THAT HER PROFESSION AS AN ACTRESS HAD NOT HINDERED HER FROM BEING A GOOD CHRISTIAN AND THAT THE EARTH WAS THE COMMON MOTHER OF ALL HUMAN BEINGS AS JESUS CHRIST HAD BEEN THE SAVIOUR OF ALL MANKIND`。音频 SHA-256：`2804546b51efe2de0eeb0702c0ada9c5b9fde806dcf39c278bcb3ef6e29b66a7`。
 - 使用 `tools/prepare_audio.py` 可复现提取；WAV、转写、来源与 CC BY 4.0 许可放入 APK assets，整个压缩包保持本地并忽略。
 - 性能对比使用相同音频集；有参考转写时同时评估精度，防止仅比较速度而忽略识别退化。
 
@@ -134,7 +134,7 @@ docs/                        模型兼容性、使用方法、测量定义
 
 ### 阶段三：五项 CPU 对比
 
-接入 MNN、ncnn、LiteRT，完成五个 CPU 入口的顺序执行、首次推理、预热、重复测量、PSS 采样、WER/CER、取消及 CSV 导出。记录 LiteRT 63 帧 bucket 与其他动态长度的差别。
+接入 MNN、ncnn、LiteRT，完成五个 CPU 入口的顺序执行、首次推理、预热、重复测量、PSS 采样、WER/CER、取消及 CSV 导出。记录 LiteRT 500 帧 bucket 与其他动态长度的差别。
 
 验收：五项可选择，已有模型可执行，缺失／失败项明确显示状态，导出保留完整设备、模型与单次样本信息。
 

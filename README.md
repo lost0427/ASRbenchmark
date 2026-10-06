@@ -3,10 +3,10 @@
 Android app for comparing **CPU** SenseVoiceSmall inference with sherpa-onnx,
 ONNX Runtime, MNN, ncnn and LiteRT. GPU support is planned for a later version.
 
-The APK includes one fixed **3.505-second** LibriSpeech test-clean utterance,
-`6930-75918-0000`, and its reference transcript:
+The APK includes one fixed **23.86-second** LibriSpeech test-clean utterance,
+`3729-6852-0008`, and its reference transcript:
 
-> CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS
+> SHE WAS HONOURABLY BURIED IN THE CHURCH OF SAINT SAUVEUR WITHOUT THE SLIGHTEST OPPOSITION FROM THE VENERABLE PRIEST WHO FAR FROM SHARING THE ANTI CHRISTAIN INTOLERANCY OF THE CLERGY IN GENERAL SAID THAT HER PROFESSION AS AN ACTRESS HAD NOT HINDERED HER FROM BEING A GOOD CHRISTIAN AND THAT THE EARTH WAS THE COMMON MOTHER OF ALL HUMAN BEINGS AS JESUS CHRIST HAD BEEN THE SAVIOUR OF ALL MANKIND
 
 All engines use English, ITN disabled and the same decoded PCM. Models are imported
 separately and never bundled into Git or the APK. The benchmark runs offline.
@@ -63,9 +63,9 @@ for links, pinned revisions and conversion details.
   may miss short allocations and includes the whole process, including already
   loaded runtimes. It is not isolated model memory.
 - CER/WER use uppercase ASCII letters/digits, punctuation removal and collapsed
-  whitespace. CER excludes spaces. The short clip checks output consistency;
+  whitespace. CER excludes spaces. The single clip checks output consistency;
   it does not establish corpus accuracy.
-- LiteRT uses the smallest signature bucket: 63 LFR frames for this clip. Other
+- LiteRT uses the smallest signature bucket: 500 LFR frames for this clip. Other
   paths use dynamic length. Record this extra padding when comparing latency.
 - Language is English and ITN is disabled. No VAD or punctuation model runs.
 - Core-only inference time is unavailable; it is never substituted with

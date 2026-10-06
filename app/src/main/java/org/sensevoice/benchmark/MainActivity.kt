@@ -27,6 +27,9 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 val vm: BenchmarkViewModel = viewModel()
                 val state by vm.state.collectAsState()
+                val audio = remember { JSONObject(assets.open("audio/sample.json").bufferedReader().use { it.readText() }) }
+                val audioDuration = String.format(Locale.US, "%.2f", audio.getDouble("durationSeconds"))
+                val audioBucket = liteRtBucket(lfrFrameCount(audio.getInt("frames")))
                 DisposableEffect(state.busy) {
                     if (state.busy) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -51,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text("SenseVoice Benchmark", style = MaterialTheme.typography.headlineMedium)
                         Text("CPU · Fixed LibriSpeech sample", style = MaterialTheme.typography.titleMedium)
-                        Text("6930-75918-0000 · 3.505 s · 16 kHz mono\nCONCORD RETURNED TO ITS PLACE AMIDST THE TENTS", style = MaterialTheme.typography.bodyMedium)
+                        Text("${audio.getString("utterance")} · $audioDuration s · 16 kHz mono\n${audio.getString("reference")}", style = MaterialTheme.typography.bodyMedium)
                         OutlinedButton(onClick = { importModels.launch(null) }, enabled = !state.busy) { Text("Import model folder") }
                         Text("Prepare the folder with tools/prepare_models.py. Models run offline after import.", style = MaterialTheme.typography.bodySmall)
                         engineSpecs.forEach { engine ->
@@ -64,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Text("sherpa-onnx and ONNX Runtime share the same model and ORT version. LiteRT pads to 63 LFR frames.", style = MaterialTheme.typography.bodySmall)
+                        Text("sherpa-onnx and ONNX Runtime share the same model and ORT version. LiteRT pads to $audioBucket LFR frames.", style = MaterialTheme.typography.bodySmall)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedTextField(threads, { threads = it }, label = { Text("Threads") }, singleLine = true, enabled = !state.busy, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), modifier = Modifier.weight(1f))
                             OutlinedTextField(warmup, { warmup = it }, label = { Text("Warmup") }, singleLine = true, enabled = !state.busy, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), modifier = Modifier.weight(1f))

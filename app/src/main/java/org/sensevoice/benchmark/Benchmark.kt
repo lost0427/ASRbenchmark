@@ -136,7 +136,7 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
                 row.put("status", if (cancel.get()) "cancelled" else if (text.isBlank()) "empty_output" else "ok")
                     .put("text", text).put("wer", errorRate(audioMeta.getString("reference"), text, words = true))
                     .put("cer", errorRate(audioMeta.getString("reference"), text, words = false))
-                    .put("computedLfrFrames", if (spec.id == "litert") 63 else JSONObject.NULL)
+                    .put("computedLfrFrames", if (spec.id == "litert") liteRtBucket(lfrFrameCount(samples.size)) else JSONObject.NULL)
                 if (times.isNotEmpty()) {
                     val sorted = times.sorted()
                     val median = if (sorted.size % 2 == 0) (sorted[sorted.size / 2 - 1] + sorted[sorted.size / 2]) / 2 else sorted[sorted.size / 2]

@@ -8,8 +8,8 @@ import tarfile
 import tempfile
 import wave
 
-UTTERANCE = "6930-75918-0000"
-PREFIX = "LibriSpeech/test-clean/6930/75918"
+UTTERANCE = "3729-6852-0008"
+PREFIX = "LibriSpeech/test-clean/3729/6852"
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     wanted = {
         f"{PREFIX}/{UTTERANCE}.flac": "audio.flac",
-        f"{PREFIX}/6930-75918.trans.txt": "transcript.txt",
+        f"{PREFIX}/3729-6852.trans.txt": "transcript.txt",
         "LibriSpeech/LICENSE.TXT": "LICENSE.txt",
     }
     with tempfile.TemporaryDirectory() as tmp:
