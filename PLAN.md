@@ -18,7 +18,7 @@
 | --- | --- | --- | --- |
 | sherpa-onnx | k2-fsa 官方 SenseVoice INT8 ONNX 包 | 同源浮点 ONNX 转换或 FP16 relaxation，接入 NNAPI；必须确认 GPU 设备 | INT8 包已找到；Android FP16 GPU 未验证，可能需要修改原生构建 |
 | ONNX Runtime | 与 sherpa-onnx 共用官方 `model.int8.onnx` | 同源 ONNX 转 FP16，或 FP32 图加 NNAPI FP16 relaxation；确认 GPU 设备 | INT8 包已找到，社区 FP16 ONNX 已找到；NNAPI 不保证 GPU |
-| MNN | 同源 FP32 ONNX 转 MNN 后做 CPU INT8 量化 | 同源模型转 MNN，OpenCL 优先、Vulkan 备选，低精度模式 | 社区 `.mnn` 已找到但精度未注明；目标精度包需转换与验证 |
+| MNN | PocketASR 已发布同源 Q8 `model.mnn`，8 位权重量化 | 同源浮点模型转 MNN，OpenCL 优先、Vulkan 备选，低精度模式 | Q8 成品与转换记录已找到；PocketASR 仅支持 CPU，GPU 使用独立运行时 |
 | ncnn | k2-fsa 官方 SenseVoice INT8 ncnn 包 | k2-fsa 官方 FP16 ncnn 包，Vulkan 与 FP16 存储／算术配置 | 两种模型包与导出工作流均已找到；Android GPU 算子覆盖待验证 |
 | LiteRT | 社区 `sensevoice_small_q8.tflite`，CPU/XNNPACK | 从同源 PyTorch 经 litert-torch 导出，生成 FP16 权重 `.tflite`，接入 GPU delegate | 动态 INT8 包已找到；未找到已确认的 SenseVoice FP16 GPU 成品 |
 
@@ -119,7 +119,7 @@ docs/                        模型兼容性、使用方法、测量定义
 
 ### 阶段一：模型可行性
 
-确定同源 SenseVoiceSmall，下载并校验已找到的 ONNX、ncnn、LiteRT 与 MNN 候选包。逐项核对五个入口的 INT8 CPU 和 FP16 GPU 路线，完成缺失模型的导出／量化方案与 GPU 算子覆盖调查。输出十组合清单及转换说明。
+确定同源 SenseVoiceSmall，下载并校验已找到的 ONNX、ncnn、LiteRT 与 PocketASR MNN Q8 包。逐项核对五个入口的 INT8 CPU 和 FP16 GPU 路线，完成缺失模型的导出／量化方案与 GPU 算子覆盖调查。GPU 优先使用 ncnn 现有 FP16 模型和 MNN 现有 GPU benchmark 工具进行可行性测量，再接入应用。输出十组合清单及转换说明。
 
 验收：十个组合均有具体模型来源或可复现转换步骤；缺失或不兼容项记录证据，已有模型与转换模型注明实际量化方式，不能仅凭文件名认定精度。
 

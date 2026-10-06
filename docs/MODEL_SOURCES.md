@@ -28,16 +28,29 @@ Android GPU 路线目前需要验证：
 
 参考：[ONNX Runtime NNAPI EP](https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)。NNAPI 需要 API 27+，CPU_DISABLED 需要 API 29+；低系统版本保留 CPU 模式。
 
-## 3. MNN：模型候选与两种目标配置
+## 3. MNN：PocketASR Q8 成品与 GPU 路线
+
+已找到 [PocketASR 模型发布](https://github.com/lost0427/PocketASR/releases/tag/model-sherpa-mnn-sensevoice-q8-v1)，作为 MNN CPU 首选来源：
+
+- [model.mnn](https://github.com/lost0427/PocketASR/releases/download/model-sherpa-mnn-sensevoice-q8-v1/model.mnn)：266,565,508 字节，约 254.2 MiB。
+- [tokens.txt](https://github.com/lost0427/PocketASR/releases/download/model-sherpa-mnn-sensevoice-q8-v1/tokens.txt)。
+- [provenance.json](https://github.com/lost0427/PocketASR/releases/download/model-sherpa-mnn-sensevoice-q8-v1/provenance.json)、[SHA256SUMS](https://github.com/lost0427/PocketASR/releases/download/model-sherpa-mnn-sensevoice-q8-v1/SHA256SUMS)、[识别记录](https://github.com/lost0427/PocketASR/releases/download/model-sherpa-mnn-sensevoice-q8-v1/smoke-test.log) 与模型许可证均已发布。
+- 发布方模型 SHA-256：`28b954a62c9f8f8a9ccbe1079b1bb3b1d283fee0c84b311dadc7762cfcbe82bd`，本项目尚未下载校验。
+- 源 ONNX revision：`2365baeacb507f821a0c8120fcee3d484dba7a07`，文件 SHA-256：`977016bd9c79f9eb343430b5cc305e07ab64d5212dff41b0dcfa1694bee9a8cb`，属于第一节同日期模型路线。
+- MNN 3.6.1，commit `d407447ed56c4121a11ccbd266dc184ca1ead0c2`。
+- 转换参数：`--weightQuantBits=8 --weightQuantBlock=64`。这是 8 位权重量化；不能直接认定激活为 INT8 或算子全部执行 W8A8。
+- [转换脚本](https://github.com/lost0427/PocketASR/blob/main/scripts/models/convert_sensevoice_mnn.sh) 构建 `MNN_LOW_MEMORY=ON` 的运行时，并用同版本 sherpa-mnn 在主机上识别英文样例，检查非空文本。该检查不等于 Android 性能和完整质量验证。
+
+[PocketASR README](https://github.com/lost0427/PocketASR#current-limits)、[Android 构建脚本](https://github.com/lost0427/PocketASR/blob/main/scripts/ci/build_native_sherpa_mnn.sh) 和引擎实现明确仅支持 CPU，且 `MNN_OPENCL`、`MNN_VULKAN` 和 sherpa-mnn GPU 配置均关闭。该 APK 不可直接用来测试 GPU。
 
 已找到 [xinliu/sensevoice_mnn](https://huggingface.co/xinliu/sensevoice_mnn/tree/main)：`sensevoice.mnn`、`tokens.txt`。查询时 revision：`7ca517021b1a780246859989f2dd12c1f1db3520`。
 
 模型卡没有标明权重类型、量化配置或 GPU 支持；所链接的 Android 项目 `xinliu9451/sensevoice_android_mnn` 在本次查询返回 404。因此该包仅作候选，不能认定为 INT8 或 FP16，也不引用其速度宣传作为 benchmark 结论。
 
-- **INT8 CPU**：从第一节 FP32 ONNX 转换为 MNN，检查算子覆盖；再用固定版本 MNN 工具量化。静态量化需要可复查的语音校准集；仅权重压缩时明确标记 weight-only，不能称作 W8A8。检查 MatMul/Gemm 等是否真正进入 INT8 CPU 路径。
+- **INT8 CPU**：优先使用 PocketASR 成品及匹配的 MNN 3.6.1 运行时，显示 `Q8 weight-only / CPU`，检查实际算子执行方式。如另做静态 W8A8，作为独立配置登记，使用可复查的校准集。
 - **FP16 GPU**：同源浮点 MNN 图，明确指定 `MNN_FORWARD_OPENCL`，使用 `BackendConfig::Precision_Low`；Vulkan 作为另一个明确标注的 GPU 配置。检查设备 FP16 能力、执行精度与 CPU 回退。
 
-参考：[MNN](https://github.com/alibaba/MNN)、[后端和精度配置源码](https://github.com/alibaba/MNN/blob/master/include/MNN/MNNForwardType.h)。目前未找到能够从模型卡确认精度的 SenseVoice MNN INT8 CPU／FP16 GPU 成品包。
+参考：[MNN](https://github.com/alibaba/MNN)、[后端和精度配置源码](https://github.com/alibaba/MNN/blob/master/include/MNN/MNNForwardType.h)。CPU Q8 成品已确认来源；目前未找到附 Android FP16 GPU 运行证据的 SenseVoice MNN 成品方案。
 
 ## 4. ncnn：INT8 CPU 与 FP16 GPU 模型均已找到
 
@@ -52,6 +65,7 @@ k2-fsa 已发布三种同日期 SenseVoice ncnn 包：
 - **INT8 CPU**：关闭 Vulkan，启用 `use_int8_inference`，检查实际量化层；工作流传入空校准表的行为需核对对应工具版本和图，不能宣称所有算子全 INT8。
 - **FP16 GPU**：启用 Vulkan，按设备能力设置 `use_fp16_storage`、`use_fp16_packed` 与 `use_fp16_arithmetic`。FP16 权重文件本身不能证明 FP16 GPU 算术；必须检查 GPU 能力和各层 Vulkan 支持。
 - Android 接入可参考 sherpa-ncnn 的原生前处理与模型接口，但应用中保留用户指定的 `ncnn` 名称，并报告封装版本。
+- 当前 sherpa-ncnn [SenseVoice 初始化实现](https://github.com/k2-fsa/sherpa-ncnn/blob/master/sherpa-ncnn/csrc/offline-sense-voice-model.cc) 设置线程数但未显式启用 Vulkan；[Python 示例](https://github.com/k2-fsa/sherpa-ncnn/blob/master/python-api-examples/offline-decode-file-sense-voice.py) 已输出耗时与 RTF，可作为 CPU benchmark 起点。另一个 FunASR 示例在初始化中明确关闭 Vulkan。因此，已有 FP16 模型不代表这些示例已经运行 GPU。
 
 参考：[ncnn 配置源码](https://github.com/Tencent/ncnn/blob/master/src/option.h)、[另一个 SenseVoice ncnn 示例](https://github.com/FeiGeChuanShu/FunASR-demo-ncnn)。
 
@@ -73,4 +87,15 @@ k2-fsa 已发布三种同日期 SenseVoice ncnn 包：
 
 每个配置保存模型 SHA-256、来源 revision、框架版本、转换脚本与命令、量化类型、实际执行后端、GPU 型号、算子覆盖或回退信息、语言／ITN 参数、音频特征配置、shape/bucket 与识别质量。
 
-首先采用已找到的官方 ONNX INT8 和 ncnn INT8/FP16 包，再核验 LiteRT 动态 INT8 与 MNN 候选，补齐 MNN 目标精度转换及 LiteRT FP16 导出。sherpa-onnx／ORT 的 GPU 路线需要单独验证，不能把 NNAPI、NPU 或 CPU 回退结果标成 GPU。
+首先采用已找到的官方 ONNX INT8、ncnn INT8/FP16 和 PocketASR MNN Q8 包，再核验 LiteRT 动态 INT8，补齐 MNN GPU 配置及 LiteRT FP16 导出。sherpa-onnx／ORT 的 GPU 路线需要单独验证，不能把 NNAPI、NPU 或 CPU 回退结果标成 GPU。
+
+## 7. GPU 现成工具能否直接测量
+
+| 路线 | 现有材料 | 用于本项目还需要的工作 |
+| --- | --- | --- |
+| ncnn Vulkan FP16 | 已发布 FP16 SenseVoice 模型和识别示例 | 启用 Vulkan／FP16 配置，使用相同真实音频或特征，确认算子回退并计时；无需先导出新模型 |
+| MNN OpenCL／Vulkan 低精度 | [官方 benchmark 工具](https://github.com/alibaba/MNN/blob/master/benchmark/benchmark.cpp) 可选择后端和 precision | 构建 GPU 运行时，准备浮点 SenseVoice MNN，提供正确的多输入、长度和 language/ITN；通用随机输入测量不能替代完整 ASR benchmark |
+| ORT／sherpa-onnx NNAPI | 已有 EP 与浮点模型 | 配置 FP16 模式并确认实际 GPU 分配及模型委托覆盖；目前没有确认可直接复用的 Android SenseVoice FP16 GPU benchmark 成品 |
+| LiteRT GPU delegate | 已有 Android GPU 运行时和 CPU q8 SenseVoice | 生成／验证浮点模型和 GPU 分区，不能直接沿用 CPU 动态 INT8 成绩 |
+
+优先实现 ncnn Vulkan FP16，再实现 MNN GPU。模型存储为 FP32 也可以由 GPU 后端采用 FP16 计算；因此不要求每条路线都先找到单独的 FP16 文件，但需要保留存储类型和运行精度记录。当前未确认一个可直接安装、覆盖五项 SenseVoice FP16 GPU 比较的现成 APK。
