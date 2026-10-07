@@ -135,8 +135,7 @@ signing is a subsequent packaging task. CI does not run device performance tests
 
 Local validation (2026-10-06): CPU native libraries built on Windows, and
 `assembleDebug lintDebug` completed successfully. Phone inference verified on a
-OnePlus 15 (Snapdragon 8 Elite Gen 5); see [Results](#results). The first GitHub
-Actions run remains to be verified after publication.
+OnePlus 15 (Snapdragon 8 Elite Gen 5); see [Results](#results).
 
 ## Fixed audio provenance
 
