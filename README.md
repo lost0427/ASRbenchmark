@@ -42,8 +42,8 @@ the current native inference to finish, then saves the partial report.
 
 | Entry | CPU model | Runtime |
 | --- | --- | --- |
-| sherpa-onnx | Official dynamic-quantized ONNX | sherpa-onnx 1.13.8 + ORT 1.23.2 |
-| ONNX Runtime | The same ONNX and tokens | ORT 1.23.2 CPU EP |
+| sherpa-onnx | Official dynamic-quantized ONNX | sherpa-onnx 1.13.8 + ORT 1.30.0 |
+| ONNX Runtime | The same ONNX and tokens | ORT 1.30.0 CPU EP |
 | MNN | PocketASR Q8, block 64 | MNN 3.6.1 through sherpa-mnn |
 | ncnn | Official ncnn INT8 export | ncnn through sherpa-ncnn |
 | LiteRT | `dynamic_wi8_afp32` | LiteRT 2.1.6, XNNPACK requested |

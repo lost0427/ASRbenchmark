@@ -122,13 +122,13 @@ def main():
 
     # sherpa and direct ORT use the same shared runtime from the Maven AAR.
     ort = WORK / "ort"
-    fetch("https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.23.2/onnxruntime-android-1.23.2.aar", ort / "runtime.aar")
+    fetch("https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.30.0/onnxruntime-android-1.30.0.aar", ort / "runtime.aar")
     with zipfile.ZipFile(ort / "runtime.aar") as z:
         for name in ["jni/arm64-v8a/libonnxruntime.so"]:
             z.extract(name, ort)
-    for header in ["onnxruntime_c_api.h", "onnxruntime_ep_c_api.h", "onnxruntime_cxx_api.h", "onnxruntime_cxx_inline.h", "onnxruntime_float16.h"]:
-        fetch("https://raw.githubusercontent.com/microsoft/onnxruntime/v1.23.2/include/onnxruntime/core/session/" + header, ort / "include" / header)
-    fetch("https://raw.githubusercontent.com/microsoft/onnxruntime/v1.23.2/include/onnxruntime/core/providers/nnapi/nnapi_provider_factory.h", ort / "include/nnapi_provider_factory.h")
+    for header in ["onnxruntime_c_api.h", "onnxruntime_ep_c_api.h", "onnxruntime_error_code.h", "onnxruntime_cxx_api.h", "onnxruntime_cxx_inline.h", "onnxruntime_float16.h"]:
+        fetch("https://raw.githubusercontent.com/microsoft/onnxruntime/v1.30.0/include/onnxruntime/core/session/" + header, ort / "include" / header)
+    fetch("https://raw.githubusercontent.com/microsoft/onnxruntime/v1.30.0/include/onnxruntime/core/providers/nnapi/nnapi_provider_factory.h", ort / "include/nnapi_provider_factory.h")
     onnx = source("onnx")
     attach(onnx, "onnx")
     env = os.environ.copy()

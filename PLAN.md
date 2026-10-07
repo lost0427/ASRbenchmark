@@ -44,7 +44,7 @@ FP32 作为识别质量参考。优先锁定 2024-07-17 FunAudioLLM SenseVoiceSm
 - 任务执行：协程在后台顺序执行，同一时刻只运行一个 benchmark。
 - 推理接口：统一的 `InferenceEngine`，包含模型加载、预热、单次执行和资源释放。
 - 原生接入：sherpa-onnx JNI、ONNX Runtime Android API、MNN/ncnn JNI 与 CMake、独立打包的 LiteRT。CPU 首版无需 GPU delegate 或 Google Play 服务。
-- 固定 ORT 1.23.2，共用 AAR 内的原生库；MNN 与 ncnn 使用固定源码构建独立桥接库。
+- 固定 ORT 1.30.0，共用 AAR 内的原生库；MNN 与 ncnn 使用固定源码构建独立桥接库。
 - 前处理与解码：统一音频读取、特征参数、token 词表和文本规范化；可共用的部分只实现一份。
 - 文件访问：使用 Android Storage Access Framework 导入模型目录、导出报告；音频读取内置 assets。
 - 数据保存：应用私有目录存储模型清单和最近一次 benchmark 报告，首版采用结构化 JSON。

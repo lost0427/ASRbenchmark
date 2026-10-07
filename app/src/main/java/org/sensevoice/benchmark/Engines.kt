@@ -35,8 +35,8 @@ object FeatureNative {
 
 data class EngineSpec(val id: String, val title: String, val folder: String, val precision: String, val runtime: String)
 val engineSpecs = listOf(
-    EngineSpec("sherpa", "sherpa-onnx", "onnx", "Dynamic INT8 (MatMul weights UINT8)", "sherpa-onnx 1.13.8 / ORT 1.23.2 CPU"),
-    EngineSpec("ort", "ONNX Runtime", "onnx", "Dynamic INT8 (MatMul weights UINT8)", "ONNX Runtime 1.23.2 CPU EP"),
+    EngineSpec("sherpa", "sherpa-onnx", "onnx", "Dynamic INT8 (MatMul weights UINT8)", "sherpa-onnx 1.13.8 / ORT 1.30.0 CPU"),
+    EngineSpec("ort", "ONNX Runtime", "onnx", "Dynamic INT8 (MatMul weights UINT8)", "ONNX Runtime 1.30.0 CPU EP"),
     EngineSpec("mnn", "MNN", "mnn", "Q8 weights / floating activations", "MNN 3.6.1 / sherpa-mnn CPU"),
     EngineSpec("ncnn", "ncnn", "ncnn", "INT8 mixed model", "ncnn c4193aa / sherpa-ncnn c61e50d CPU"),
     EngineSpec("litert", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 2.1.6 / CPU, XNNPACK requested"),
