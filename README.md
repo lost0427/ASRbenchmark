@@ -74,7 +74,26 @@ for links, pinned revisions and conversion details.
 
 Keep thermal conditions consistent when comparing runs. The report includes
 device information, thermal status where available, battery temperature and
-execution order. No performance results are claimed until measured on a phone.
+execution order.
+
+## Results
+
+Measured on a OnePlus 15 (Snapdragon 8 Elite Gen 5, SM8850), Android 16, 4
+threads, 3 warmups and 10 measured repetitions on the fixed clip above.
+Thermal status 0 throughout; battery 32.6-33.1 °C.
+
+| Engine | Status | Mean ms | Median ms | P90 ms | RTF | WER | CER | Peak PSS |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| sherpa-onnx | ok | 489.8 | 488.6 | 501.2 | 0.0205 | 5.80% | 3.38% | 810 MB |
+| ONNX Runtime | ok | 530.1 | 530.3 | 534.3 | 0.0222 | 5.80% | 3.38% | 890 MB |
+| LiteRT | ok | 658.4 | 650.8 | 708.0 | 0.0276 | 5.80% | 3.38% | 1611 MB |
+| MNN | ok | 885.3 | 912.0 | 966.3 | 0.0371 | 5.80% | 2.77% | 1120 MB |
+| ncnn | ok | 1691.7 | 1692.0 | 1711.7 | 0.0709 | 13.04% | 7.38% | 717 MB |
+
+sherpa-onnx and direct ORT share the ONNX model and produce identical text.
+LiteRT pads this clip to the 500-frame signature bucket. ncnn is the slowest and
+has the highest error rate; MNN has the lowest CER. These numbers cover one clip
+and one device, so they are a latency/consistency check, not a corpus benchmark.
 
 ## Build
 
@@ -115,8 +134,9 @@ retained for 14 days. This first version distributes a debug-signed APK; release
 signing is a subsequent packaging task. CI does not run device performance tests.
 
 Local validation (2026-10-06): CPU native libraries built on Windows, and
-`assembleDebug lintDebug` completed successfully. Phone inference and the first
-GitHub Actions run remain to be verified after installation and publication.
+`assembleDebug lintDebug` completed successfully. Phone inference verified on a
+OnePlus 15 (Snapdragon 8 Elite Gen 5); see [Results](#results). The first GitHub
+Actions run remains to be verified after publication.
 
 ## Fixed audio provenance
 
