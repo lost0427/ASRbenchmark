@@ -15,6 +15,21 @@ android {
         versionName = "0.1.0"
         ndk { abiFilters += "arm64-v8a" }
     }
+    // Two native variants: baseline runs on all arm64 phones; aggressive adds i8mm/bf16 for
+    // Snapdragon 8 Elite Gen 5-class CPUs and may fault (SIGILL) on older devices.
+    flavorDimensions += "cpu"
+    productFlavors {
+        create("baseline") {
+            dimension = "cpu"
+            applicationIdSuffix = ".baseline"
+            versionNameSuffix = "-baseline"
+        }
+        create("aggressive") {
+            dimension = "cpu"
+            applicationIdSuffix = ".aggressive"
+            versionNameSuffix = "-aggressive"
+        }
+    }
     buildFeatures { compose = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -22,6 +37,10 @@ android {
     }
     buildTypes { release { isMinifyEnabled = false } }
     packaging { jniLibs { useLegacyPackaging = false } }
+    sourceSets {
+        getByName("baseline") { jniLibs.srcDir("src/main/jniLibs") }
+        getByName("aggressive") { jniLibs.srcDir("src/main/jniLibs-aggressive") }
+    }
 }
 
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
@@ -39,9 +58,11 @@ dependencies {
 
 val checkCpuRuntimes by tasks.registering {
     doLast {
-        listOf("benchmark_sherpa", "benchmark_mnn", "benchmark_ncnn", "benchmark_features", "c++_shared").forEach { name ->
-            check(file("src/main/jniLibs/arm64-v8a/lib$name.so").isFile) {
-                "Missing CPU runtime lib$name.so. Run python tools/build_native.py first."
+        listOf("baseline" to "src/main/jniLibs", "aggressive" to "src/main/jniLibs-aggressive").forEach { (flavor, dir) ->
+            listOf("benchmark_sherpa", "benchmark_mnn", "benchmark_ncnn", "benchmark_features", "c++_shared").forEach { name ->
+                check(file("$dir/arm64-v8a/lib$name.so").isFile) {
+                    "Missing $flavor CPU runtime lib$name.so. Run python tools/build_native.py --variant $flavor first."
+                }
             }
         }
     }

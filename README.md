@@ -13,8 +13,17 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
 
 ## Use
 
-1. Download the `sensevoice-cpu-arm64-debug` artifact from the repository's GitHub
-   Actions page and install its APK on an arm64 Android 8.0+ phone.
+1. Download a `sensevoice-cpu-arm64-debug` artifact from the repository's GitHub
+   Actions page, or an attached APK from the latest Release, and install it on an
+   arm64 Android 8.0+ phone. Two variants are published:
+   - **baseline** (`app-baseline-debug.apk`) - native code at the `armv8-a`
+     baseline; runs on any arm64 phone.
+   - **aggressive** (`app-aggressive-debug.apk`) - built with
+     `armv8.6-a+i8mm+bf16` and ncnn's ARMv8.2/dot-product kernels. Faster on
+     Snapdragon 8 Elite Gen 5-class CPUs but will fault (SIGILL) on older
+     arm64 phones; use baseline there.
+
+   The two APKs have different application IDs and can be installed side by side.
 2. Prepare models on a computer with Python 3.10+ and `requests`:
 
    ```powershell
@@ -105,7 +114,8 @@ Windows:
 ```powershell
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 $env:PATH = "$env:ANDROID_HOME\cmake\3.22.1\bin;$env:PATH"
-python tools/build_native.py --sdk $env:ANDROID_HOME
+python tools/build_native.py --variant baseline   --sdk $env:ANDROID_HOME
+python tools/build_native.py --variant aggressive --sdk $env:ANDROID_HOME
 .\gradlew.bat assembleDebug
 ```
 
@@ -113,9 +123,14 @@ Linux / GitHub Actions:
 
 ```sh
 export PATH="$ANDROID_HOME/cmake/3.22.1/bin:$PATH"
-python tools/build_native.py --jobs 2
+python tools/build_native.py --variant baseline   --jobs 2
+python tools/build_native.py --variant aggressive --jobs 2
 ./gradlew assembleDebug
 ```
+
+`--variant baseline` stages `armv8-a` libraries into `app/src/main/jniLibs`;
+`--variant aggressive` stages `armv8.6-a+i8mm+bf16` libraries into
+`app/src/main/jniLibs-aggressive`. `assembleDebug` produces both flavor APKs.
 
 The build script stages four JNI bridges and the shared C++ runtime into
 `app/src/main/jniLibs/arm64-v8a`. Downloaded dependency sources and model weights stay in ignored

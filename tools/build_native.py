@@ -85,6 +85,8 @@ def main():
     parser.add_argument("--ndk", default="28.2.13676358")
     parser.add_argument("--cmake", default="cmake")
     parser.add_argument("--jobs", default="2")
+    parser.add_argument("--variant", choices=["baseline", "aggressive"], default="baseline",
+                        help="baseline: armv8-a for all arm64; aggressive: armv8.6-a+i8mm+bf16 for 8 Gen-class CPUs")
     args = parser.parse_args()
     # Python honors the Windows system proxy; CMake's curl also needs env vars.
     for scheme, proxy in urllib.request.getproxies().items():
@@ -104,6 +106,8 @@ def main():
     toolchain = ndk / "build/cmake/android.toolchain.cmake"
     if not toolchain.exists():
         raise FileNotFoundError(toolchain)
+    aggressive = args.variant == "aggressive"
+    suffix = "" if not aggressive else "-aggressive"
     common = [
         "-G", "Ninja", f"-DCMAKE_TOOLCHAIN_FILE={toolchain.as_posix()}",
         "-DANDROID_ABI=arm64-v8a", "-DANDROID_PLATFORM=android-26", "-DANDROID_STL=c++_shared",
@@ -113,9 +117,14 @@ def main():
         "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384",
         "-DBUILD_SHARED_LIBS=OFF",
     ]
+    if aggressive:
+        # armv8.6-a+ i8mm/bf16 select the best CPU kernels on 8 Gen-class phones (Snapdragon 8
+        # Elite Gen 5 and newer). Older arm64 phones must use the baseline variant.
+        march = "-march=armv8.6-a+i8mm+bf16"
+        common += [f"-DCMAKE_C_FLAGS={march}", f"-DCMAKE_CXX_FLAGS={march}", f"-DCMAKE_ASM_FLAGS={march}"]
 
     def build(src, name, flags, targets, env=None):
-        dst = WORK / (name + "-build")
+        dst = WORK / (name + suffix + "-build")
         run(args.cmake, "-S", src, "-B", dst, *common, *flags, env=env)
         run(args.cmake, "--build", dst, "--target", *targets, "--parallel", args.jobs, env=env)
         return dst
@@ -144,13 +153,16 @@ def main():
     ], ["benchmark_sherpa"], env)
 
     mnn = source("mnn")
-    install = WORK / "mnn-install"
+    install = WORK / ("mnn-install" + suffix)
     mnn_build = build(mnn, "mnn-runtime", [
         "-DMNN_BUILD_SHARED_LIBS=OFF", "-DMNN_SEP_BUILD=OFF", "-DMNN_LOW_MEMORY=ON",
         "-DMNN_BUILD_CONVERTER=OFF", "-DMNN_BUILD_TRAIN=OFF", "-DMNN_BUILD_TEST=OFF",
         "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF", "-DMNN_BUILD_PROTOBUFFER=OFF",
         "-DMNN_BUILD_LLM=OFF", "-DMNN_BUILD_AUDIO=OFF", "-DMNN_BUILD_OPENCV=OFF",
         "-DMNN_OPENCL=OFF", "-DMNN_VULKAN=OFF", "-DMNN_OPENGL=OFF", "-DMNN_NNAPI=OFF",
+        # SME2 kernels fault (SIGILL) on Android 16 Snapdragon 8 Elite Gen 5: the OS reports
+        # SME2 in HWCAP2 but cannot enter streaming mode (PR_SME_SET_VL fails). Keep i8mm/dotprod.
+        "-DMNN_SME2=OFF",
         "-DMNN_BUILD_FOR_ANDROID_COMMAND=ON",
         "-DMNN_JNI=OFF", f"-DCMAKE_INSTALL_PREFIX={install.as_posix()}",
     ], ["MNN"])
@@ -167,15 +179,17 @@ def main():
 
     ncnn = source("ncnn")
     attach(ncnn, "ncnn")
+    ncnn_arch = ["-DNCNN_ARM82=ON", "-DNCNN_ARM82DOT=ON", "-DNCNN_ARM82FP16FML=ON"] if aggressive \
+        else ["-DNCNN_ARM82=OFF", "-DNCNN_ARM82DOT=OFF", "-DNCNN_ARM82FP16FML=OFF"]
     ncnn_build = build(ncnn, "ncnn", [
         "-DSHERPA_NCNN_ENABLE_C_API=OFF", "-DSHERPA_NCNN_ENABLE_JNI=OFF",
         "-DSHERPA_NCNN_ENABLE_BINARY=OFF", "-DSHERPA_NCNN_ENABLE_PORTAUDIO=OFF",
         "-DSHERPA_NCNN_ENABLE_GENERATE_INT8_SCALE_TABLE=OFF",
         "-DNCNN_VULKAN=OFF", "-DNCNN_INT8=ON",
-        "-DNCNN_ARM82=OFF", "-DNCNN_ARM82DOT=OFF", "-DNCNN_ARM82FP16FML=OFF",
+        *ncnn_arch,
     ], ["benchmark_ncnn", "benchmark_features"])
 
-    out = ROOT / "app/src/main/jniLibs/arm64-v8a"
+    out = ROOT / ("app/src/main/jniLibs" + suffix) / "arm64-v8a"
     out.mkdir(parents=True, exist_ok=True)
     for directory, lib in [(onnx_build, "benchmark_sherpa"), (mnn_api_build, "benchmark_mnn"),
                            (ncnn_build, "benchmark_ncnn"), (ncnn_build, "benchmark_features")]:
