@@ -54,7 +54,7 @@ jobs:
       - name: Build APK
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug lintDebug
+          ./gradlew --no-daemon assembleDebug lint
       - uses: actions/upload-artifact@v4
         with:
           name: sensevoice-cpu-arm64-debug
