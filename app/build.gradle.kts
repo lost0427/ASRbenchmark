@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "org.sensevoice.benchmark"
     compileSdk = 35
+    ndkVersion = "28.2.13676358"
     defaultConfig {
         applicationId = "org.sensevoice.benchmark"
         minSdk = 26
