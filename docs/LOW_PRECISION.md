@@ -1,5 +1,8 @@
 # Low-precision SenseVoice benchmark
 
+Measured baseline/aggressive results for all 27 combinations, including historical
+runs, are summarized in [BENCHMARK_RESULTS.md](BENCHMARK_RESULTS.md).
+
 The APK uses official ONNX Runtime 1.30.0 from Maven. The custom ORT build
 experiment is retired. The baseline/aggressive APK flavors describe the existing
 native CPU builds; both use the same official ORT and the same GGUF bridge.
