@@ -82,8 +82,9 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
         val power = context.getSystemService(PowerManager::class.java)
         fun environment() = JSONObject().put("thermalStatus", if (Build.VERSION.SDK_INT >= 29) power.currentThermalStatus else JSONObject.NULL)
             .put("batteryTemperatureTenthsC", context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1))
-        val report = JSONObject().put("schemaVersion", 1).put("createdAt", java.time.Instant.now().toString())
-            .put("appVersion", "0.1.0").put("backend", "CPU").put("audio", audioMeta)
+        val report = JSONObject().put("schemaVersion", 2).put("createdAt", java.time.Instant.now().toString())
+            .put("appVersion", BuildConfig.VERSION_NAME).put("buildVariant", BuildConfig.FLAVOR)
+            .put("ortDistribution", "Official Maven 1.30.0").put("backend", "CPU").put("audio", audioMeta)
             .put("device", JSONObject().put("manufacturer", Build.MANUFACTURER).put("model", Build.MODEL).put("android", Build.VERSION.RELEASE)
                 .put("api", Build.VERSION.SDK_INT).put("abis", JSONArray(Build.SUPPORTED_ABIS.toList()))
                 .put("soc", if (Build.VERSION.SDK_INT >= 31) Build.SOC_MODEL else JSONObject.NULL)
@@ -98,6 +99,7 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
         for (spec in engineSpecs.filter { it.id in ids }) {
             if (cancel.get()) break
             val row = JSONObject().put("engine", spec.title).put("id", spec.id).put("precision", spec.precision)
+                .put("engineId", spec.engineId).put("modelVariant", spec.variant)
                 .put("runtime", spec.runtime).put("backend", "CPU").put("startEnvironment", environment())
             rows.put(row)
             if (!store.available(spec)) { row.put("status", "missing_model"); continue }
@@ -112,7 +114,7 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
             val times = mutableListOf<Double>()
             val texts = JSONArray()
             try {
-                mutableState.value = state.value.copy(status = "Loading ${spec.title}…")
+                mutableState.value = state.value.copy(status = "Loading ${spec.label}…")
                 val loadStart = SystemClock.elapsedRealtimeNanos()
                 engine = createEngine(spec, store.root, config.threads)
                 row.put("loadMs", elapsed(loadStart)).put("pssBaselineKb", baseline).put("pssLoadedKb", pssKb())
@@ -121,12 +123,12 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
                 row.put("firstInferenceMs", elapsed(firstStart)).put("firstText", firstText)
                 for (i in 0 until config.warmup) {
                     if (cancel.get()) break
-                    mutableState.value = state.value.copy(status = "${spec.title}: warmup ${i + 1}/${config.warmup}")
+                    mutableState.value = state.value.copy(status = "${spec.label}: warmup ${i + 1}/${config.warmup}")
                     engine.recognize(samples)
                 }
                 for (i in 0 until config.repetitions) {
                     if (cancel.get()) break
-                    mutableState.value = state.value.copy(status = "${spec.title}: run ${i + 1}/${config.repetitions}")
+                    mutableState.value = state.value.copy(status = "${spec.label}: run ${i + 1}/${config.repetitions}")
                     val start = SystemClock.elapsedRealtimeNanos()
                     val text = engine.recognize(samples)
                     times += elapsed(start)
@@ -136,7 +138,7 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
                 row.put("status", if (cancel.get()) "cancelled" else if (text.isBlank()) "empty_output" else "ok")
                     .put("text", text).put("wer", errorRate(audioMeta.getString("reference"), text, words = true))
                     .put("cer", errorRate(audioMeta.getString("reference"), text, words = false))
-                    .put("computedLfrFrames", if (spec.id == "litert") liteRtBucket(lfrFrameCount(samples.size)) else JSONObject.NULL)
+                    .put("computedLfrFrames", if (spec.engineId == "litert") liteRtBucket(lfrFrameCount(samples.size)) else JSONObject.NULL)
                 if (times.isNotEmpty()) {
                     val sorted = times.sorted()
                     val median = if (sorted.size % 2 == 0) (sorted[sorted.size / 2 - 1] + sorted[sorted.size / 2]) / 2 else sorted[sorted.size / 2]
@@ -204,7 +206,7 @@ fun errorRate(reference: String, text: String, words: Boolean): Double {
 
 fun reportCsv(json: String): String {
     val report = JSONObject(json)
-    val columns = listOf("engine", "precision", "runtime", "status", "loadMs", "firstInferenceMs", "meanMs", "medianMs", "p90Ms", "rtf", "sampledPeakPssKb", "wer", "cer", "text", "error")
+    val columns = listOf("id", "engine", "engineId", "modelVariant", "precision", "runtime", "status", "modelBundleBytes", "loadMs", "firstInferenceMs", "meanMs", "medianMs", "p90Ms", "rtf", "sampledPeakPssKb", "wer", "cer", "text", "error")
     fun escape(value: Any?) = "\"" + (value?.takeUnless { it == JSONObject.NULL }?.toString() ?: "").replace("\"", "\"\"") + "\""
     val rows = report.getJSONArray("results")
     return buildString {

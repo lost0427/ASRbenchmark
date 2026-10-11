@@ -44,26 +44,38 @@ class MainActivity : ComponentActivity() {
                 val saveCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
                     if (uri != null) exportStatus = runCatching { contentResolver.openOutputStream(uri)!!.bufferedWriter().use { it.write(exportText) }; "Report exported." }.getOrElse { "Export failed: ${it.message}" }
                 }
-                var selected by rememberSaveable { mutableStateOf(engineSpecs.map { it.id }) }
-                var threads by rememberSaveable { mutableStateOf("2") }
+                var selected by rememberSaveable { mutableStateOf(listOf("sherpa", "ort", "mnn", "ncnn", "litert")) }
+                var threads by rememberSaveable { mutableStateOf("4") }
                 var warmup by rememberSaveable { mutableStateOf("3") }
                 var repeats by rememberSaveable { mutableStateOf("10") }
                 val config = RunConfig(threads.toIntOrNull() ?: 0, warmup.toIntOrNull() ?: -1, repeats.toIntOrNull() ?: 0)
                 val valid = config.threads in 1..16 && config.warmup in 0..20 && config.repetitions in 1..100
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Text("SenseVoice Benchmark", style = MaterialTheme.typography.headlineMedium)
-                        Text("CPU · Fixed LibriSpeech sample", style = MaterialTheme.typography.titleMedium)
+                        Text("SenseVoice Precision Benchmark", style = MaterialTheme.typography.headlineMedium)
+                        Text("CPU · ${BuildConfig.FLAVOR} · Fixed LibriSpeech sample", style = MaterialTheme.typography.titleMedium)
                         Text("${audio.getString("utterance")} · $audioDuration s · 16 kHz mono\n${audio.getString("reference")}", style = MaterialTheme.typography.bodyMedium)
                         OutlinedButton(onClick = { importModels.launch(null) }, enabled = !state.busy) { Text("Import model folder") }
-                        Text("Prepare the folder with tools/prepare_models.py. Models run offline after import.", style = MaterialTheme.typography.bodySmall)
-                        engineSpecs.forEach { engine ->
-                            Row(Modifier.fillMaxWidth()) {
-                                Checkbox(checked = engine.id in selected, enabled = !state.busy, onCheckedChange = { checked -> selected = if (checked) selected + engine.id else selected - engine.id })
-                                Column(Modifier.padding(top = 8.dp)) {
-                                    Text(engine.title, style = MaterialTheme.typography.titleMedium)
-                                    Text(engine.precision, style = MaterialTheme.typography.bodySmall)
-                                    Text(if (engine.id in state.installed) "Ready" else "Model not imported", color = if (engine.id in state.installed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                        Text("Import the low-precision model bundle once, then choose variants to compare. Models run offline.", style = MaterialTheme.typography.bodySmall)
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in state.installed }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
+                            OutlinedButton(onClick = { selected = emptyList() }, enabled = !state.busy) { Text("Clear") }
+                        }
+                        engineSpecs.groupBy { it.engineId }.forEach { (_, variants) ->
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(variants.first().title, style = MaterialTheme.typography.titleLarge)
+                                TextButton(onClick = { selected = variants.filter { it.id in state.installed }.map { it.id } },
+                                    enabled = !state.busy && variants.any { it.id in state.installed }) { Text("Only this engine") }
+                            }
+                            variants.forEach { engine ->
+                                Row(Modifier.fillMaxWidth()) {
+                                    Checkbox(checked = engine.id in selected, enabled = !state.busy && engine.id in state.installed,
+                                        onCheckedChange = { checked -> selected = if (checked) (selected + engine.id).distinct() else selected - engine.id })
+                                    Column(Modifier.padding(top = 8.dp)) {
+                                        Text(engine.variant.uppercase(Locale.ROOT), style = MaterialTheme.typography.titleMedium)
+                                        Text(engine.precision, style = MaterialTheme.typography.bodySmall)
+                                        Text(if (engine.id in state.installed) "Ready" else "Model not imported", color = if (engine.id in state.installed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                                    }
                                 }
                             }
                         }
@@ -75,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         }
                         if (!valid) Text("Threads: 1–16 · Warmup: 0–20 · Repeats: 1–100", color = MaterialTheme.colorScheme.error)
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(onClick = { vm.run(selected.toSet(), config) }, enabled = !state.busy && valid && selected.any { it in state.installed }) { Text("Run benchmark") }
+                            Button(onClick = { vm.run(selected.filter { it in state.installed }.toSet(), config) }, enabled = !state.busy && valid && selected.any { it in state.installed }) { Text("Run benchmark") }
                             OutlinedButton(onClick = vm::cancelRun, enabled = state.running) { Text("Stop") }
                         }
                         if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -88,7 +100,7 @@ class MainActivity : ComponentActivity() {
                                 val row = results.getJSONObject(i)
                                 ElevatedCard(Modifier.fillMaxWidth()) {
                                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                        Text(row.getString("engine"), style = MaterialTheme.typography.titleMedium)
+                                        Text("${row.getString("engine")} · ${row.optString("modelVariant", "q8")}", style = MaterialTheme.typography.titleMedium)
                                         Text(row.getString("status"))
                                         fun number(key: String, format: String = "%.2f") = if (row.has(key)) String.format(Locale.US, format, row.getDouble(key)) else "—"
                                         if (row.has("meanMs")) {

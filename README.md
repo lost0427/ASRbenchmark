@@ -1,7 +1,7 @@
 # SenseVoice Benchmark
 
 Android app for comparing **CPU** SenseVoiceSmall inference with sherpa-onnx,
-ONNX Runtime, MNN, ncnn and LiteRT. GPU support is planned for a later version.
+ONNX Runtime, MNN, ncnn, LiteRT and SenseVoice.cpp/GGML. GPU support is planned for a later version.
 
 The APK includes one fixed **23.86-second** LibriSpeech test-clean utterance,
 `3729-6852-0008`, and its reference transcript:
@@ -38,7 +38,7 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
    `manifest.json` and its subdirectories. Tap **Import model folder** and choose
    that folder. Import checks sizes and SHA-256 before activating the new models.
 4. Choose engines, threads, warmup and repeats, then tap **Run benchmark**.
-   Defaults: 2 threads, 3 warmups, 10 measured repetitions. The first inference
+   Defaults: 4 threads, 3 warmups, 10 measured repetitions. The first inference
    is measured separately, before warmup.
 5. Export JSON for full configuration, model provenance and individual samples;
    export CSV for a compact comparison. Results also remain in app storage.
@@ -48,6 +48,11 @@ installed set. Keep the app open during import and benchmarking. Stop waits for
 the current native inference to finish, then saves the partial report.
 
 ## Models
+
+The multi-precision APK adds Q4/Q2 ONNX, MNN Q2–Q7, LiteRT Q4/Q2,
+FP16-storage ncnn, and SenseVoice.cpp/GGUF Q3–Q8 and FP16 variants.
+See [low-precision setup and test matrix](docs/LOW_PRECISION.md) to prepare the
+combined model folder. ONNX Runtime uses the official Maven package.
 
 | Entry | CPU model | Runtime |
 | --- | --- | --- |

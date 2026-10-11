@@ -9,11 +9,11 @@ android {
     compileSdk = 35
     ndkVersion = "28.2.13676358"
     defaultConfig {
-        applicationId = "org.sensevoice.benchmark"
+        applicationId = "org.sensevoice.benchmark.precision"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 4
+        versionName = "0.4.0"
         ndk { abiFilters += "arm64-v8a" }
     }
     // Two native variants: baseline runs on all arm64 phones; aggressive adds i8mm/bf16 for
@@ -24,14 +24,16 @@ android {
             dimension = "cpu"
             applicationIdSuffix = ".baseline"
             versionNameSuffix = "-baseline"
+            resValue("string", "app_name", "SenseVoice Precision Baseline")
         }
         create("aggressive") {
             dimension = "cpu"
             applicationIdSuffix = ".aggressive"
             versionNameSuffix = "-aggressive"
+            resValue("string", "app_name", "SenseVoice Precision ARMv8.6")
         }
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -60,7 +62,7 @@ dependencies {
 val checkCpuRuntimes by tasks.registering {
     doLast {
         listOf("baseline" to "src/main/jniLibs", "aggressive" to "src/main/jniLibs-aggressive").forEach { (flavor, dir) ->
-            listOf("benchmark_sherpa", "benchmark_mnn", "benchmark_ncnn", "benchmark_features", "c++_shared").forEach { name ->
+            listOf("benchmark_sherpa", "benchmark_mnn", "benchmark_ncnn", "benchmark_features", "benchmark_gguf", "c++_shared").forEach { name ->
                 check(file("$dir/arm64-v8a/lib$name.so").isFile) {
                     "Missing $flavor CPU runtime lib$name.so. Run python tools/build_native.py --variant $flavor first."
                 }

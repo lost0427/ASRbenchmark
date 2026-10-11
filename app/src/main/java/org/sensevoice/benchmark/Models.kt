@@ -14,7 +14,8 @@ class ModelStore(private val context: Context) {
     fun available(spec: EngineSpec): Boolean {
         val entries = manifest?.optJSONObject("engines") ?: return false
         return entries.has(spec.folder) && entries.getJSONObject(spec.folder).getJSONArray("files").let { files ->
-            (0 until files.length()).all { File(root, files.getJSONObject(it).getString("path")).isFile }
+            val paths = (0 until files.length()).map { files.getJSONObject(it).getString("path") }
+            spec.requiredFiles.all { "${spec.folder}/$it" in paths } && paths.all { File(root, it).isFile }
         }
     }
 
@@ -23,7 +24,7 @@ class ModelStore(private val context: Context) {
         val sourceManifest = directory.findFile("manifest.json") ?: error("Select the folder containing manifest.json. Prepare it with tools/prepare_models.py.")
         val text = context.contentResolver.openInputStream(sourceManifest.uri)!!.bufferedReader().use { it.readText() }
         val data = JSONObject(text)
-        require(data.getInt("schemaVersion") == 1) { "Unsupported model manifest" }
+        require(data.getInt("schemaVersion") in 1..2) { "Unsupported model manifest" }
         val entries = data.getJSONObject("engines")
         require(entries.length() > 0) { "Manifest has no models" }
         val staging = File(context.filesDir, "models-import")
@@ -34,6 +35,10 @@ class ModelStore(private val context: Context) {
                 require(name in engineSpecs.map { it.folder }) { "Unknown model folder: $name" }
                 val files = entries.getJSONObject(name).getJSONArray("files")
                 require(files.length() in 1..10)
+                val declared = (0 until files.length()).map { files.getJSONObject(it).getString("path") }
+                engineSpecs.filter { it.folder == name }.forEach { spec ->
+                    require(spec.requiredFiles.all { "$name/$it" in declared }) { "Incomplete model: $name" }
+                }
                 for (i in 0 until files.length()) {
                     val entry = files.getJSONObject(i)
                     val relative = entry.getString("path")

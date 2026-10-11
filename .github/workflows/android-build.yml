@@ -42,7 +42,10 @@ jobs:
             .native
             app/src/main/jniLibs
             app/src/main/jniLibs-aggressive
-          key: cpu-native-v2-${{ runner.os }}-${{ hashFiles('tools/build_native.py', 'native/**') }}
+          key: cpu-native-v3-${{ runner.os }}-${{ hashFiles('tools/build_native.py', 'tools/build_gguf.py', 'native/**') }}
+          restore-keys: |
+            cpu-native-v3-${{ runner.os }}-
+            cpu-native-v2-${{ runner.os }}-
       - name: Build baseline CPU runtimes
         run: |
           export PATH="$ANDROID_HOME/cmake/3.22.1/bin:$PATH"
@@ -55,6 +58,8 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug lint
+      - name: Verify APK packaging
+        run: python tools/check_apks.py --sdk "$ANDROID_HOME"
       - uses: actions/upload-artifact@v4
         with:
           name: sensevoice-cpu-arm64-debug
@@ -78,8 +83,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ github.ref_name }}" \
-            "apk/baseline/debug/app-baseline-debug.apk#SenseVoice Benchmark (baseline, all arm64 phones)" \
-            "apk/aggressive/debug/app-aggressive-debug.apk#SenseVoice Benchmark (aggressive, Snapdragon 8 Elite Gen 5+)" \
+            "apk/baseline/debug/app-baseline-debug.apk#SenseVoice Precision (baseline, all arm64 phones)" \
+            "apk/aggressive/debug/app-aggressive-debug.apk#SenseVoice Precision (ARMv8.6, Snapdragon 8 Elite Gen 5+)" \
             --repo "${{ github.repository }}" \
             --title "${{ github.ref_name }}" \
             --generate-notes

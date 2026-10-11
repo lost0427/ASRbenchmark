@@ -218,6 +218,7 @@ def main():
             for file in vendor.iterdir():
                 if file.is_file() and file.name.upper().startswith(("LICENSE", "COPYING", "NOTICE")):
                     shutil.copy2(file, notices / ("MNN-" + vendor.name + "-" + file.name + ".txt"))
+    run(os.sys.executable, ROOT / "tools/build_gguf.py", "--sdk", args.sdk, "--cmake", args.cmake, "--jobs", args.jobs)
     print("CPU JNI libraries staged:", out, flush=True)
 
 
