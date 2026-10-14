@@ -157,6 +157,27 @@ Local validation (2026-10-06): CPU native libraries built on Windows, and
 `assembleDebug lint` completed successfully. Phone inference verified on a
 OnePlus 15 (Snapdragon 8 Elite Gen 5); see [Results](#results).
 
+## Windows CLI benchmark
+
+The Windows CLI uses prebuilt Python wheels for sherpa-onnx, ONNX Runtime, MNN
+and LiteRT. It runs CPU inference with the existing models in
+`models/low-precision-models`; no Android build or model download is needed.
+The `ncnn` Python integration and the locally compiled GGUF smoke executable are
+not included in this Windows benchmark.
+
+```powershell
+python -m venv .native/windows-benchmark-env
+.native/windows-benchmark-env/Scripts/python.exe -m pip install -r tools/windows-benchmark-requirements.txt
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py
+```
+
+Use `--engines sherpa ort mnn litert`, `--folders onnx mnn litert`,
+`--threads`, `--warmups`, `--repeats` and `--output` to select a run. sherpa-onnx
+uses the local Q8 ONNX model; direct ORT, MNN and LiteRT can run their local
+precision variants. Results include load time, first inference, repeated
+latency samples, RTF, WER and recognized text. This CLI currently measures CPU
+backends only; GPU execution is not reported.
+
 ## Fixed audio provenance
 
 The supplied `test-clean.tar.gz` is kept locally and ignored by Git. To regenerate
