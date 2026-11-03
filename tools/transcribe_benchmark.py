@@ -1,4 +1,4 @@
-"""Benchmark a SenseVoice GGUF with the transcribe.cpp Python bindings."""
+"""Benchmark a GGUF with the transcribe.cpp Python bindings."""
 import argparse
 import json
 import os
@@ -68,15 +68,19 @@ def main():
     if reference_path.is_file():
         reference = json.loads(reference_path.read_text(encoding="utf-8")).get("reference")
     device = select_device(transcribe_cpp, args.device)
-    kwargs = {"timestamps": args.timestamps, "itn": args.itn}
-    if args.language:
-        kwargs["language"] = args.language
 
     started = time.perf_counter()
     with transcribe_cpp.Model(str(args.model), device=device) as model:
         load_ms = (time.perf_counter() - started) * 1000
         backend = model.backend
         runtime_device = model.device
+        kwargs = {"timestamps": args.timestamps}
+        if model.supports("itn"):
+            kwargs["itn"] = args.itn
+        elif args.itn not in ("default", "off"):
+            raise SystemExit("This model does not support ITN")
+        if args.language:
+            kwargs["language"] = args.language
         with model.session(n_threads=args.threads) as session:
             for _ in range(args.warmups):
                 session.run(pcm, **kwargs)
