@@ -116,7 +116,7 @@ int8, and the GGUF repository ships FP32, FP16 and Q3-Q8.
 ONNX-level BF16 is not a speed win. TensorRT BF16 is the exception and is
 covered next.
 
-### TensorRT (external engine)
+## TensorRT (external engine)
 
 TensorRT has no SenseVoice API. `tools/tensorrt_benchmark.py` builds a
 fixed-shape plan from the official FP32 ONNX and runs it with BF16, FP16, or
@@ -173,7 +173,7 @@ Setup:
    48 s. Use `--precision fp16` or `fp32` for the other builder modes. The tool
    writes JSON with `--output`.
 
-### transcribe.cpp (external engine)
+## transcribe.cpp (external engine)
 
 The same 23.86 s clip was also run through handy-computer/transcribe.cpp
 SenseVoiceSmall GGUFs (release 0.4.1) as an external cross-check. CPU used 12
@@ -239,7 +239,18 @@ Create a BF16 GGUF with the Windows benchmark environment:
 `--device` also accepts `vulkan` and `igpu`. The tool writes JSON with
 `--output`; the model must be a 16 kHz mono WAV.
 
-### Shape and chunk length
+## GPU-only comparison
+
+![GPU-only engine comparison](windows-gpu-engines.png)
+
+End-to-end latency on the same 23.86 s clip. TensorRT uses a prebuilt 398-frame
+BF16 engine; the dynamic-profile engine is shown for contrast and is slower than
+ORT. transcribe.cpp includes its own mel/encoder/decoder. All rows produced WER
+5.80%. TensorRT's advantage is the model segment (32-40 ms); fbank (~40-50 ms)
+and laptop clocks dominate the total, so the end-to-end gap over ORT varies from
+about 7% to 20%.
+
+## Shape and chunk length
 
 The model input is `x: [1, T, 560]`; each `T` step is one LFR frame, or 60 ms of
 audio. `T` fixes the audio duration, the attention cost (quadratic in `T`), the
