@@ -11,10 +11,12 @@ from matplotlib.patches import Patch
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 QWEN = [
+    ("Haujet GGUF int4/q4_k", "DML", 844, 7.25),
     ("transcribe.cpp Q8_0", "CUDA", 1199, 5.80),
     ("transcribe.cpp BF16", "CUDA", 1760, 5.80),
     ("transcribe.cpp F16", "CUDA", 1846, 5.80),
     ("ONNX Runtime int4", "CUDA", 4282, 7.25),
+    ("Haujet GGUF int4/q4_k", "CPU", 5890, 7.25),
     ("ONNX Runtime FP16", "CUDA", 7931, 5.80),
     ("transcribe.cpp Q8_0", "CPU", 9397, 5.80),
     ("ONNX Runtime int4", "CPU", 10061, 7.25),
@@ -22,7 +24,7 @@ QWEN = [
     ("transcribe.cpp F16", "CPU", 12335, 5.80),
     ("transcribe.cpp BF16", "CPU", 14183, 5.80),
 ]
-COLORS = {"CPU": "#3b6ea5", "CUDA": "#c44e52"}
+COLORS = {"CPU": "#3b6ea5", "CUDA": "#c44e52", "DML": "#6a51a3"}
 
 
 def setup():
@@ -42,8 +44,8 @@ def first_chart():
     labels = [f"{name}  ·  {provider}" for name, provider, _, _ in rows]
     values = [row[2] for row in rows]
     colors = [COLORS[row[1]] for row in rows]
-    fig, ax = plt.subplots(figsize=(10.5, 6.2))
-    fig.subplots_adjust(left=0.34, right=0.80, top=0.80, bottom=0.12)
+    fig, ax = plt.subplots(figsize=(10.5, 7.0))
+    fig.subplots_adjust(left=0.36, right=0.80, top=0.82, bottom=0.12)
     y = np.arange(len(rows))
     ax.barh(y, values, color=colors, height=0.66, zorder=2)
     ax.set_yticks(y, labels)
@@ -56,9 +58,9 @@ def first_chart():
         ax.text(value + 180, float(position), f"{value:,} ms   WER {wer:.2f}%",
                 va="center", ha="left", fontsize=8.6, color="#26313d")
     ax.spines[["top", "right"]].set_visible(False)
-    handles = [Patch(color=COLORS[key]) for key in ("CPU", "CUDA")]
-    ax.legend(handles, ["CPU", "CUDA"], frameon=False, loc="lower right", ncol=2,
-              bbox_to_anchor=(1.0, -0.17), fontsize=9)
+    handles = [Patch(color=COLORS[key]) for key in ("CPU", "CUDA", "DML")]
+    ax.legend(handles, ["CPU", "CUDA", "DML+Vulkan"], frameon=False, loc="lower right",
+              ncol=3, bbox_to_anchor=(1.0, -0.14), fontsize=9)
     fig.text(0.02, 0.945, "Qwen3-ASR-1.7B on Windows", fontsize=16, fontweight="bold",
              color="#1d2733")
     fig.text(0.02, 0.902, "23.86 s clip · RTX 4060 Laptop · 12 CPU threads · lower is better",
@@ -69,9 +71,9 @@ def first_chart():
 
 
 def second_chart():
-    labels = ["SenseVoice\nQ8 · CPU", "Qwen3-ASR\nQ8 · CPU",
-              "SenseVoice\nQ8 · CUDA", "Qwen3-ASR\nQ8 · CUDA"]
-    values = [1255, 9397, 125, 1199]
+    labels = ["SenseVoice\nQ8 · CPU", "Qwen3 best\nCPU",
+              "SenseVoice\nQ8 · CUDA", "Qwen3 best\nGPU"]
+    values = [1255, 5890, 125, 844]
     colors = ["#4c956c", "#d98b3a", "#4c956c", "#d98b3a"]
     x = np.array([0, 1, 3, 4])
     fig, ax = plt.subplots(figsize=(9.2, 5.5))
@@ -91,9 +93,9 @@ def second_chart():
             fontsize=9, fontweight="bold")
     ax.text(0.88, 0.035, "CUDA", transform=ax.transAxes, ha="center", color="#5b6675",
             fontsize=9, fontweight="bold")
-    fig.text(0.02, 0.935, "SenseVoice vs Qwen3-ASR · same clip, same engine",
+    fig.text(0.02, 0.935, "SenseVoice vs Qwen3-ASR · best available",
              fontsize=15.5, fontweight="bold", color="#1d2733")
-    fig.text(0.02, 0.885, "transcribe.cpp Q8_0 · WER 5.80% for both · Qwen3 is 7.5x slower on CPU and 9.6x on CUDA",
+    fig.text(0.02, 0.885, "Qwen3: int4/q4_k hybrid, WER 7.25% · SenseVoice: Q8 WER 5.80% · 4.7x / 6.8x slower",
              fontsize=9.5, color="#5b6675")
     fig.text(0.02, 0.035, "SenseVoiceSmall ~234M parameters  ·  Qwen3-ASR 1.7B parameters  ·  one clean English utterance",
              fontsize=8.8, color="#6b7685")

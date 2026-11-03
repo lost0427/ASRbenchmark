@@ -250,36 +250,44 @@ threads, transcribe.cpp 0.4.1, sherpa-onnx 1.13.8, ONNX Runtime 1.30.0 (CPU) or
 
 | Engine / precision | Provider | ms | RTF | WER |
 | --- | --- | ---: | ---: | ---: |
+| Qwen3-ASR-GGUF int4/q4_k | DML+Vulkan | 844 | 0.035 | 7.25% |
 | transcribe.cpp Q8_0 | CUDA | 1,199 | 0.050 | 5.80% |
 | transcribe.cpp F16 | CUDA | 1,846 | 0.077 | 5.80% |
 | transcribe.cpp BF16 | CUDA | 1,760 | 0.074 | 5.80% |
+| ONNX Runtime int4 | CUDA | 4,282 | 0.179 | 7.25% |
+| Qwen3-ASR-GGUF int4/q4_k | CPU | 5,890 | 0.247 | 7.25% |
+| ONNX Runtime FP16 | CUDA | 7,931 | 0.332 | 5.80% |
 | transcribe.cpp Q8_0 | CPU | 9,397 | 0.394 | 5.80% |
+| ONNX Runtime int4 | CPU | 10,061 | 0.422 | 7.25% |
+| sherpa-onnx int8 | CPU | 10,280 | 0.431 | 7.25% |
 | transcribe.cpp F16 | CPU | 12,335 | 0.517 | 5.80% |
 | transcribe.cpp BF16 | CPU | 14,183 | 0.594 | 5.80% |
-| sherpa-onnx int8 | CPU | 10,280 | 0.431 | 7.25% |
-| ONNX Runtime int4 | CPU | 10,061 | 0.422 | 7.25% |
-| ONNX Runtime int4 | CUDA | 4,282 | 0.179 | 7.25% |
-| ONNX Runtime FP16 | CUDA | 7,931 | 0.332 | 5.80% |
 
-transcribe.cpp and sherpa-onnx rows are medians of repeated runs. ORT rows sum
-the measured mel, encoder, prefill and decode medians; they are not a single
-wall-clock median. CUDA transcribe rows used 3 warmups and 10 repeats, except
-F16/BF16 (5 repeats). CPU transcribe rows used 2 warmups and 3 repeats;
-sherpa-onnx used 2 warmups and 5 repeats; ORT used 3 warmups and 10 repeats.
+transcribe.cpp, sherpa-onnx and Qwen3-ASR-GGUF rows are medians of repeated
+runs. The Qwen3-ASR-GGUF DML row uses a 24 s fixed pad (the 40 s default was
+984 ms); its CPU row uses the repo default 40 s chunk. ORT rows sum the measured
+mel, encoder, prefill and decode medians; they are not a single wall-clock
+median. CUDA transcribe rows used 3 warmups and 10 repeats, except F16/BF16
+(5 repeats). CPU transcribe rows used 2 warmups and 3 repeats; sherpa-onnx used
+2 warmups and 5 repeats; ORT used 3 warmups and 10 repeats; Qwen3-ASR-GGUF used
+2 warmups and 10 repeats.
 
-Q8 transcribe.cpp on CUDA is the fastest measured path here at 1.21 s, 8.5x
-faster than sherpa-onnx CPU and 3.5x faster than ORT int4 CUDA. The 4-bit ORT
-CUDA path is the fastest ORT variant (4.28 s); FP16 CUDA is slower (7.93 s)
-because the FP16 decoder is memory-bound and its 3.4 GB step weights plus KV
-cache leave little headroom on an 8 GB laptop GPU. The FP16 encoder itself took
-about 32 ms; the decoder dominates. F16/BF16 CUDA transcribe variants are also
-slightly slower than Q8.
+The Qwen3-ASR-GGUF hybrid is the fastest Qwen3 path here: 844 ms with 24 s
+padding (984 ms at 40 s) using an ONNX int4 encoder and a q4_k GGUF decoder.
+Its 7.25% WER matches the other 4-bit Qwen3 paths. transcribe.cpp Q8 is the
+fastest 8-bit path at 1.20 s and keeps WER at 5.80%. The Qwen3-ASR-GGUF CPU
+path (5.89 s) is faster than transcribe.cpp Q8 CPU (9.40 s) but less accurate.
+The 4-bit ORT CUDA path is 4.28 s; FP16 CUDA is slower (7.93 s) because the
+FP16 decoder is memory-bound and its 3.4 GB step weights plus KV cache leave
+little headroom on an 8 GB laptop GPU. The FP16 encoder itself took about 32 ms;
+the decoder dominates. F16/BF16 CUDA transcribe variants are also slightly
+slower than Q8.
 
 Accuracy is a single-clip check, not a corpus result. transcribe.cpp
-Q8/F16/BF16 and ORT FP16 produced WER 5.80%. The int4 and sherpa int8 paths
-produced 7.25% on this clip ("Saint Saverre" and "savior" instead of the
-reference spelling). That difference is precision-related here, but one
-utterance is not enough to rank accuracy.
+Q8/F16/BF16 and ORT FP16 produced WER 5.80%. The 4-bit paths all produced
+7.25%: ORT int4 emitted "Saint Saverre" and "intolerance"; sherpa int8 and the
+Qwen3-ASR-GGUF q4_k path emitted "intolerance" and "savior". That difference is
+precision-related here, but one utterance is not enough to rank accuracy.
 
 ![Qwen3-ASR engine latency and WER](windows-qwen3-engines.png)
 
@@ -294,8 +302,10 @@ wheel path for this model.
 
 For this clip and the same transcribe.cpp Q8_0 engine, SenseVoice is the clear
 winner: 125 ms vs 1,199 ms on CUDA (9.6x), and 1,255 ms vs 9,397 ms on CPU
-(7.5x). Both produce WER 5.80%. Qwen3 int4 and sherpa int8 are slower than
-SenseVoice and slightly less accurate on this clip (7.25%).
+(7.5x). Both produce WER 5.80%. Even the best Qwen3 hybrid path, at 844 ms on
+DML+Vulkan and 5,890 ms on CPU, is 6.8x / 4.7x slower and less accurate at
+7.25%. Qwen3 int4, sherpa int8 and the hybrid GGUF path are all slower than
+SenseVoice and slightly less accurate on this clip.
 
 That does not mean Qwen3 is a worse model in general. It is a 1.7B
 autoregressive audio-LLM, versus the roughly 234M-parameter CTC-style
@@ -330,11 +340,49 @@ Sources:
   `69eb686fd94a4a865bb5340a3d6ac0d7f1fec0d5`
 - chat template: `Qwen/Qwen3-ASR-1.7B`, revision
   `7278e1e70fe206f11671096ffdd38061171dd6e5`
+- Qwen3-ASR-GGUF: `HaujetZhao/Qwen3-ASR-GGUF`, commit
+  `e790e3bfe9c1c52453da1166df236950a8a8b036`, model release tag `models`;
+  llama.cpp `b8950` Windows Vulkan binaries
 
 The adapters build the official chat prompt, insert one `<|audio_pad|>` per
 encoder output frame, set `audio_offset` to the first audio pad, and strip the
 leading `language ...<asr_text>` prefix before WER. The feature extractor uses
 `padding="longest"`; this clip produces 2,386 mel frames and 310 audio features.
+
+#### Qwen3-ASR-GGUF hybrid
+
+This path uses the HaujetZhao repository: an int4 ONNX encoder plus a q4_k
+llama.cpp decoder. The encoder runs through DirectML and the decoder through
+Vulkan. The repository's ctypes bindings match llama.cpp `b8950`; the current
+`b12069` build crashed in `llama-hparams.cpp` before inference.
+
+```powershell
+git clone --depth 1 https://github.com/HaujetZhao/Qwen3-ASR-GGUF.git .native/qwen3-asr-gguf
+New-Item -ItemType Directory -Force .native/qwen3-asr-gguf/model
+curl.exe -L -o .native/qwen3-asr-gguf/Qwen3-ASR-1.7B-gguf.zip `
+  https://github.com/HaujetZhao/Qwen3-ASR-GGUF/releases/download/models/Qwen3-ASR-1.7B-gguf.zip
+tar -xf .native/qwen3-asr-gguf/Qwen3-ASR-1.7B-gguf.zip -C .native/qwen3-asr-gguf/model
+curl.exe -L -o .native/qwen3-asr-gguf/llama-b8950-vulkan.zip `
+  https://github.com/ggml-org/llama.cpp/releases/download/b8950/llama-b8950-bin-win-vulkan-x64.zip
+New-Item -ItemType Directory -Force .native/qwen3-asr-gguf/llama-b8950
+tar -xf .native/qwen3-asr-gguf/llama-b8950-vulkan.zip -C .native/qwen3-asr-gguf/llama-b8950
+Copy-Item .native/qwen3-asr-gguf/llama-b8950/*.dll `
+  .native/qwen3-asr-gguf/qwen_asr_gguf/inference/bin -Force
+python -m venv .native/qwen-gguf-env
+.native/qwen-gguf-env/Scripts/python.exe -m pip install `
+  -r tools/qwen3-asr-gguf-requirements.txt
+```
+
+```powershell
+.native/qwen-gguf-env/Scripts/python.exe tools/qwen3_asr_gguf.py `
+  --provider dml --chunk-size 24 --warmups 2 --repeats 10
+.native/qwen-gguf-env/Scripts/python.exe tools/qwen3_asr_gguf.py `
+  --provider cpu --warmups 2 --repeats 10
+```
+
+`--chunk-size 24` matches this 23.86 s clip more closely than the repo's 40 s
+default. The CPU row uses 16 kHz audio with the same language and greedy
+decoding settings.
 
 Direct ORT CPU and int4 CUDA:
 
