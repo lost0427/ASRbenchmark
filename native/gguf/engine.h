@@ -7,11 +7,12 @@
 
 class GgufEngine {
  public:
-  GgufEngine(const std::string &filename, int threads) : threads_(threads) {
+  GgufEngine(const std::string &filename, int threads, bool use_gpu = false,
+             bool flash_attn = false) : threads_(threads) {
     auto params = sense_voice_context_default_params();
-    params.use_gpu = false;
+    params.use_gpu = use_gpu;
     params.use_itn = false;
-    params.flash_attn = false;
+    params.flash_attn = flash_attn;
     context_ = sense_voice_small_init_from_file_with_params(filename.c_str(), params);
     if (!context_ || !context_->state) {
       release();

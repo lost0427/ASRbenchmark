@@ -159,24 +159,85 @@ OnePlus 15 (Snapdragon 8 Elite Gen 5); see [Results](#results).
 
 ## Windows CLI benchmark
 
-The Windows CLI uses prebuilt Python wheels for sherpa-onnx, ONNX Runtime, MNN
-and LiteRT. It runs CPU inference with the existing models in
-`models/low-precision-models`; no Android build or model download is needed.
-The `ncnn` Python integration and the locally compiled GGUF smoke executable are
-not included in this Windows benchmark.
+The Windows CLI uses prebuilt Python wheels for sherpa-onnx, ONNX Runtime, MNN,
+ncnn and LiteRT, plus the locally built GGUF runner. It runs inference with the
+existing models in `models/low-precision-models`; no Android build or model
+download is needed.
 
 ```powershell
 python -m venv .native/windows-benchmark-env
 .native/windows-benchmark-env/Scripts/python.exe -m pip install -r tools/windows-benchmark-requirements.txt
-.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py
+python tools/build_gguf.py --host
+python tools/build_gguf.py --host --avx512
 ```
 
-Use `--engines sherpa ort mnn litert`, `--folders onnx mnn litert`,
-`--threads`, `--warmups`, `--repeats` and `--output` to select a run. sherpa-onnx
-uses the local Q8 ONNX model; direct ORT, MNN and LiteRT can run their local
-precision variants. Results include load time, first inference, repeated
-latency samples, RTF, WER and recognized text. This CLI currently measures CPU
-backends only; GPU execution is not reported.
+The AVX-512 build is optional and only pays off at high thread counts; the
+default build uses AVX2. Point the benchmark at it with `--gguf-exe`:
+
+```powershell
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py --engines gguf `
+  --gguf-exe .native/gguf-host-avx512-build/bin/benchmark_gguf_smoke.exe --threads 12
+```
+
+Run every engine and model folder, or pick a subset:
+
+```powershell
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py --engines ncnn
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py --folders gguf-q4_0 onnx-q4
+```
+
+Use `--engines sherpa ort mnn ncnn litert gguf`, `--folders`, `--threads`,
+`--warmups`, `--repeats`, `--gguf-exe`, `--gguf-flash` and `--output` to select a
+run. sherpa-onnx uses the local Q8 ONNX model; direct ORT, MNN, ncnn, LiteRT and
+GGUF can run their local precision variants. Results include load time, first
+inference, repeated latency samples, RTF, WER, recognized text and the provider
+actually used. If the GGUF runner is missing, a default run skips it with a
+warning; requesting `--engines gguf` explicitly fails. GGUF flash attention is
+opt-in via `--gguf-flash` and improves CUDA Q8/Q4 by about 13%. ORT CUDA leaves
+intra-op threads automatic because CPU fallback nodes dominate int8 Q8; CPU
+providers still honor `--threads`.
+
+CUDA is available for ONNX Runtime and the GGUF runner. ORT needs the GPU pins in
+a separate environment because `onnxruntime-gpu` replaces `onnxruntime`:
+
+```powershell
+python -m venv .native/windows-benchmark-gpu-env
+.native/windows-benchmark-gpu-env/Scripts/python.exe -m pip install -r tools/windows-benchmark-gpu-requirements.txt
+.native/windows-benchmark-gpu-env/Scripts/python.exe tools/windows_benchmark.py --engines ort --provider cuda
+```
+
+GGUF needs its own CUDA build. Run it from a Developer PowerShell (MSVC; nvcc
+does not accept the MinGW host build), then use `--provider cuda`:
+
+```powershell
+python tools/build_gguf.py --host --cuda
+.native/windows-benchmark-env/Scripts/python.exe tools/windows_benchmark.py --engines gguf --provider cuda
+```
+
+The other runtimes stay CPU-only: sherpa-onnx wheels are not built with GPU,
+MNN's Windows wheel silently falls back to CPU, ncnn ships without Vulkan, and
+LiteRT GPU is not wired for Windows. GPU runs need CUDA 12.x and cuDNN 9; the CLI
+adds pip-installed CUDA and cuDNN DLL directories automatically. `--provider
+cuda` fails instead of silently reporting CPU numbers.
+
+The GPU pins use `onnxruntime-gpu` 1.26.0, the newest release built against CUDA
+12, while the CPU environment stays on `onnxruntime` 1.30.0. Run `--provider
+cpu` inside the GPU environment for an apples-to-apples ORT CPU/CUDA comparison.
+GGUF FP16 on CUDA currently returns empty text; use Q8, Q4 or ONNX FP32 instead.
+
+### External engine experiments
+
+TensorRT and transcribe.cpp are optional external comparisons, not part of the
+CLI. Their adapters and the BF16 GGUF converter are checked in:
+
+- `tools/tensorrt_benchmark.py` + `tools/tensorrt-requirements.txt`
+- `tools/transcribe_benchmark.py` + `tools/transcribe-requirements.txt`
+- `tools/convert_gguf_bf16.py`
+- `tools/prepare_low_precision.py --fp32` creates the TensorRT input model
+
+See [Windows benchmark results](docs/WINDOWS_BENCHMARK_RESULTS.md) for the
+TensorRT SDK install, model downloads, engine build, and run commands.
 
 ## Fixed audio provenance
 

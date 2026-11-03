@@ -1,0 +1,7 @@
+# TensorRT is installed from the NVIDIA Windows SDK zip, not from PyPI.
+# See docs/WINDOWS_BENCHMARK_RESULTS.md for the exact steps.
+numpy==2.5.4
+onnx==1.20.1
+cuda-python>=12.9,<13
+nvidia-cudnn-cu12==9.10.2.21
+requests==2.32.3

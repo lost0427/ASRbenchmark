@@ -48,13 +48,34 @@ def main():
     parser.add_argument("--cmake", default="cmake")
     parser.add_argument("--jobs", default="2")
     parser.add_argument("--host", action="store_true", help="Build desktop recognizer and quantizer")
+    parser.add_argument("--cuda", action="store_true", help="Build the desktop runner with GGML CUDA")
+    parser.add_argument("--avx512", action="store_true",
+                        help="Build the desktop CPU runner with AVX-512 (requires AVX-512 CPU)")
     args = parser.parse_args()
+    if args.cuda and not args.host:
+        parser.error("--cuda only applies to --host")
+    if args.avx512 and not args.host:
+        parser.error("--avx512 only applies to --host")
+    if args.cuda and args.avx512:
+        parser.error("--cuda and --avx512 are separate builds")
     src = prepare_source()
     common = ["-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SHARED_LIBS=OFF",
               "-DCMAKE_POSITION_INDEPENDENT_CODE=ON", "-DGGML_NATIVE=OFF", "-DGGML_OPENMP=OFF",
-              "-DGGML_CPU_ALL_VARIANTS=OFF", "-DGGML_BLAS=OFF", "-DGGML_CUDA=OFF", "-DGGML_VULKAN=OFF"]
+              "-DGGML_CPU_ALL_VARIANTS=OFF", "-DGGML_BLAS=OFF",
+              f"-DGGML_CUDA={'ON' if args.cuda else 'OFF'}", "-DGGML_VULKAN=OFF"]
+    if args.cuda:
+        common.append("-DCMAKE_CUDA_ARCHITECTURES=native")
+    if args.avx512:
+        common += ["-DGGML_AVX512=ON", "-DGGML_AVX512_VBMI=ON",
+                   "-DGGML_AVX512_VNNI=ON", "-DGGML_AVX512_BF16=ON"]
     if args.host:
-        build = WORK / "gguf-host-build"
+        if args.cuda:
+            name = "gguf-host-cuda-build"
+        elif args.avx512:
+            name = "gguf-host-avx512-build"
+        else:
+            name = "gguf-host-build"
+        build = WORK / name
         cmake = src / "CMakeLists.txt"
         text = cmake.read_text(encoding="utf-8")
         if "# Benchmark desktop smoke" not in text:

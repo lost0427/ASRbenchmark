@@ -27,6 +27,7 @@ SOURCE_HASH = "977016bd9c79f9eb343430b5cc305e07ab64d5212dff41b0dcfa1694bee9a8cb"
 GGUF_REPO = "lovemefan/sense-voice-gguf"
 GGUF_REV = "c3dc3564b1795b03f4c2cfa8549af5797faca4ad"
 GGUF_VARIANTS = ["q8_0", "q6_k", "q5_0", "q5_k", "q4_0", "q4_1", "q4_k", "q3_k", "fp16"]
+ENGINES = ["onnx", "mnn", "ncnn", "litert", "gguf"]
 
 
 def copy_file(source, destination):
@@ -78,6 +79,18 @@ def prepare_onnx(source, baseline, root, manifest, bits):
                "sourceSha256": SOURCE_HASH, "converter": "onnxruntime 1.30.0 MatMulNBitsQuantizer",
                "bits": bits, "blockSize": 64, "symmetric": True, "quantizedMatMulCount": len(nodes),
                "activationPrecision": "floating", "calibration": "none; weight-only quantization",
+           })
+
+
+def prepare_fp32(source, baseline, root, manifest):
+    folder = "onnx-fp32"
+    path = root / folder
+    path.mkdir(parents=True, exist_ok=True)
+    copy_file(source, path / "model.onnx")
+    supporting_files(baseline, root, "onnx", folder)
+    record(root, manifest, folder, f"https://huggingface.co/{ONNX}/tree/{ONNX_REV}",
+           "FP32 (official unquantized ONNX)", {
+               "sourceSha256": SOURCE_HASH, "converter": "none; official FP32 ONNX",
            })
 
 
@@ -244,8 +257,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baseline", type=Path, default=ROOT / "models/cpu-models")
     parser.add_argument("--output", type=Path, default=ROOT / "models/low-precision-models")
-    parser.add_argument("--engines", nargs="+", choices=["onnx", "mnn", "ncnn", "litert", "gguf"], default=["onnx", "mnn", "ncnn", "litert", "gguf"])
+    parser.add_argument("--engines", nargs="+", choices=ENGINES, default=None)
+    parser.add_argument("--fp32", action="store_true",
+                        help="also create onnx-fp32 for TensorRT; alone, only creates it")
     args = parser.parse_args()
+    engines = args.engines if args.engines is not None else ([] if args.fp32 else ENGINES)
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=True)
     baseline = args.baseline.resolve()
@@ -259,10 +275,12 @@ def main():
         manifest["engines"][folder] = entry
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     source = WORK / "model.onnx"
-    if any(e in args.engines for e in ["onnx", "mnn"]):
+    if args.fp32 or any(e in engines for e in ["onnx", "mnn"]):
         fetch(f"https://huggingface.co/{ONNX}/resolve/{ONNX_REV}/model.onnx", source)
         assert sha(source) == SOURCE_HASH, "Original floating ONNX checksum mismatch"
-    for engine in args.engines:
+    if args.fp32:
+        prepare_fp32(source, baseline, root, manifest)
+    for engine in engines:
         if engine == "onnx":
             for bits in [4, 2]: prepare_onnx(source, baseline, root, manifest, bits)
         elif engine == "mnn":
