@@ -235,6 +235,9 @@ CLI. Their adapters and the BF16 GGUF converter are checked in:
 - `tools/transcribe_benchmark.py` + `tools/transcribe-requirements.txt`
 - `tools/convert_gguf_bf16.py`
 - `tools/prepare_low_precision.py --fp32` creates the TensorRT input model
+- `tools/prepare_qwen3_asr.py`, `tools/qwen3_asr_ort.py`,
+  `tools/qwen3_asr_sherpa.py` and `tools/plot_qwen3_benchmark.py` for the
+  Qwen3-ASR-1.7B comparison
 
 See [Windows benchmark results](docs/WINDOWS_BENCHMARK_RESULTS.md) for the
 TensorRT SDK install, model downloads, engine build, and run commands.
