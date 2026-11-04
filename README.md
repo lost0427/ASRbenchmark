@@ -236,8 +236,10 @@ CLI. Their adapters and the BF16 GGUF converter are checked in:
 - `tools/convert_gguf_bf16.py`
 - `tools/prepare_low_precision.py --fp32` creates the TensorRT input model
 - `tools/prepare_qwen3_asr.py`, `tools/qwen3_asr_ort.py`,
-  `tools/qwen3_asr_sherpa.py`, `tools/qwen3_asr_gguf.py` and
-  `tools/plot_qwen3_benchmark.py` for the Qwen3-ASR-1.7B comparison;
+  `tools/qwen3_asr_sherpa.py`, `tools/qwen3_asr_gguf.py`,
+  `tools/plot_qwen3_benchmark.py`, `tools/prepare_librispeech.py`,
+  `tools/sensevoice_wer.py`, `tools/qwen3_wer.py` and
+  `tools/plot_qwen3_wer.py` for the Qwen3-ASR-1.7B comparison and corpus WER;
   `tools/qwen3-asr-gguf-requirements.txt` covers the hybrid GGUF path
 
 See [Windows benchmark results](docs/WINDOWS_BENCHMARK_RESULTS.md) for the
