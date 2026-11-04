@@ -1,3 +1,4 @@
 # Install the transcribe.cpp release wheels and models separately; see
 # docs/WINDOWS_BENCHMARK_RESULTS.md. This file only pins the Python dependency.
 numpy==2.5.4
+soundfile==0.14.0
