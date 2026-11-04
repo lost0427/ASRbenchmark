@@ -5,7 +5,8 @@ an AMD Ryzen AI 9 HX 370, one warmup and three measured repetitions. Later
 sections use 12 threads, optimized AVX-512 builds, CUDA, or external engines
 where explicitly noted. The workload is always the same 23.86-second 16 kHz
 LibriSpeech clip used by the Android benchmark. Results include feature
-extraction and decoding unless a row is labelled engine-only.
+extraction and decoding unless a row is labelled engine-only. For full
+LibriSpeech test-clean WER, see [LibriSpeech test-clean WER](LIBRISPEECH_WER.md).
 
 | Engine / model | Mean ms | Median ms | WER |
 | --- | ---: | ---: | ---: |

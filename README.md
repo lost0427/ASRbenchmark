@@ -241,7 +241,9 @@ CLI. Their adapters and the BF16 GGUF converter are checked in:
   `tools/qwen3-asr-gguf-requirements.txt` covers the hybrid GGUF path
 
 See [Windows benchmark results](docs/WINDOWS_BENCHMARK_RESULTS.md) for the
-TensorRT SDK install, model downloads, engine build, and run commands.
+TensorRT SDK install, model downloads, engine build, and run commands. Full
+LibriSpeech test-clean accuracy is in
+[LibriSpeech test-clean WER](docs/LIBRISPEECH_WER.md).
 
 ## Fixed audio provenance
 
