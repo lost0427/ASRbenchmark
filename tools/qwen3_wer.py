@@ -164,6 +164,7 @@ def main():
     parser.add_argument("--engines", nargs="+",
                         default=["transcribe", "sherpa", "ort", "gguf"])
     parser.add_argument("--sample-size", type=int, default=1000)
+    parser.add_argument("--limit", type=int)
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--threads", type=int, default=12)
     parser.add_argument("--max-new-tokens", type=int, default=128)
@@ -191,6 +192,8 @@ def main():
         with sample_path.open("w", encoding="utf-8", newline="\n") as handle:
             for row in sample:
                 handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+    if args.limit:
+        sample = sample[:args.limit]
     print(f"sample={len(sample)} seed={args.seed}", flush=True)
 
     for engine in args.engines:

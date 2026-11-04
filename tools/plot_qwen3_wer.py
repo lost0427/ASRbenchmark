@@ -12,6 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 ROWS = [
     ("Qwen3 transcribe.cpp Q8", "Qwen3", 1.78250, 1.53991, 2.04563),
+    ("Qwen3 transcribe.cpp F16", "Qwen3", 1.82255, 1.58479, 2.06403),
+    ("Qwen3 transcribe.cpp BF16", "Qwen3", 1.82756, 1.59405, 2.08232),
+    ("Qwen3 ONNX Runtime FP16", "Qwen3", 1.88764, 1.62948, 2.15092),
     ("Qwen3-ASR-GGUF q4_k", "Qwen3", 2.02283, 1.75341, 2.32330),
     ("Qwen3 ONNX Runtime int4", "Qwen3", 2.03285, 1.77721, 2.32146),
     ("Qwen3 sherpa-onnx int8", "Qwen3", 3.08933, 2.48130, 3.84441),
@@ -35,8 +38,8 @@ def main():
     lower = values - np.array([row[3] for row in rows])
     upper = np.array([row[4] for row in rows]) - values
     colors = [COLORS[row[1]] for row in rows]
-    fig, ax = plt.subplots(figsize=(10.4, 4.8))
-    fig.subplots_adjust(left=0.31, right=0.88, top=0.78, bottom=0.21)
+    fig, ax = plt.subplots(figsize=(10.4, 6.2))
+    fig.subplots_adjust(left=0.31, right=0.88, top=0.80, bottom=0.18)
     y = np.arange(len(rows))
     ax.barh(y, values, color=colors, height=0.62, xerr=[lower, upper],
             error_kw={"ecolor": "#52606d", "elinewidth": 1.2, "capsize": 3}, zorder=2)
@@ -59,9 +62,9 @@ def main():
              "Same manifest, same audio, 19,972 reference words · 95% bootstrap CI",
              fontsize=9.4, color="#5b6675")
     fig.text(0.02, 0.035,
-             "Qwen3 transcribe.cpp is 1.50 percentage points better than "
-             "SenseVoice transcribe.cpp on this sample.",
-             fontsize=8.8, color="#6b7685")
+             "Qwen3 Q8/F16/BF16 transcribe variants are within 0.05 percentage points; "
+             "all Qwen3 variants except sherpa beat SenseVoice here.",
+             fontsize=8.4, color="#6b7685")
     fig.savefig(DOCS / "windows-librispeech-qwen3-wer.png", dpi=220,
                 bbox_inches="tight")
     fig.savefig(DOCS / "windows-librispeech-qwen3-wer.svg", bbox_inches="tight")
