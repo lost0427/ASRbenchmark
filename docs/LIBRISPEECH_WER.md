@@ -68,6 +68,9 @@ for every Qwen3 engine and for aggregation of the existing SenseVoice results:
 | Engine | Configuration | Corpus WER | 95% CI | Mean utterance WER | Empty outputs |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Qwen3 transcribe.cpp | Q8, CUDA | **1.7825%** | 1.5399–2.0456% | 2.1473% | 0 |
+| Qwen3 transcribe.cpp | F16, CUDA | 1.8226% | 1.5848–2.0640% | — | 0 |
+| Qwen3 transcribe.cpp | BF16, CUDA | 1.8276% | 1.5941–2.0823% | — | 0 |
+| Qwen3 ONNX Runtime | FP16, CUDA | 1.8876% | 1.6295–2.1509% | — | 0 |
 | Qwen3-ASR-GGUF | q4_k, DML+Vulkan | 2.0228% | 1.7534–2.3233% | 2.2524% | 0 |
 | Qwen3 ONNX Runtime | int4, CUDA | 2.0328% | 1.7772–2.3215% | 2.4056% | 0 |
 | Qwen3 sherpa-onnx | int8, CPU | 3.0893% | 2.4813–3.8444% | 3.3640% | 2 |
@@ -75,11 +78,13 @@ for every Qwen3 engine and for aggregation of the existing SenseVoice results:
 
 Qwen3 transcribe.cpp is **1.50 percentage points better** than SenseVoice
 transcribe.cpp on the same sample (1.78% vs 3.28%), a 46% relative reduction;
-the confidence intervals do not overlap. Qwen3 ONNX Runtime int4 and
-Qwen3-ASR-GGUF q4_k are also better than the best SenseVoice result on this
-sample, at about 2.02%. Qwen3 sherpa int8 is nominally better than SenseVoice
-(3.09% vs 3.28%) but its interval is wide because two of the 1,000 outputs were
-garbage/non-English; those two are counted as errors.
+the confidence intervals do not overlap. Qwen3 F16/BF16 are within 0.05 points
+of Q8 (1.82%/1.83%), and ORT FP16 is 1.89%, also better than SenseVoice. Qwen3
+ONNX Runtime int4 and Qwen3-ASR-GGUF q4_k are about 2.02%. Qwen3 sherpa int8 is
+nominally better than SenseVoice (3.09% vs 3.28%) but its interval is wide
+because two of the 1,000 outputs were garbage/non-English; those two are counted
+as errors. There is no ONNX BF16 export; BF16 is only available through
+transcribe.cpp.
 
 This reverses the impression from the single 23.86-second clip, where both
 models happened to score 5.80%. The 1,000-utterance sample is a better accuracy
@@ -103,15 +108,19 @@ current apples-to-apples accuracy check. The next step is to run Qwen3 on all
 - Included: full-corpus SenseVoice with LiteRT Q8, MNN Q8, ONNX Runtime int8,
   sherpa-onnx int8, ncnn INT8, and transcribe.cpp Q8.
 - Qwen3 is included on the common 1,000-utterance subset only: transcribe.cpp
-  Q8, ONNX Runtime int4, Qwen3-ASR-GGUF q4_k, and sherpa-onnx int8.
+  Q8/F16/BF16, ONNX Runtime int4/FP16, Qwen3-ASR-GGUF q4_k, and sherpa-onnx
+  int8. There is no ONNX BF16 export.
 - The custom `benchmark_gguf_smoke.exe` and TensorRT runners are single-file or
   fixed-shape tools. They are not included in this full-corpus table; the
   transcribe.cpp result covers the same GGUF Q8 weights with a persistent model.
 - This is read English speech. It does not measure noisy audio, multilingual
   audio, long-form segmentation, or ITN.
 - Raw per-utterance JSONL and summaries are in
-  `.native/librispeech/sensevoice-wer/` and
-  `.native/librispeech/qwen3-wer-1000/` and are not committed.
+  `.native/librispeech/sensevoice-wer/`,
+  `.native/librispeech/qwen3-wer-1000/`,
+  `.native/librispeech/qwen3-transcribe-f16-1000/`,
+  `.native/librispeech/qwen3-transcribe-bf16-1000/`, and
+  `.native/librispeech/qwen3-ort-fp16-1000/` and are not committed.
 
 ## Reproduction
 
@@ -138,6 +147,17 @@ Qwen3 on the same 1,000-utterance sample:
   --output-dir .native/librispeech/qwen3-wer-1000 --engines ort
 .native/qwen-gguf-env/Scripts/python.exe tools/qwen3_wer.py `
   --output-dir .native/librispeech/qwen3-wer-1000 --engines gguf
+.native/transcribe-env/Scripts/python.exe tools/qwen3_wer.py `
+  --output-dir .native/librispeech/qwen3-transcribe-f16-1000 `
+  --engines transcribe --transcribe-device cuda `
+  --transcribe-model .native/models/qwen3-asr/transcribe/Qwen3-ASR-1.7B-F16.gguf
+.native/transcribe-env/Scripts/python.exe tools/qwen3_wer.py `
+  --output-dir .native/librispeech/qwen3-transcribe-bf16-1000 `
+  --engines transcribe --transcribe-device cuda `
+  --transcribe-model .native/models/qwen3-asr/transcribe/Qwen3-ASR-1.7B-BF16.gguf
+.native/gpu-env/Scripts/python.exe tools/qwen3_wer.py `
+  --output-dir .native/librispeech/qwen3-ort-fp16-1000 --engines ort `
+  --ort-model .native/models/qwen3-asr/ort-fp16
 ```
 
 Each engine writes `*.jsonl` plus a `*.summary.json`. The report chart is
