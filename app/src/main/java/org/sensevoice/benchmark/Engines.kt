@@ -107,6 +107,8 @@ val gpuEngineSpecs = listOf(
         backend = "vulkan", fp16 = true, accelerator = "GPU Vulkan", compute = "FP16"),
     EngineSpec("mnn-cl-q8", "MNN", "mnn", "Q8 weights / block 64", "MNN 3.6.1 / OpenCL",
         backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "Q8 weights, partial fallback"),
+    EngineSpec("mnn-cpu-fp32", "MNN", "mnn-fp32", "FP32 weights", "MNN 3.6.1 / CPU",
+        backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
     EngineSpec("ort-nnapi", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
         "model.onnx", backend = "nnapi", accelerator = "NNAPI", compute = "default flags"),
     EngineSpec("ort-nnapi-fp16", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
@@ -121,6 +123,8 @@ val gpuEngineSpecs = listOf(
         "model.tflite", backend = "gpu", fp16 = false, accelerator = "GPU delegate", compute = "FP32"),
     EngineSpec("litert-gpu-q8", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 1.4.2 / GPU delegate",
         backend = "gpu", fp16 = true, accelerator = "GPU delegate", compute = "dynamic INT8, partial fallback"),
+    EngineSpec("litert-cpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 1.4.2 / CPU, XNNPACK requested",
+        "model.tflite", backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
 )
 
 val engineSpecs = cpuEngineSpecs + gpuEngineSpecs

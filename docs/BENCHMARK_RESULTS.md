@@ -372,12 +372,14 @@
 | ncnn-vk-fp16 | ncnn-fp16 | FP16 | FP16 | ncnn Vulkan 主测 |
 | ncnn-vk-int8 | ncnn | INT8 mixed | INT8 层回退 CPU | 仅作覆盖度证据 |
 | mnn-cl-fp16 / mnn-cl-fp32 | mnn-fp32 | FP32 | FP16 / FP32 | MNN OpenCL 主测 |
+| mnn-cpu-fp32 | mnn-fp32 | FP32 | FP32 | 同模型 CPU 对照 |
 | mnn-vk-fp16 | mnn-fp32 | FP32 | FP16 | OpenCL 不可用时的备选 |
 | mnn-cl-q8 | mnn | Q8 | 部分回退 | 量化模型 GPU 覆盖度 |
 | ort-nnapi / ort-nnapi-fp16 | onnx-fp32 | FP32 | 默认 / USE_FP16 | ORT NNAPI |
 | ort-nnapi-q8 | onnx | INT8 dynamic | — | 量化支持度 |
 | sherpa-nnapi | onnx-fp32 | FP32 | 默认 | 与 ORT 交叉验证 |
 | litert-gpu-fp16 / litert-gpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP16 / FP32 | LiteRT GPU delegate 主测 |
+| litert-cpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP32 | 同模型 CPU 对照 |
 | litert-gpu-q8 | litert | W8 dynamic | — | 回退证据 |
 
 每个 GPU 行都保留同模型 CPU 对照；`ncnn`、`mnn`、`litert` 的既有 CPU 结果可直接作为对照。

@@ -46,6 +46,8 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
 3. Copy the generated `models/cpu-models` folder to the phone, including
    `manifest.json` and its subdirectories. Tap **Import model folder** and choose
    that folder. Import checks sizes and SHA-256 before activating the new models.
+   The full low-precision bundle with GPU models is about 7 GB; importing it needs
+   roughly twice that in free space because the new set is staged before activation.
 4. Choose engines, threads, warmup and repeats, then tap **Run benchmark**.
    **Run all imported** selects and runs every model that is installed in one tap.
    Defaults: 4 threads, 3 warmups, 10 measured repetitions. The first inference
