@@ -260,8 +260,11 @@ def main():
     parser.add_argument("--engines", nargs="+", choices=ENGINES, default=None)
     parser.add_argument("--fp32", action="store_true",
                         help="also create onnx-fp32 for TensorRT; alone, only creates it")
+    parser.add_argument("--no-gpu", action="store_true",
+                        help="skip mnn-fp32 and litert-fp32 GPU models")
     args = parser.parse_args()
     engines = args.engines if args.engines is not None else ([] if args.fp32 else ENGINES)
+    gpu = not args.no_gpu and not args.fp32
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=True)
     baseline = args.baseline.resolve()
@@ -275,7 +278,7 @@ def main():
         manifest["engines"][folder] = entry
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     source = WORK / "model.onnx"
-    if args.fp32 or any(e in engines for e in ["onnx", "mnn"]):
+    if args.fp32 or gpu or any(e in engines for e in ["onnx", "mnn"]):
         fetch(f"https://huggingface.co/{ONNX}/resolve/{ONNX_REV}/model.onnx", source)
         assert sha(source) == SOURCE_HASH, "Original floating ONNX checksum mismatch"
     if args.fp32:
@@ -289,6 +292,9 @@ def main():
             for bits in [4, 2]: prepare_litert(baseline, root, manifest, bits)
         elif engine == "ncnn": prepare_ncnn(baseline, root, manifest)
         else: prepare_gguf(baseline, root, manifest)
+    if gpu:
+        from prepare_gpu_models import prepare_gpu
+        prepare_gpu(root, baseline)
     print("Import this folder on the phone:", root, flush=True)
 
 

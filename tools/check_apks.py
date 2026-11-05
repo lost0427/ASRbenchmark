@@ -36,8 +36,9 @@ def check_apk(apk, build_tools, official):
                     assert alignment >= 16384, f"Native load segment lacks 16 KB alignment: {name}"
             assert archive.getinfo(name).compress_type == zipfile.ZIP_STORED, f"Native library is compressed: {name}"
         assert sha(archive.read("lib/arm64-v8a/libonnxruntime.so")) == sha(official), "APK does not contain the official ORT runtime"
-    # Catch the previously observed unstripped 300 MB APK regression.
-    assert apk.stat().st_size < 100_000_000, "APK exceeds the expected stripped-runtime size"
+    # Catch the previously observed unstripped 300 MB APK regression. GPU builds
+    # add Vulkan/OpenCL kernels and the LiteRT GPU delegate, so the ceiling is higher.
+    assert apk.stat().st_size < 140_000_000, "APK exceeds the expected stripped-runtime size"
     print(f"Verified: {apk.name}, {apk.stat().st_size / 1e6:.1f} MB, SHA-256 {sha(apk.read_bytes())}")
 
 
