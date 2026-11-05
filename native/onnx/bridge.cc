@@ -2,9 +2,11 @@
 #include "sherpa-onnx/c-api/c-api.h"
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_org_sensevoice_benchmark_SherpaNative_create(JNIEnv *env, jobject, jstring model, jstring tokens, jint threads) {
+Java_org_sensevoice_benchmark_SherpaNative_create(JNIEnv *env, jobject, jstring model, jstring tokens, jint threads,
+                                                  jstring provider) {
   try {
     auto m = String(env, model), t = String(env, tokens);
+    std::string p = String(env, provider);
     SherpaOnnxOfflineRecognizerConfig config{};
     config.feat_config.sample_rate = 16000;
     config.feat_config.feature_dim = 80;
@@ -13,11 +15,11 @@ Java_org_sensevoice_benchmark_SherpaNative_create(JNIEnv *env, jobject, jstring 
     config.model_config.sense_voice.use_itn = 0;
     config.model_config.tokens = t.c_str();
     config.model_config.num_threads = threads;
-    config.model_config.provider = "cpu";
+    config.model_config.provider = p.c_str();
     config.decoding_method = "greedy_search";
-    auto *p = SherpaOnnxCreateOfflineRecognizer(&config);
-    if (!p) throw std::runtime_error("sherpa-onnx could not load model");
-    return reinterpret_cast<jlong>(p);
+    auto *recognizer = SherpaOnnxCreateOfflineRecognizer(&config);
+    if (!recognizer) throw std::runtime_error("sherpa-onnx could not load model");
+    return reinterpret_cast<jlong>(recognizer);
   } catch (const std::exception &e) { Error(env, e); return 0; }
 }
 

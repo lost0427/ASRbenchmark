@@ -1,4 +1,4 @@
-"""Build CPU JNI libraries from pinned upstreams on Windows or Linux."""
+"""Build CPU and GPU JNI libraries from pinned upstreams on Windows or Linux."""
 import argparse
 import os
 from pathlib import Path
@@ -70,6 +70,18 @@ def source(name):
     return dst
 
 
+def patch(src, relative, old, new, count=1):
+    """Apply an auditable exact-text patch; fail loudly when upstream drifts."""
+    path = src / relative
+    text = path.read_text(encoding="utf-8")
+    if new in text:
+        return
+    found = text.count(old)
+    if found != count:
+        raise RuntimeError(f"Patch anchor found {found} times (expected {count}) in {path}")
+    path.write_text(text.replace(old, new), encoding="utf-8")
+
+
 def attach(src, name):
     cmake = src / "CMakeLists.txt"
     text = cmake.read_text(encoding="utf-8")
@@ -87,6 +99,8 @@ def main():
     parser.add_argument("--jobs", default="2")
     parser.add_argument("--variant", choices=["baseline", "aggressive"], default="baseline",
                         help="baseline: armv8-a for all arm64; aggressive: armv8.6-a+i8mm+bf16 for 8 Gen-class CPUs")
+    parser.add_argument("--no-gpu", action="store_true",
+                        help="build CPU-only runtimes without Vulkan, OpenCL or NNAPI support")
     args = parser.parse_args()
     # Python honors the Windows system proxy; CMake's curl also needs env vars.
     for scheme, proxy in urllib.request.getproxies().items():
@@ -107,10 +121,13 @@ def main():
     if not toolchain.exists():
         raise FileNotFoundError(toolchain)
     aggressive = args.variant == "aggressive"
+    gpu = not args.no_gpu
     suffix = "" if not aggressive else "-aggressive"
+    # android-27 is required for the ORT NNAPI EP; libneuralnetworks is loaded lazily.
+    native_platform = "android-27" if gpu else "android-26"
     common = [
         "-G", "Ninja", f"-DCMAKE_TOOLCHAIN_FILE={toolchain.as_posix()}",
-        "-DANDROID_ABI=arm64-v8a", "-DANDROID_PLATFORM=android-26", "-DANDROID_STL=c++_shared",
+        "-DANDROID_ABI=arm64-v8a", f"-DANDROID_PLATFORM={native_platform}", "-DANDROID_STL=c++_shared",
         "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
         "-DCMAKE_CXX_VISIBILITY_PRESET=hidden", "-DCMAKE_C_VISIBILITY_PRESET=hidden",
         "-DCMAKE_VISIBILITY_INLINES_HIDDEN=ON", "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
@@ -153,13 +170,42 @@ def main():
     ], ["benchmark_sherpa"], env)
 
     mnn = source("mnn")
+    patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/session.cc",
+          '#include "sherpa-mnn/csrc/session.h"\n',
+          '#include "sherpa-mnn/csrc/session.h"\n\n#include <MNN/MNNForwardType.h>  // NOLINT\n')
+    patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/session.cc",
+          """  MNN::ScheduleConfig config;
+  config.numThread = num_threads;
+  MNN::BackendConfig bnConfig;
+  bnConfig.memory = MNN::BackendConfig::Memory_Low;
+  config.backendConfig = &bnConfig;""",
+          """  MNN::ScheduleConfig config;
+  config.numThread = num_threads;
+  MNN::BackendConfig bnConfig;
+  bnConfig.memory = MNN::BackendConfig::Memory_Low;
+  bnConfig.power = MNN::BackendConfig::Power_High;
+  // Provider strings accepted here: cpu, opencl, opencl-fp32, vulkan, vulkan-fp32.
+  const bool fp32 = provider_str.find("fp32") != std::string::npos;
+  if (provider_str.rfind("opencl", 0) == 0) {
+    config.type = MNN_FORWARD_OPENCL;
+  } else if (provider_str.rfind("vulkan", 0) == 0) {
+    config.type = MNN_FORWARD_VULKAN;
+  } else {
+    config.type = MNN_FORWARD_CPU;
+  }
+  if (config.type != MNN_FORWARD_CPU) {
+    bnConfig.precision = fp32 ? MNN::BackendConfig::Precision_Normal
+                              : MNN::BackendConfig::Precision_Low;
+  }
+  config.backendConfig = &bnConfig;""")
     install = WORK / ("mnn-install" + suffix)
     mnn_build = build(mnn, "mnn-runtime", [
         "-DMNN_BUILD_SHARED_LIBS=OFF", "-DMNN_SEP_BUILD=OFF", "-DMNN_LOW_MEMORY=ON",
         "-DMNN_BUILD_CONVERTER=OFF", "-DMNN_BUILD_TRAIN=OFF", "-DMNN_BUILD_TEST=OFF",
         "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF", "-DMNN_BUILD_PROTOBUFFER=OFF",
         "-DMNN_BUILD_LLM=OFF", "-DMNN_BUILD_AUDIO=OFF", "-DMNN_BUILD_OPENCV=OFF",
-        "-DMNN_OPENCL=OFF", "-DMNN_VULKAN=OFF", "-DMNN_OPENGL=OFF", "-DMNN_NNAPI=OFF",
+        f"-DMNN_OPENCL={'ON' if gpu else 'OFF'}", f"-DMNN_VULKAN={'ON' if gpu else 'OFF'}",
+        "-DMNN_OPENGL=OFF", "-DMNN_NNAPI=OFF",
         # SME2 kernels fault (SIGILL) on Android 16 Snapdragon 8 Elite Gen 5: the OS reports
         # SME2 in HWCAP2 but cannot enter streaming mode (PR_SME_SET_VL fails). Keep i8mm/dotprod.
         "-DMNN_SME2=OFF",
@@ -178,6 +224,24 @@ def main():
     ], ["benchmark_mnn"])
 
     ncnn = source("ncnn")
+    patch(ncnn, "sherpa-ncnn/csrc/offline-model-config.h",
+          """  std::string tokens;
+  int32_t num_threads = 2;
+  bool debug = false;""",
+          """  std::string tokens;
+  int32_t num_threads = 2;
+  bool debug = false;
+
+  // GPU toggles; use_vulkan_compute needs an NCNN_VULKAN build.
+  bool use_vulkan_compute = false;
+  bool fp16 = true;""")
+    patch(ncnn, "sherpa-ncnn/csrc/offline-sense-voice-model.cc",
+          "    net_.opt.num_threads = config_.num_threads;",
+          """    net_.opt.num_threads = config_.num_threads;
+    net_.opt.use_vulkan_compute = config_.use_vulkan_compute;
+    net_.opt.use_fp16_packed = config_.fp16;
+    net_.opt.use_fp16_storage = config_.fp16;
+    net_.opt.use_fp16_arithmetic = config_.fp16;""", count=2)
     attach(ncnn, "ncnn")
     ncnn_arch = ["-DNCNN_ARM82=ON", "-DNCNN_ARM82DOT=ON", "-DNCNN_ARM82FP16FML=ON"] if aggressive \
         else ["-DNCNN_ARM82=OFF", "-DNCNN_ARM82DOT=OFF", "-DNCNN_ARM82FP16FML=OFF"]
@@ -185,7 +249,7 @@ def main():
         "-DSHERPA_NCNN_ENABLE_C_API=OFF", "-DSHERPA_NCNN_ENABLE_JNI=OFF",
         "-DSHERPA_NCNN_ENABLE_BINARY=OFF", "-DSHERPA_NCNN_ENABLE_PORTAUDIO=OFF",
         "-DSHERPA_NCNN_ENABLE_GENERATE_INT8_SCALE_TABLE=OFF",
-        "-DNCNN_VULKAN=OFF", "-DNCNN_INT8=ON",
+        f"-DNCNN_VULKAN={'ON' if gpu else 'OFF'}", "-DNCNN_INT8=ON",
         *ncnn_arch,
     ], ["benchmark_ncnn", "benchmark_features"])
 
