@@ -34,7 +34,9 @@ Java_org_sensevoice_benchmark_NcnnNative_deviceInfo(JNIEnv *env, jobject) {
   try {
     const int count = ncnn::get_gpu_count();
     if (count <= 0) return env->NewStringUTF("Vulkan unavailable");
-    const char *name = ncnn::get_gpu_device(0)->get_device_name();
+    const ncnn::VulkanDevice *dev = ncnn::get_gpu_device(0);
+    if (!dev || !dev->is_valid()) return env->NewStringUTF("Vulkan device invalid");
+    const char *name = dev->info.device_name();
     return env->NewStringUTF((std::string("Vulkan 0: ") + (name ? name : "unknown")).c_str());
   } catch (...) {
     return env->NewStringUTF("Vulkan unavailable");
