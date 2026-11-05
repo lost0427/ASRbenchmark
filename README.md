@@ -99,7 +99,9 @@ row on the same model so the report can separate backend gain from model change.
 original floating checkpoint; its provenance records that limitation. NNAPI was
 deprecated in Android 15, so a report row can legitimately show no acceleration.
 ncnn disables Vulkan for INT8 layers, so `ncnn-vk-int8` is a coverage probe, not
-an INT8-GPU result.
+an INT8-GPU result. MNN's OpenCL backend can silently fall back to CPU when the
+vendor OpenCL library cannot be loaded; treat `mnn-vk-fp16` as the primary MNN GPU
+row and compare both against the CPU control.
 
 Every GPU row records `accelerator`, `computePrecision` and `backendInfo`
 (ncnn Vulkan device name, MNN provider, ORT NNAPI profiling marker, or LiteRT

@@ -53,14 +53,17 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text("SenseVoice Precision Benchmark", style = MaterialTheme.typography.headlineMedium)
-                        Text("CPU · ${BuildConfig.FLAVOR} · Fixed LibriSpeech sample", style = MaterialTheme.typography.titleMedium)
+                        Text("CPU + GPU · ${BuildConfig.FLAVOR} · Fixed LibriSpeech sample", style = MaterialTheme.typography.titleMedium)
                         Text("${audio.getString("utterance")} · $audioDuration s · 16 kHz mono\n${audio.getString("reference")}", style = MaterialTheme.typography.bodyMedium)
                         OutlinedButton(onClick = { importModels.launch(null) }, enabled = !state.busy) { Text("Import model folder") }
                         Text("Import the low-precision model bundle once, then choose variants to compare. Models run offline.", style = MaterialTheme.typography.bodySmall)
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Button(onClick = { vm.run(state.installed, config) }, enabled = !state.busy && valid && state.installed.isNotEmpty()) { Text("Run all imported") }
                             OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in state.installed }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
                             OutlinedButton(onClick = { selected = emptyList() }, enabled = !state.busy) { Text("Clear") }
                         }
+                        Text("LiteRT GPU delegate: ${if (liteRtGpuSupported) "available" else "unavailable"} · NNAPI and Vulkan/OpenCL are probed per run.",
+                            style = MaterialTheme.typography.bodySmall)
                         engineSpecs.groupBy { it.engineId }.forEach { (_, variants) ->
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(variants.first().title, style = MaterialTheme.typography.titleLarge)
@@ -74,6 +77,7 @@ class MainActivity : ComponentActivity() {
                                     Column(Modifier.padding(top = 8.dp)) {
                                         Text(engine.variant.uppercase(Locale.ROOT), style = MaterialTheme.typography.titleMedium)
                                         Text(engine.precision, style = MaterialTheme.typography.bodySmall)
+                                        if (engine.accelerator != "CPU") Text("${engine.accelerator} · ${engine.compute}", style = MaterialTheme.typography.bodySmall)
                                         Text(if (engine.id in state.installed) "Ready" else "Model not imported", color = if (engine.id in state.installed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
                                     }
                                 }
@@ -102,6 +106,7 @@ class MainActivity : ComponentActivity() {
                                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                         Text("${row.getString("engine")} · ${row.optString("modelVariant", "q8")}", style = MaterialTheme.typography.titleMedium)
                                         Text(row.getString("status"))
+                                        Text("${row.optString("accelerator", "CPU")} · ${row.optString("computePrecision", "")}${row.optString("backendInfo").takeIf { it.isNotEmpty() }?.let { " · $it" } ?: ""}", style = MaterialTheme.typography.bodySmall)
                                         fun number(key: String, format: String = "%.2f") = if (row.has(key)) String.format(Locale.US, format, row.getDouble(key)) else "—"
                                         if (row.has("meanMs")) {
                                             Text("Mean ${number("meanMs")} ms · RTF ${number("rtf", "%.3f")}")

@@ -82,9 +82,9 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
         val power = context.getSystemService(PowerManager::class.java)
         fun environment() = JSONObject().put("thermalStatus", if (Build.VERSION.SDK_INT >= 29) power.currentThermalStatus else JSONObject.NULL)
             .put("batteryTemperatureTenthsC", context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1))
-        val report = JSONObject().put("schemaVersion", 2).put("createdAt", java.time.Instant.now().toString())
+        val report = JSONObject().put("schemaVersion", 3).put("createdAt", java.time.Instant.now().toString())
             .put("appVersion", BuildConfig.VERSION_NAME).put("buildVariant", BuildConfig.FLAVOR)
-            .put("ortDistribution", "Official Maven 1.30.0").put("backend", "CPU").put("audio", audioMeta)
+            .put("ortDistribution", "Official Maven 1.30.0").put("backend", "CPU+GPU").put("audio", audioMeta)
             .put("device", JSONObject().put("manufacturer", Build.MANUFACTURER).put("model", Build.MODEL).put("android", Build.VERSION.RELEASE)
                 .put("api", Build.VERSION.SDK_INT).put("abis", JSONArray(Build.SUPPORTED_ABIS.toList()))
                 .put("soc", if (Build.VERSION.SDK_INT >= 31) Build.SOC_MODEL else JSONObject.NULL)
@@ -100,7 +100,9 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
             if (cancel.get()) break
             val row = JSONObject().put("engine", spec.title).put("id", spec.id).put("precision", spec.precision)
                 .put("engineId", spec.engineId).put("modelVariant", spec.variant)
-                .put("runtime", spec.runtime).put("backend", "CPU").put("startEnvironment", environment())
+                .put("runtime", spec.runtime).put("backend", spec.accelerator).put("backendSelector", spec.backend)
+                .put("accelerator", spec.accelerator).put("modelFolder", spec.folder)
+                .put("computePrecision", spec.compute).put("startEnvironment", environment())
             rows.put(row)
             if (!store.available(spec)) { row.put("status", "missing_model"); continue }
             row.put("model", store.manifest!!.getJSONObject("engines").getJSONObject(spec.folder))
@@ -148,6 +150,7 @@ class BenchmarkViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) { row.put("status", "error").put("error", "${e.javaClass.simpleName}: ${e.message}")
             } catch (e: LinkageError) { row.put("status", "runtime_unavailable").put("error", e.message)
             } finally {
+                runCatching { engine?.let { row.put("backendInfo", it.backendInfo ?: JSONObject.NULL) } }
                 runCatching { engine?.close() }.onFailure { row.put("cleanupError", it.message) }
                 sampler.shutdown()
                 sampler.awaitTermination(1, TimeUnit.SECONDS)
@@ -206,7 +209,7 @@ fun errorRate(reference: String, text: String, words: Boolean): Double {
 
 fun reportCsv(json: String): String {
     val report = JSONObject(json)
-    val columns = listOf("id", "engine", "engineId", "modelVariant", "precision", "runtime", "status", "modelBundleBytes", "loadMs", "firstInferenceMs", "meanMs", "medianMs", "p90Ms", "rtf", "sampledPeakPssKb", "wer", "cer", "text", "error")
+    val columns = listOf("id", "engine", "engineId", "modelVariant", "modelFolder", "precision", "computePrecision", "accelerator", "backendSelector", "backendInfo", "runtime", "status", "modelBundleBytes", "loadMs", "firstInferenceMs", "meanMs", "medianMs", "p90Ms", "rtf", "sampledPeakPssKb", "wer", "cer", "text", "error")
     fun escape(value: Any?) = "\"" + (value?.takeUnless { it == JSONObject.NULL }?.toString() ?: "").replace("\"", "\"\"") + "\""
     val rows = report.getJSONArray("results")
     return buildString {

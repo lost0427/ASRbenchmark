@@ -10,7 +10,7 @@ android {
     ndkVersion = "28.2.13676358"
     defaultConfig {
         applicationId = "org.sensevoice.benchmark.precision"
-        minSdk = 26
+        minSdk = 27
         targetSdk = 35
         versionCode = 4
         versionName = "0.4.0"
@@ -56,7 +56,8 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.30.0")
-    implementation("com.google.ai.edge.litert:litert:2.1.6")
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
 }
 
 val checkCpuRuntimes by tasks.registering {
