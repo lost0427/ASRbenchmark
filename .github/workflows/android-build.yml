@@ -42,10 +42,9 @@ jobs:
             .native
             app/src/main/jniLibs
             app/src/main/jniLibs-aggressive
-          key: cpu-native-v3-${{ runner.os }}-${{ hashFiles('tools/build_native.py', 'tools/build_gguf.py', 'native/**') }}
+          key: gpu-native-v1-${{ runner.os }}-${{ hashFiles('tools/build_native.py', 'tools/build_gguf.py', 'native/**') }}
           restore-keys: |
-            cpu-native-v3-${{ runner.os }}-
-            cpu-native-v2-${{ runner.os }}-
+            gpu-native-v1-${{ runner.os }}-
       - name: Build baseline CPU runtimes
         run: |
           export PATH="$ANDROID_HOME/cmake/3.22.1/bin:$PATH"

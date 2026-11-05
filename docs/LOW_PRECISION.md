@@ -19,7 +19,9 @@ file sizes and SHA-256 hashes. Older Q8-only model folders still import.
 | sherpa-onnx and direct ORT | Q8, Q4, Q2 | Q8 is the official dynamic model; Q4/Q2 quantize constant MatMul weights with MatMulNBits, block 64 |
 | MNN | Q8, Q7, Q6, Q5, Q4, Q3, Q2 | Weight-only, block 64, floating activations; requested bit width does not establish native arithmetic width |
 | ncnn | INT8, FP16 storage | Official 2024-07-17 exports; CPU only |
-| LiteRT | Q8, Q4, Q2 | Q4/Q2 requantize the original W8 fully-connected weights; depthwise weights remain W8 and activations remain FP32 |
+| LiteRT | Q8, Q4, Q2, FP32 | Q4/Q2 requantize the original W8 fully-connected weights; depthwise weights remain W8 and activations remain FP32. FP32 is a lossless dequantization of W8 weights |
+| GPU: ncnn / MNN | Vulkan FP16, Vulkan INT8, OpenCL FP16/FP32, Vulkan FP16 | GPU rows have a CPU control on the same model |
+| GPU: NNAPI / LiteRT | NNAPI FP32/FP16/INT8, GPU delegate FP16/FP32 | NNAPI requires API 27+ and is deprecated from Android 15 |
 | SenseVoice.cpp / GGML | Q8_0, Q6_K, Q5_0, Q5_K, Q4_0, Q4_1, Q4_K, Q3_K, FP16 | Mixed tensor types; actual types are counted in provenance |
 
 INT2/INT3 ncnn exports are unavailable in this integration. The pinned GGUF
@@ -42,10 +44,13 @@ python -m venv .native/model-env
 ```
 
 The result is `models/low-precision-models`, approximately 5.03 GB for 24 model
-folders and 27 selectable engine/precision combinations. The two ONNX engines
+folders and 27 selectable engine/precision combinations. With the default GPU
+step it also contains `mnn-fp32` (FP32 MNN weights, ~0.9 GB) and `litert-fp32`
+(FP32 LiteRT weights dequantized from W8, ~0.9 GB). Pass `--no-gpu` to skip both.
+The two ONNX engines
 share each ONNX model. The preparation script checks the source floating ONNX
 hash, pinned GGUF hashes, and writes hashes for every importable file.
-On Windows it downloads a pinned FlatBuffers compiler to generate LiteRT 2.1.6's
+On Windows it downloads a pinned FlatBuffers compiler to generate LiteRT's
 schema; other platforms need `flatc` on PATH.
 
 Copy the whole folder, including `manifest.json`, to the phone. Install either
@@ -91,8 +96,11 @@ These checks are not a corpus accuracy evaluation.
   `977016bd9c79f9eb343430b5cc305e07ab64d5212dff41b0dcfa1694bee9a8cb`.
 - MNN converter and runtime: 3.6.1.
 - ORT quantizer and Android runtime: 1.30.0.
-- LiteRT runtime/schema: 2.1.6; W8 model revision
+- LiteRT runtime/schema: 1.4.2 for both CPU and GPU; W8 model revision
   `8d1dfd033bafc5d40e03cb1dc714134386eb6895`.
+- GPU runtimes: ncnn commit `c4193aadbbb56582aa87b1850dd3d98fb8fd936d` with
+  Vulkan (bundled glslang), MNN 3.6.1 commit
+  `d407447ed56c4121a11ccbd266dc184ca1ead0c2` with OpenCL and Vulkan.
 - GGUF models: `lovemefan/sense-voice-gguf`, revision
   `c3dc3564b1795b03f4c2cfa8549af5797faca4ad`.
 - SenseVoice.cpp: v1.4.0, commit `c78e6919351ac83255e96de46169f518097f1ef3`.

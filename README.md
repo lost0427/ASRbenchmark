@@ -1,7 +1,8 @@
 # SenseVoice Benchmark
 
-Android app for comparing **CPU** SenseVoiceSmall inference with sherpa-onnx,
-ONNX Runtime, MNN, ncnn, LiteRT and SenseVoice.cpp/GGML. GPU support is planned for a later version.
+Android app for comparing SenseVoiceSmall inference on **CPU and GPU** with
+sherpa-onnx, ONNX Runtime, MNN, ncnn, LiteRT and SenseVoice.cpp/GGML. GPU paths
+cover ncnn Vulkan, MNN OpenCL/Vulkan, ORT NNAPI and the LiteRT GPU delegate.
 
 The APK includes one fixed **23.86-second** LibriSpeech test-clean utterance,
 `3729-6852-0008`, and its reference transcript:
@@ -15,7 +16,7 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
 
 1. Download a `sensevoice-cpu-arm64-debug` artifact from the repository's GitHub
    Actions page, or an attached APK from the latest Release, and install it on an
-   arm64 Android 8.0+ phone. Two variants are published:
+   arm64 Android 8.1+ phone (API 27 is required by the NNAPI path). Two variants are published:
    - **baseline** (`app-baseline-debug.apk`) - native code at the `armv8-a`
      baseline; runs on any arm64 phone.
    - **aggressive** (`app-aggressive-debug.apk`) - built with
@@ -31,13 +32,22 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
    python tools/prepare_models.py
    ```
 
+   For the full matrix (quantized plus GPU-ready models), use the low-precision
+   script instead; it also writes `mnn-fp32` and `litert-fp32`:
+
+   ```powershell
+   python -m pip install -r tools/model-requirements.txt
+   python tools/prepare_low_precision.py
+   ```
+
    For a smaller download, use `--engines onnx mnn` or select any of
-   `onnx mnn ncnn litert`. The ONNX folder supports both sherpa-onnx and direct ORT.
+   `onnx mnn ncnn litert`. Pass `--no-gpu` to skip the two GPU-ready folders.
 
 3. Copy the generated `models/cpu-models` folder to the phone, including
    `manifest.json` and its subdirectories. Tap **Import model folder** and choose
    that folder. Import checks sizes and SHA-256 before activating the new models.
 4. Choose engines, threads, warmup and repeats, then tap **Run benchmark**.
+   **Run all imported** selects and runs every model that is installed in one tap.
    Defaults: 4 threads, 3 warmups, 10 measured repetitions. The first inference
    is measured separately, before warmup.
 5. Export JSON for full configuration, model provenance and individual samples;
@@ -60,12 +70,44 @@ combined model folder. ONNX Runtime uses the official Maven package.
 | ONNX Runtime | The same ONNX and tokens | ORT 1.30.0 CPU EP |
 | MNN | PocketASR Q8, block 64 | MNN 3.6.1 through sherpa-mnn |
 | ncnn | Official ncnn INT8 export | ncnn through sherpa-ncnn |
-| LiteRT | `dynamic_wi8_afp32` | LiteRT 2.1.6, XNNPACK requested |
+| LiteRT | `dynamic_wi8_afp32` | LiteRT 1.4.2, XNNPACK requested |
 
 Quantized weights do not imply every activation or operator uses INT8.
 Quantization schemes are shown in the app and report. MNN and ncnn include
 their Sherpa wrappers' front end and decoder. See [model sources](docs/MODEL_SOURCES.md)
 for links, pinned revisions and conversion details.
+
+### GPU backends
+
+The APK includes four accelerator paths. Each one has an explicit CPU control
+row on the same model so the report can separate backend gain from model change.
+
+| Entry | Model | Backend | Compute precision |
+| --- | --- | --- | --- |
+| `ncnn-vk-fp16` | Official FP16-storage ncnn export | Vulkan | FP16 |
+| `ncnn-vk-int8` | Official INT8 ncnn export | Vulkan | INT8 layers fall back to CPU |
+| `mnn-cl-fp16` / `mnn-cl-fp32` | `mnn-fp32` | OpenCL | FP16 / FP32 |
+| `mnn-vk-fp16` | `mnn-fp32` | Vulkan | FP16 |
+| `mnn-cl-q8` | PocketASR Q8 | OpenCL | Q8 weights, partial fallback |
+| `ort-nnapi` / `ort-nnapi-fp16` | `onnx-fp32` | NNAPI | default / `USE_FP16` |
+| `ort-nnapi-q8` | Dynamic INT8 ONNX | NNAPI | dynamic INT8 |
+| `sherpa-nnapi` | `onnx-fp32` | NNAPI | default |
+| `litert-gpu-fp16` / `litert-gpu-fp32` | `litert-fp32` | GPU delegate | FP16 / FP32 |
+| `litert-gpu-q8` | `dynamic_wi8_afp32` | GPU delegate | partial fallback |
+
+`litert-fp32` is a lossless dequantization of the W8 model weights, not the
+original floating checkpoint; its provenance records that limitation. NNAPI was
+deprecated in Android 15, so a report row can legitimately show no acceleration.
+ncnn disables Vulkan for INT8 layers, so `ncnn-vk-int8` is a coverage probe, not
+an INT8-GPU result.
+
+Every GPU row records `accelerator`, `computePrecision` and `backendInfo`
+(ncnn Vulkan device name, MNN provider, ORT NNAPI profiling marker, or LiteRT
+delegate support). Run the exported JSON through the checker before quoting it:
+
+```powershell
+python tools/check_gpu_results.py sensevoice-results.json
+```
 
 ## Measurement
 
@@ -81,6 +123,8 @@ for links, pinned revisions and conversion details.
   it does not establish corpus accuracy.
 - LiteRT uses the smallest signature bucket: 500 LFR frames for this clip. Other
   paths use dynamic length. Record this extra padding when comparing latency.
+- GPU rows include shader/kernel compilation in `loadMs` and the first inference.
+  GPU runs use one thread; the reported `threads` setting applies to CPU rows.
 - Language is English and ITN is disabled. No VAD or punctuation model runs.
 - Core-only inference time is unavailable; it is never substituted with
   end-to-end latency. Requested thread counts do not guarantee identical
@@ -141,7 +185,10 @@ The build script stages four JNI bridges and the shared C++ runtime into
 `app/src/main/jniLibs/arm64-v8a`. Downloaded dependency sources and model weights stay in ignored
 directories. The ORT AAR supplies the shared ONNX runtime for both ONNX paths.
 Native dependency archives are pinned in `tools/build_native.py`; upstream CMake files
-also pin their transitive downloads. GPU backends are disabled.
+also pin their transitive downloads. GPU backends are enabled by default: ncnn
+builds Vulkan with its bundled glslang, MNN builds OpenCL and Vulkan backends, and
+the native platform level is `android-27` so the ORT NNAPI EP is compiled in. Pass
+`--no-gpu` to build CPU-only libraries for older devices.
 Lint is pinned to 8.13.2 to support the Lifecycle 2.10 checks brought in by LiteRT.
 
 Publish the prepared local repository with GitHub Desktop's **Publish repository**

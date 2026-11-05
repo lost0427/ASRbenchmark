@@ -362,3 +362,34 @@
 | gguf-q4_k | 3,775.4 | 3,736.6 | 4,096.1 | 5.80% | 3.08% | ok |
 | gguf-q3_k | 5,333.4 | 5,298.2 | 5,532.2 | 23.19% | 14.15% | ok |
 | gguf-fp16 | 5,200.5 | 5,110.9 | 5,390.4 | 5.80% | 3.08% | ok |
+
+## 10. GPU 后端测试矩阵（0.5.0）
+
+0.5.0 起 APK 同时包含 CPU 与 GPU 配置。GPU 结果尚未实测，本节定义待测矩阵与报告口径。
+
+| 组合 ID | 模型目录 | 权重存储 | 计算精度 | 说明 |
+| --- | --- | --- | --- | --- |
+| ncnn-vk-fp16 | ncnn-fp16 | FP16 | FP16 | ncnn Vulkan 主测 |
+| ncnn-vk-int8 | ncnn | INT8 mixed | INT8 层回退 CPU | 仅作覆盖度证据 |
+| mnn-cl-fp16 / mnn-cl-fp32 | mnn-fp32 | FP32 | FP16 / FP32 | MNN OpenCL 主测 |
+| mnn-vk-fp16 | mnn-fp32 | FP32 | FP16 | OpenCL 不可用时的备选 |
+| mnn-cl-q8 | mnn | Q8 | 部分回退 | 量化模型 GPU 覆盖度 |
+| ort-nnapi / ort-nnapi-fp16 | onnx-fp32 | FP32 | 默认 / USE_FP16 | ORT NNAPI |
+| ort-nnapi-q8 | onnx | INT8 dynamic | — | 量化支持度 |
+| sherpa-nnapi | onnx-fp32 | FP32 | 默认 | 与 ORT 交叉验证 |
+| litert-gpu-fp16 / litert-gpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP16 / FP32 | LiteRT GPU delegate 主测 |
+| litert-gpu-q8 | litert | W8 dynamic | — | 回退证据 |
+
+每个 GPU 行都保留同模型 CPU 对照；`ncnn`、`mnn`、`litert` 的既有 CPU 结果可直接作为对照。
+
+运行方式：安装 APK，导入包含 GPU 文件的模型包，点击 **Run all imported**，导出 JSON，
+然后在电脑上执行：
+
+```powershell
+python tools/check_gpu_results.py sensevoice-results.json
+```
+
+该脚本检查 GPU 行是否带 `backendInfo`、WER 是否超过 15%，并提示缺少 CPU 对照的组合。
+
+后续补充实测数据时应沿用第 2 节的设备、线程、预热和重复设置，并记录 GPU 型号、
+驱动版本、`loadMs`（含 shader/kernel 编译）与 `firstInferenceMs`。

@@ -91,13 +91,17 @@ k2-fsa 已发布三种同日期 SenseVoice ncnn 包：
 
 首先采用已找到的官方 ONNX INT8、ncnn INT8/FP16 和 PocketASR MNN Q8 包，再核验 LiteRT 动态 INT8，补齐 MNN GPU 配置及 LiteRT FP16 导出。sherpa-onnx／ORT 的 GPU 路线需要单独验证，不能把 NNAPI、NPU 或 CPU 回退结果标成 GPU。
 
-## 7. GPU 现成工具能否直接测量
+## 7. GPU 路线（0.5.0 已接入）
 
-| 路线 | 现有材料 | 用于本项目还需要的工作 |
-| --- | --- | --- |
-| ncnn Vulkan FP16 | 已发布 FP16 SenseVoice 模型和识别示例 | 启用 Vulkan／FP16 配置，使用相同真实音频或特征，确认算子回退并计时；无需先导出新模型 |
-| MNN OpenCL／Vulkan 低精度 | [官方 benchmark 工具](https://github.com/alibaba/MNN/blob/master/benchmark/benchmark.cpp) 可选择后端和 precision | 构建 GPU 运行时，准备浮点 SenseVoice MNN，提供正确的多输入、长度和 language/ITN；通用随机输入测量不能替代完整 ASR benchmark |
-| ORT／sherpa-onnx NNAPI | 已有 EP 与浮点模型 | 配置 FP16 模式并确认实际 GPU 分配及模型委托覆盖；目前没有确认可直接复用的 Android SenseVoice FP16 GPU benchmark 成品 |
-| LiteRT GPU delegate | 已有 Android GPU 运行时和 CPU q8 SenseVoice | 生成／验证浮点模型和 GPU 分区，不能直接沿用 CPU 动态 INT8 成绩 |
+四条路线已在本仓库实现，配置与验收方式如下。每个 GPU 行都有同模型 CPU 对照。
 
-优先实现 ncnn Vulkan FP16，再实现 MNN GPU。模型存储为 FP32 也可以由 GPU 后端采用 FP16 计算；因此不要求每条路线都先找到单独的 FP16 文件，但需要保留存储类型和运行精度记录。当前未确认一个可直接安装、覆盖五项 SenseVoice FP16 GPU 比较的现成 APK。
+| 路线 | 实现方式 | 精度配置 | 验收要求 |
+| --- | --- | --- | --- |
+| ncnn Vulkan | `NCNN_VULKAN=ON`；补丁给 sherpa-ncnn 增加 `use_vulkan_compute`/`fp16` 开关 | FP16 权重 + FP16 计算；INT8 模型（预期 INT8 层回退 CPU） | 报告 `backendInfo` 含 Vulkan 设备名 |
+| MNN OpenCL／Vulkan | `MNN_OPENCL=ON`、`MNN_VULKAN=ON`；补丁让 sherpa-mnn 解析 provider | `opencl`/`opencl-fp32`/`vulkan`，`Precision_Low`=FP16，`Precision_Normal`=FP32 | 报告记录实际 provider |
+| ORT／sherpa-onnx NNAPI | `ANDROID_PLATFORM=android-27`；ORT Java `addNnapi`，sherpa `provider="nnapi"` | 默认 flags、`USE_FP16`、动态 INT8 | ORT profiling 中出现 NNAPI 标记；为 0 时如实记录不可用 |
+| LiteRT GPU delegate | `litert` + `litert-gpu` 2.3.2；`CompatibilityList` + `GpuDelegate` | FP16（`precision_loss_allowed`）、FP32 | `backendInfo` 记录 delegate 支持与计算精度 |
+
+模型：ncnn 复用官方 FP16／INT8 导出；MNN 使用新增 `mnn-fp32`；LiteRT 使用新增
+`litert-fp32`（由 W8 权重无损反量化，provenance 已注明不是原始浮点 checkpoint）。
+NNAPI 自 Android 15 起废弃，设备无驱动时不产生加速，属于有效结果。
