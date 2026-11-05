@@ -1,5 +1,6 @@
 """Build CPU and GPU JNI libraries from pinned upstreams on Windows or Linux."""
 import argparse
+import hashlib
 import os
 from pathlib import Path
 import shutil
@@ -23,6 +24,27 @@ def run(*args, env=None):
     subprocess.run([str(a) for a in args], check=True, env=env)
 
 
+def system_proxies():
+    proxies = {key: value for key, value in urllib.request.getproxies().items() if key in ("http", "https")}
+    if not proxies and os.name == "nt":
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Internet Settings") as key:
+            enabled = winreg.QueryValueEx(key, "ProxyEnable")[0]
+            server = winreg.QueryValueEx(key, "ProxyServer")[0]
+        if enabled and server:
+            entries = server.split(";") if "=" in server else ["http=" + server]
+            for entry in entries:
+                scheme, _, address = entry.partition("=")
+                if scheme in ("http", "https") and address:
+                    proxies[scheme] = "http://" + address.split("://")[-1]
+    if "https" not in proxies and "http" in proxies:
+        proxies["https"] = proxies["http"]
+    return proxies
+
+
+PROXIES = system_proxies()
+
+
 def fetch(url, output):
     output.parent.mkdir(parents=True, exist_ok=True)
     if not output.exists():
@@ -31,7 +53,8 @@ def fetch(url, output):
         for attempt in range(5):
             offset = temporary.stat().st_size if temporary.exists() else 0
             try:
-                with requests.get(url, stream=True, headers={"Range": f"bytes={offset}-"} if offset else {}, timeout=(20, 45)) as response:
+                with requests.get(url, stream=True, proxies=PROXIES or None,
+                                  headers={"Range": f"bytes={offset}-"} if offset else {}, timeout=(20, 45)) as response:
                     response.raise_for_status()
                     mode = "ab" if offset and response.status_code == 206 else "wb"
                     with temporary.open(mode) as dst:
@@ -70,6 +93,61 @@ def source(name):
     return dst
 
 
+def sha256(path):
+    value = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            value.update(chunk)
+    return value.hexdigest()
+
+
+def extract_tree(archive, destination, opener):
+    with opener(archive) as source:
+        zipped = isinstance(source, zipfile.ZipFile)
+        members = source.infolist() if zipped else source
+        for member in members:
+            name = member.filename if zipped else member.name
+            parts = Path(name).parts
+            if len(parts) < 2:
+                continue
+            target = (destination / Path(*parts[1:])).resolve()
+            if not target.is_relative_to(destination.resolve()):
+                raise ValueError(f"Archive path outside {destination}: {name}")
+            is_dir = member.is_dir() if hasattr(member, "is_dir") else member.isdir()
+            if is_dir:
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            reader = source.open(member) if zipped else source.extractfile(member)
+            with reader as src, target.open("wb") as dst:
+                shutil.copyfileobj(src, dst)
+
+
+def prepare_ncnn_source():
+    """ncnn's GitHub archive omits the glslang submodule required by Vulkan."""
+    destination = WORK / "ncnn-source"
+    if not (destination / "CMakeLists.txt").exists():
+        archive = WORK / "ncnn-c4193aadbbb56582aa87b1850dd3d98fb8fd936d.zip"
+        fetch("https://github.com/Tencent/ncnn/archive/c4193aadbbb56582aa87b1850dd3d98fb8fd936d.zip", archive)
+        expected = "da5563a86045d66ecf34820f82edec67906f988c61ecd3787f7e5df8bdfb43c0"
+        if sha256(archive) != expected:
+            raise RuntimeError("ncnn archive checksum mismatch")
+        extract_tree(archive, destination, zipfile.ZipFile)
+    if not (destination / "glslang/CMakeLists.txt").exists():
+        archive = WORK / "glslang-8cd77a808d0bffa442ae9462d5e3a8141892ba5a.tar.gz"
+        fetch("https://github.com/nihui/glslang/archive/8cd77a808d0bffa442ae9462d5e3a8141892ba5a.tar.gz", archive)
+        glslang = destination / "glslang"
+        glslang.mkdir(parents=True, exist_ok=True)
+        extract_tree(archive, glslang, tarfile.open)
+    if os.name != "nt":
+        # Mirrors sherpa-ncnn's FetchContent PATCH_COMMAND on non-Windows hosts.
+        cmake = destination / "src/CMakeLists.txt"
+        text = cmake.read_text(encoding="utf-8")
+        if "ncnn PROPERTIES VERSION" in text:
+            cmake.write_text("\n".join(line for line in text.splitlines() if "ncnn PROPERTIES VERSION" not in line) + "\n", encoding="utf-8")
+    return destination
+
+
 def patch(src, relative, old, new, count=1):
     """Apply an auditable exact-text patch; fail loudly when upstream drifts."""
     path = src / relative
@@ -103,9 +181,8 @@ def main():
                         help="build CPU-only runtimes without Vulkan, OpenCL or NNAPI support")
     args = parser.parse_args()
     # Python honors the Windows system proxy; CMake's curl also needs env vars.
-    for scheme, proxy in urllib.request.getproxies().items():
-        if scheme in ("http", "https"):
-            os.environ.setdefault(scheme.upper() + "_PROXY", proxy)
+    for scheme, address in PROXIES.items():
+        os.environ.setdefault(scheme.upper() + "_PROXY", address)
     os.environ["GIT_CEILING_DIRECTORIES"] = str(WORK)
     if os.name == "nt" and not shutil.which("sed"):
         git = shutil.which("git")
@@ -245,13 +322,20 @@ def main():
     attach(ncnn, "ncnn")
     ncnn_arch = ["-DNCNN_ARM82=ON", "-DNCNN_ARM82DOT=ON", "-DNCNN_ARM82FP16FML=ON"] if aggressive \
         else ["-DNCNN_ARM82=OFF", "-DNCNN_ARM82DOT=OFF", "-DNCNN_ARM82FP16FML=OFF"]
-    ncnn_build = build(ncnn, "ncnn", [
+    ncnn_flags = [
         "-DSHERPA_NCNN_ENABLE_C_API=OFF", "-DSHERPA_NCNN_ENABLE_JNI=OFF",
         "-DSHERPA_NCNN_ENABLE_BINARY=OFF", "-DSHERPA_NCNN_ENABLE_PORTAUDIO=OFF",
         "-DSHERPA_NCNN_ENABLE_GENERATE_INT8_SCALE_TABLE=OFF",
         f"-DNCNN_VULKAN={'ON' if gpu else 'OFF'}", "-DNCNN_INT8=ON",
         *ncnn_arch,
-    ], ["benchmark_ncnn", "benchmark_features"])
+    ]
+    if gpu:
+        ncnn_source = prepare_ncnn_source()
+        ncnn_flags.append(f"-DFETCHCONTENT_SOURCE_DIR_NCNN={ncnn_source.as_posix()}")
+        cached = WORK / ("ncnn" + suffix + "-build/CMakeCache.txt")
+        if cached.exists() and "FETCHCONTENT_SOURCE_DIR_NCNN" not in cached.read_text(encoding="utf-8", errors="ignore"):
+            shutil.rmtree(cached.parent)
+    ncnn_build = build(ncnn, "ncnn", ncnn_flags, ["benchmark_ncnn", "benchmark_features"])
 
     out = ROOT / ("app/src/main/jniLibs" + suffix) / "arm64-v8a"
     out.mkdir(parents=True, exist_ok=True)

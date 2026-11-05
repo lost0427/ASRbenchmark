@@ -80,6 +80,11 @@ def prepare_litert_fp32(baseline, root, manifest):
         raise FileNotFoundError(f"Missing {original}")
     data = original.read_bytes()
     model = schema.ModelT.InitFromObj(schema.Model.GetRootAsModel(data, 0))
+    # InitFromObj materializes every byte as a Python int; collapse to bytes so
+    # Pack() stays linear and memory-bounded for this ~250 MB model.
+    for buffer in model.buffers:
+        if buffer.data is not None and not isinstance(buffer.data, (bytes, bytearray)):
+            buffer.data = bytes(buffer.data)
     converted = 0
     for graph in model.subgraphs:
         for tensor in graph.tensors:
