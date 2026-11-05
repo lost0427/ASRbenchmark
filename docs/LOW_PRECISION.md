@@ -45,8 +45,8 @@ python -m venv .native/model-env
 
 The result is `models/low-precision-models`, approximately 5.03 GB for 24 model
 folders and 27 selectable engine/precision combinations. With the default GPU
-step it also contains `mnn-fp32` (FP32 MNN weights, ~0.9 GB) and `litert-fp32`
-(FP32 LiteRT weights dequantized from W8, ~0.9 GB). Pass `--no-gpu` to skip both.
+step it also contains `mnn-fp32` (FP32 MNN weights, 0.94 GB) and `litert-fp32`
+(FP32 LiteRT weights dequantized from W8, 0.94 GB). Pass `--no-gpu` to skip both.
 The two ONNX engines
 share each ONNX model. The preparation script checks the source floating ONNX
 hash, pinned GGUF hashes, and writes hashes for every importable file.
