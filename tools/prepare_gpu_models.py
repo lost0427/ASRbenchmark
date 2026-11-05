@@ -80,22 +80,27 @@ def prepare_litert_fp32(baseline, root, manifest):
         raise FileNotFoundError(f"Missing {original}")
     data = original.read_bytes()
     model = schema.ModelT.InitFromObj(schema.Model.GetRootAsModel(data, 0))
-    # InitFromObj materializes every byte as a Python int; collapse to bytes so
-    # Pack() stays linear and memory-bounded for this ~250 MB model.
-    for buffer in model.buffers:
-        if buffer.data is not None and not isinstance(buffer.data, (bytes, bytearray)):
-            buffer.data = bytes(buffer.data)
+    print(f"litert-fp32: parsed {len(model.subgraphs)} subgraphs", flush=True)
     converted = 0
-    for graph in model.subgraphs:
+    cache = {}
+    for graph_index, graph in enumerate(model.subgraphs):
         for tensor in graph.tensors:
             if tensor.type != tensor_types.INT8:
                 continue
-            buffer = model.buffers[tensor.buffer]
-            raw = bytes(buffer.data) if buffer.data is not None else b""
-            if not raw:
+            # Subgraphs share weight buffers; dequantize each unique buffer once.
+            buffer_index = tensor.buffer
+            if buffer_index in cache:
+                tensor.buffer = cache[buffer_index]
+                tensor.type = tensor_types.FLOAT32
+                tensor.quantization = None
+                converted += 1
+                continue
+            buffer = model.buffers[buffer_index]
+            if buffer.data is None or len(buffer.data) == 0:
                 raise RuntimeError("Found a non-constant INT8 tensor; refusing to dequantize")
             q = tensor.quantization
-            weights = np.frombuffer(raw, dtype=np.int8)
+            # Keep numpy arrays: Buffer.Pack's byte path loops element by element.
+            weights = np.asarray(buffer.data, dtype=np.uint8).reshape(-1).view(np.int8)
             scales = np.asarray(q.scale, dtype=np.float32)
             zero_points = q.zeroPoint
             if zero_points is None or len(zero_points) == 0:
@@ -116,14 +121,24 @@ def prepare_litert_fp32(baseline, root, manifest):
             assert scale.size == weights.size, "Quantization pattern does not match tensor size"
             real = (weights.astype(np.float32) - zero) * scale
             new_buffer = buffer_module.BufferT()
-            new_buffer.data = real.astype(np.float32).tobytes()
+            # Buffer.Data is [ubyte]; a float32 array would make flatbuffers write a
+            # 4-byte element vector whose declared length stays in elements, which
+            # TFLite reads as a buffer that is 4x too small.
+            new_buffer.data = real.astype(np.float32).reshape(-1).view(np.uint8)
             model.buffers.append(new_buffer)
+            cache[buffer_index] = len(model.buffers) - 1
             tensor.buffer = len(model.buffers) - 1
             tensor.type = tensor_types.FLOAT32
             tensor.quantization = None
             converted += 1
+        print(f"litert-fp32: subgraph {graph_index} done, {converted} tensors total", flush=True)
+    used = {tensor.buffer for graph in model.subgraphs for tensor in graph.tensors}
+    for index in cache:
+        if index not in used:
+            model.buffers[index].data = None
     model.metadata = []
     import flatbuffers
+    print(f"litert-fp32: packing {converted} dequantized tensors", flush=True)
     builder = flatbuffers.Builder(max(len(data) * 4, 1 << 20))
     builder.Finish(model.Pack(builder), file_identifier=b"TFL3")
     folder = "litert-fp32"
@@ -174,9 +189,9 @@ def prepare_mnn_fp32(root, manifest):
 def prepare_gpu(root, baseline, force=False):
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {"schemaVersion": 2, "engines": {}}
-    if force or not (root / "litert-fp32/model.tflite").exists():
+    if force or "litert-fp32" not in manifest.get("engines", {}) or not (root / "litert-fp32/model.tflite").exists():
         prepare_litert_fp32(baseline, root, manifest)
-    if force or not (root / "mnn-fp32/model.mnn").exists():
+    if force or "mnn-fp32" not in manifest.get("engines", {}) or not (root / "mnn-fp32/model.mnn").exists():
         prepare_mnn_fp32(root, manifest)
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print("GPU-ready bundle:", root.resolve())
@@ -193,3 +208,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
