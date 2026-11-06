@@ -1,8 +1,9 @@
 # LibriSpeech test-clean: corpus WER
 
-This is the first corpus-level accuracy check for SenseVoiceSmall and a
-1,000-utterance check for Qwen3-ASR. The fixed 23.86-second sample used elsewhere
-is useful for latency and smoke testing, but it is too small to rank models.
+This report covers full-corpus SenseVoiceSmall results, a 1,000-utterance
+Qwen3-ASR 1.7B comparison, and a full-corpus Qwen3-ASR 0.6B engine comparison.
+The fixed 23.86-second sample used elsewhere is useful for latency and smoke
+testing, but it is too small to rank models.
 
 ## Dataset and method
 
@@ -55,9 +56,8 @@ which degrades further above 20 seconds.
 
 ## Qwen3-ASR: 1,000-utterance subset
 
-Qwen3 has not yet been run on all 2,620 utterances. To get a fast, directly
-comparable result, a fixed random subset was drawn once with seed 1337 and used
-for every Qwen3 engine and for aggregation of the existing SenseVoice results:
+The Qwen3-ASR 1.7B configurations in this subsection use a fixed random subset
+drawn once with seed 1337 and shared with the SenseVoice results:
 
 - **1,000 utterances**, 19,972 reference words.
 - Same audio, references, normalization, and corpus-WER formula as above.
@@ -87,9 +87,31 @@ as errors. There is no ONNX BF16 export; BF16 is only available through
 transcribe.cpp.
 
 This reverses the impression from the single 23.86-second clip, where both
-models happened to score 5.80%. The 1,000-utterance sample is a better accuracy
-signal, but it is still a subset and only read English. Do not call it a full
-Qwen3 corpus result.
+models happened to score 5.80%. This 1,000-utterance result is still a subset
+and only covers read English.
+
+## Qwen3-ASR 0.6B: full-corpus engine comparison
+
+All three configurations ran on the same 2,620 LibriSpeech test-clean utterances
+and 53,120 reference words. WER uses the normalization and corpus-level formula
+described above. EXL3 runs use the BF16 TensorRT encoder and greedy decoding.
+Model initialization is excluded from full-run time; the run includes two warmup
+utterances. Per-utterance latency includes audio loading and inference.
+
+![Qwen3-ASR 0.6B corpus WER and latency](windows-librispeech-qwen3-0.6b-comparison.png)
+
+[SVG version](windows-librispeech-qwen3-0.6b-comparison.svg)
+
+| Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.982% | 277.9 | 379.2 | 773.8 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.903% | 147.6 | 311.8 | 463.1 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.423%** | **139.0** | **305.2** | **445.7** |
+
+On this run, EXL3 3 bpw was 1.88x faster than GGUF by median latency and had
+0.079 percentage points lower WER. EXL3 4 bpw was 2.00x faster than GGUF and
+had the lowest WER. Compared with 4 bpw, 3 bpw was 6.2% slower and 0.480
+percentage points higher in WER.
 
 ## What changed from the single clip
 
@@ -99,20 +121,22 @@ it contains unusual spellings and a small number of words. The corpus result is
 the number to use for accuracy comparisons.
 
 The earlier single-clip Qwen3 numbers (5.80%) should not be compared directly
-to the full SenseVoice table. The 1,000-utterance Qwen3 subset above is the
-current apples-to-apples accuracy check. The next step is to run Qwen3 on all
-2,620 utterances if a full-corpus number is required.
+to the full SenseVoice table. The 1,000-utterance Qwen3 1.7B subset and the
+2,620-utterance Qwen3 0.6B comparison above are the corpus-level results
+currently available for their respective configurations.
 
 ## Coverage and limitations
 
 - Included: full-corpus SenseVoice with LiteRT Q8, MNN Q8, ONNX Runtime int8,
   sherpa-onnx int8, ncnn INT8, and transcribe.cpp Q8.
-- Qwen3 is included on the common 1,000-utterance subset only: transcribe.cpp
-  Q8/F16/BF16, ONNX Runtime int4/FP16, Qwen3-ASR-GGUF q4_k, and sherpa-onnx
-  int8. There is no ONNX BF16 export.
-- The custom `benchmark_gguf_smoke.exe` and TensorRT runners are single-file or
-  fixed-shape tools. They are not included in this full-corpus table; the
-  transcribe.cpp result covers the same GGUF Q8 weights with a persistent model.
+- The Qwen3 1.7B configurations above use a common 1,000-utterance subset:
+  transcribe.cpp Q8/F16/BF16, ONNX Runtime int4/FP16, Qwen3-ASR-GGUF q4_k, and
+  sherpa-onnx int8. The separate 0.6B comparison uses all 2,620 utterances.
+  There is no ONNX BF16 export.
+- The 1.7B subset table does not include the custom `benchmark_gguf_smoke.exe`
+  or TensorRT runner. The 0.6B full-corpus comparison above includes GGUF and
+  TensorRT + ExLlamaV3. The transcribe.cpp result covers the same GGUF Q8
+  weights with a persistent model.
 - This is read English speech. It does not measure noisy audio, multilingual
   audio, long-form segmentation, or ITN.
 - Raw per-utterance JSONL and summaries are in
