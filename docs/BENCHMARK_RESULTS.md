@@ -365,7 +365,50 @@
 
 ## 10. GPU 后端测试矩阵（0.5.0）
 
-0.5.0 起 APK 同时包含 CPU 与 GPU 配置。GPU 结果尚未实测，本节定义待测矩阵与报告口径。
+0.5.0 起 APK 同时包含 CPU 与 GPU 配置。实测报告为
+`models/sensevoice-results-10-GPU.json`（OnePlus PLK110／SM8850，Android 16，
+**8 线程**，3 预热／10 次，2026-11-06）。
+
+### 10.1 实测结果
+
+![Latency by config](android-gpu-latency.png)
+
+![Accelerator vs CPU](android-gpu-vs-cpu.png)
+
+![Accuracy vs latency](android-gpu-pareto.png)
+
+| 组合 | 均值 ms | 中位数 ms | WER | 说明 |
+| --- | ---: | ---: | ---: | --- |
+| sherpa | 497.2 | 502.3 | 5.80% | 本次最快，且识别正常 |
+| ort | 581.3 | 572.1 | 5.80% | CPU Q8 |
+| ncnn | 752.1 | 738.0 | 14.49% | CPU 结果比 4 线程时明显变快 |
+| litert | 1043.3 | 1023.6 | 5.80% | CPU/XNNPACK |
+| mnn | 1218.2 | 1197.1 | 5.80% | CPU Q8 |
+| ort-nnapi-q8 | 1131.0 | 1065.7 | 5.80% | NNAPI events=0，实际 CPU 回退 |
+| sherpa-nnapi | 1313.0 | 1320.8 | 5.80% | NNAPI，比 CPU 慢 2.6 倍 |
+| ncnn-vk-int8 | 1373.0 | 1291.1 | 13.04% | 唯一能输出可读文本的 GPU 路径；比同引擎 CPU 慢 1.83 倍 |
+| mnn-cl-q8 | 854.6 | 853.2 | 100% | 空输出 |
+| mnn-cl-fp16 / fp32 | 927.3 / 915.0 | 925.7 / 914.5 | 100% | 空输出 |
+| mnn-vk-fp16 | 1619.9 | 1652.9 | 100% | 空输出 |
+| ncnn-vk-fp16 | 7334.8 | 7321.4 | 100% | 输出 “chair chair …”，加载耗时 72 s（shader 编译） |
+| litert-gpu-fp16 / fp32 / q8 | — | — | — | `GPU delegate is not supported on this device` |
+| mnn-cpu-fp32 / litert-cpu-fp32 | 2635.7 / 1511.6 | 2542.5 / 1428.6 | 5.80% | 同模型 CPU 对照，工作正常 |
+
+### 10.2 结论
+
+- **综合最快且可用：sherpa-onnx Q8 CPU，497 ms／WER 5.80%**，也是全部 42 个配置里最快的。
+- **GPU 路线本次全部不划算**：MNN 的 OpenCL／Vulkan 四条均为空输出；ncnn Vulkan FP16 输出错误
+  文本且慢 3.5 倍；LiteRT GPU delegate 被设备兼容性检查直接拒绝。
+- **NNAPI 没有真正启用**：ORT 的 profiling 里 NNAPI 事件为 0，耗时反而比 CPU Q8 高 1.9～2.5 倍。
+  Android 15 起 NNAPI 已废弃，该结果符合预期。
+- ncnn INT8 的 Vulkan 路径能跑出正确文本，但比同引擎 CPU 慢 1.83 倍，且 WER 13.04%，不建议使用。
+- 本次为 8 线程，与第 2～9 节的 4 线程结果不可直接横向比较；ncnn CPU 从 1,714 ms 降到 752 ms
+  主要来自线程数与 aggressive 构建。
+
+待排查：MNN GPU 空输出（倾向 GPU 后端读取输出或模型形状问题）；LiteRT 兼容性检查返回 false
+但 Adreno 840 实际可能可用，需要改为“强制创建 delegate 并记录结果”再验证。
+
+### 10.3 待测矩阵
 
 | 组合 ID | 模型目录 | 权重存储 | 计算精度 | 说明 |
 | --- | --- | --- | --- | --- |
