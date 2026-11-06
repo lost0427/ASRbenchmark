@@ -98,9 +98,9 @@ described above. EXL3 runs use the BF16 TensorRT encoder and greedy decoding.
 Model initialization is excluded from full-run time; the run includes two warmup
 utterances. Per-utterance latency includes audio loading and inference.
 
-![Qwen3-ASR 0.6B corpus WER and latency](windows-librispeech-qwen3-0.6b-comparison.png)
+![Qwen3-ASR 0.6B speed and accuracy](windows-librispeech-qwen3-0.6b-speed-accuracy.png)
 
-[SVG version](windows-librispeech-qwen3-0.6b-comparison.svg)
+[SVG version](windows-librispeech-qwen3-0.6b-speed-accuracy.svg); [separate metric panels](windows-librispeech-qwen3-0.6b-comparison.png)
 
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
