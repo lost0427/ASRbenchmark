@@ -45,13 +45,15 @@ python -m venv .native/model-env
 
 The result is `models/low-precision-models`, approximately 5.03 GB for 24 model
 folders and 27 selectable engine/precision combinations. With the default GPU
-step it also contains `mnn-fp32` (FP32 MNN weights, 0.94 GB) and `litert-fp32`
-(FP32 LiteRT weights dequantized from W8, 0.94 GB). Pass `--no-gpu` to skip both.
+step it also contains `mnn-fp32` (FP32 MNN weights, 0.94 GB), `litert-fp32`
+(FP32 LiteRT weights dequantized from W8, 0.94 GB) and `mnn-fp32-static`
+(static-shape MNN, 0.94 GB). Pass `--no-gpu` to skip them.
 The two ONNX engines
 share each ONNX model. The preparation script checks the source floating ONNX
 hash, pinned GGUF hashes, and writes hashes for every importable file.
 On Windows it downloads a pinned FlatBuffers compiler to generate LiteRT's
-schema; other platforms need `flatc` on PATH.
+schema; other platforms need `flatc` on PATH. The static-shape step needs
+`onnxsim` (already in `tools/model-requirements.txt`).
 
 Copy the whole folder, including `manifest.json`, to the phone. Install either
 APK and select **Import model folder**, then **Select imported** or choose a

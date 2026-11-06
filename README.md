@@ -46,7 +46,7 @@ separately and never bundled into Git or the APK. The benchmark runs offline.
 3. Copy the generated `models/cpu-models` folder to the phone, including
    `manifest.json` and its subdirectories. Tap **Import model folder** and choose
    that folder. Import checks sizes and SHA-256 before activating the new models.
-   The full low-precision bundle with GPU models is about 7 GB; importing it needs
+   The full low-precision bundle with GPU models is about 9 GB; importing it needs
    roughly twice that in free space because the new set is staged before activation.
 4. Choose engines, threads, warmup and repeats, then tap **Run benchmark**.
    **Run all imported** selects and runs every model that is installed in one tap.
@@ -87,23 +87,29 @@ row on the same model so the report can separate backend gain from model change.
 | Entry | Model | Backend | Compute precision |
 | --- | --- | --- | --- |
 | `ncnn-vk-fp16` | Official FP16-storage ncnn export | Vulkan | FP16 |
+| `ncnn-vk-fp32c` | Official FP16-storage ncnn export | Vulkan | FP16 storage / FP32 compute |
 | `ncnn-vk-int8` | Official INT8 ncnn export | Vulkan | INT8 layers fall back to CPU |
 | `mnn-cl-fp16` / `mnn-cl-fp32` | `mnn-fp32` | OpenCL | FP16 / FP32 |
+| `mnn-cl-static` / `mnn-cpu-static` | `mnn-fp32-static` | OpenCL / CPU | FP16, static shapes / FP32 control |
 | `mnn-vk-fp16` | `mnn-fp32` | Vulkan | FP16 |
 | `mnn-cl-q8` | PocketASR Q8 | OpenCL | Q8 weights, partial fallback |
 | `ort-nnapi` / `ort-nnapi-fp16` | `onnx-fp32` | NNAPI | default / `USE_FP16` |
 | `ort-nnapi-q8` | Dynamic INT8 ONNX | NNAPI | dynamic INT8 |
 | `sherpa-nnapi` | `onnx-fp32` | NNAPI | default |
-| `litert-gpu-fp16` / `litert-gpu-fp32` | `litert-fp32` | GPU delegate | FP16 / FP32 |
-| `litert-gpu-q8` | `dynamic_wi8_afp32` | GPU delegate | partial fallback |
+| `litert-gpu-fp16` / `litert-gpu-fp32` | `litert-fp32` | CompiledModel GPU | FP16 / FP32 |
+| `litert-gpu-q8` | `dynamic_wi8_afp32` | CompiledModel GPU | partial fallback |
 
-`litert-fp32` is a lossless dequantization of the W8 model weights, not the
+`mnn-fp32-static` bakes the fixed-clip frame count and folds the dynamic
+Shape/Gather/Reshape chain, so the MNN GPU backend sees a fully static graph.
+LiteRT GPU now uses the 2.3.2 `CompiledModel` + `Accelerator.GPU` path with a
+program cache; the legacy `GpuDelegate` and its `CompatibilityList` check are
+gone. `litert-fp32` is a lossless dequantization of the W8 model weights, not the
 original floating checkpoint; its provenance records that limitation. NNAPI was
 deprecated in Android 15, so a report row can legitimately show no acceleration.
 ncnn disables Vulkan for INT8 layers, so `ncnn-vk-int8` is a coverage probe, not
-an INT8-GPU result. MNN's OpenCL backend can silently fall back to CPU when the
-vendor OpenCL library cannot be loaded; treat `mnn-vk-fp16` as the primary MNN GPU
-row and compare both against the CPU control.
+an INT8-GPU result. ncnn has no Vulkan `MatMul` or `ConvolutionDepthWise1D`, so
+the ncnn rows still carry per-layer CPU fallbacks. MNN's OpenCL backend can
+silently fall back to CPU when the vendor OpenCL library cannot be loaded.
 
 Every GPU row records `accelerator`, `computePrecision` and `backendInfo`
 (ncnn Vulkan device name, MNN provider, ORT NNAPI profiling marker, or LiteRT

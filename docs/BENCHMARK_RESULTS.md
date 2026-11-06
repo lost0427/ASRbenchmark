@@ -369,6 +369,9 @@
 `models/sensevoice-results-10-GPU.json`（OnePlus PLK110／SM8850，Android 16，
 **8 线程**，3 预热／10 次，2026-11-06）。
 
+> 下面的 10.1 是旧 APK（LiteRT 1.4.2 legacy delegate、MNN 动态形状）的结果。
+> 新增的 `mnn-fp32-static`、`ncnn-vk-fp32c` 和 LiteRT 2.3.2 `CompiledModel` 需要重跑一次。
+
 ### 10.1 实测结果
 
 ![Latency by config](android-gpu-latency.png)
@@ -413,17 +416,19 @@
 | 组合 ID | 模型目录 | 权重存储 | 计算精度 | 说明 |
 | --- | --- | --- | --- | --- |
 | ncnn-vk-fp16 | ncnn-fp16 | FP16 | FP16 | ncnn Vulkan 主测 |
+| ncnn-vk-fp32c | ncnn-fp16 | FP16 | FP32 计算 | 排查 FP16 溢出 |
 | ncnn-vk-int8 | ncnn | INT8 mixed | INT8 层回退 CPU | 仅作覆盖度证据 |
 | mnn-cl-fp16 / mnn-cl-fp32 | mnn-fp32 | FP32 | FP16 / FP32 | MNN OpenCL 主测 |
 | mnn-cpu-fp32 | mnn-fp32 | FP32 | FP32 | 同模型 CPU 对照 |
+| mnn-cl-static / mnn-cpu-static | mnn-fp32-static | FP32 | FP16 / FP32 | 静态形状，GPU 主测 |
 | mnn-vk-fp16 | mnn-fp32 | FP32 | FP16 | OpenCL 不可用时的备选 |
 | mnn-cl-q8 | mnn | Q8 | 部分回退 | 量化模型 GPU 覆盖度 |
 | ort-nnapi / ort-nnapi-fp16 | onnx-fp32 | FP32 | 默认 / USE_FP16 | ORT NNAPI |
 | ort-nnapi-q8 | onnx | INT8 dynamic | — | 量化支持度 |
 | sherpa-nnapi | onnx-fp32 | FP32 | 默认 | 与 ORT 交叉验证 |
-| litert-gpu-fp16 / litert-gpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP16 / FP32 | LiteRT GPU delegate 主测 |
+| litert-gpu-fp16 / litert-gpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP16 / FP32 | LiteRT CompiledModel GPU 主测 |
 | litert-cpu-fp32 | litert-fp32 | FP32（由 W8 反量化） | FP32 | 同模型 CPU 对照 |
-| litert-gpu-q8 | litert | W8 dynamic | — | 回退证据 |
+| litert-gpu-q8 | litert | W8 dynamic | — | CompiledModel GPU 回退证据 |
 
 每个 GPU 行都保留同模型 CPU 对照；`ncnn`、`mnn`、`litert` 的既有 CPU 结果可直接作为对照。
 
