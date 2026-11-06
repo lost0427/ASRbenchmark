@@ -98,10 +98,11 @@ k2-fsa 已发布三种同日期 SenseVoice ncnn 包：
 | 路线 | 实现方式 | 精度配置 | 验收要求 |
 | --- | --- | --- | --- |
 | ncnn Vulkan | `NCNN_VULKAN=ON`；补丁给 sherpa-ncnn 增加 `use_vulkan_compute`/`fp16` 开关 | FP16 权重 + FP16 计算；INT8 模型（预期 INT8 层回退 CPU） | 报告 `backendInfo` 含 Vulkan 设备名 |
-| MNN OpenCL／Vulkan | `MNN_OPENCL=ON`、`MNN_VULKAN=ON`；补丁让 sherpa-mnn 解析 provider | `opencl`/`opencl-fp32`/`vulkan`，`Precision_Low`=FP16，`Precision_Normal`=FP32 | 报告记录实际 provider |
+| MNN OpenCL／Vulkan | `MNN_OPENCL=ON`、`MNN_VULKAN=ON`；补丁让 sherpa-mnn 解析 provider；`mnn-fp32-static` 折叠动态 shape | `opencl`/`opencl-fp32`/`vulkan`，`Precision_Low`=FP16，`Precision_Normal`=FP32 | 报告记录实际 provider |
 | ORT／sherpa-onnx NNAPI | `ANDROID_PLATFORM=android-27`；ORT Java `addNnapi`，sherpa `provider="nnapi"` | 默认 flags、`USE_FP16`、动态 INT8 | ORT profiling 中出现 NNAPI 标记；为 0 时如实记录不可用 |
-| LiteRT GPU delegate | `litert` + `litert-gpu` 2.3.2；`CompatibilityList` + `GpuDelegate` | FP16（`precision_loss_allowed`）、FP32 | `backendInfo` 记录 delegate 支持与计算精度 |
+| LiteRT GPU | `litert` + `litert-gpu` 2.3.2；`CompiledModel` + `Accelerator.GPU`，带 program cache | `GpuOptions.Precision` 选 FP16／FP32 | `backendInfo` 记录 CompiledModel 与计算精度 |
 
-模型：ncnn 复用官方 FP16／INT8 导出；MNN 使用新增 `mnn-fp32`；LiteRT 使用新增
-`litert-fp32`（由 W8 权重无损反量化，provenance 已注明不是原始浮点 checkpoint）。
+模型：ncnn 复用官方 FP16／INT8 导出；MNN 使用新增 `mnn-fp32` 与静态形状
+`mnn-fp32-static`；LiteRT 使用新增 `litert-fp32`（由 W8 权重无损反量化，
+provenance 已注明不是原始浮点 checkpoint）。
 NNAPI 自 Android 15 起废弃，设备无驱动时不产生加速，属于有效结果。
