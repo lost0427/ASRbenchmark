@@ -76,12 +76,15 @@ def main():
     for _ in range(args.warmups):
         run()
     samples, decode_tokens, prefill_tokens = [], [], []
+    stage_samples = {name: [] for name in ("encode_time", "prefill_time", "decode_time")}
     result = None
     for _ in range(args.repeats):
         elapsed, result = run()
         samples.append(elapsed)
         decode_tokens.append(result.performance["decode_tokens"])
         prefill_tokens.append(result.performance["prefill_tokens"])
+        for name in stage_samples:
+            stage_samples[name].append(result.performance[name] * 1000)
     text = result.text.strip()
     report = {
         "engine": "qwen3-asr-gguf",
@@ -95,6 +98,21 @@ def main():
         "rtf": float(np.median(samples)) / (seconds * 1000),
         "prefillTokens": int(np.median(prefill_tokens)),
         "decodeTokens": int(np.median(decode_tokens)),
+        "encoderMs": float(np.median(stage_samples["encode_time"])),
+        "llmPrefillMs": float(np.median(stage_samples["prefill_time"])),
+        "llmDecodeMs": float(np.median(stage_samples["decode_time"])),
+        "decoderMs": float(np.median([
+            prefill + decode for prefill, decode in zip(
+                stage_samples["prefill_time"], stage_samples["decode_time"]
+            )
+        ])),
+        "otherMs": float(np.median([
+            total - encoder - prefill - decode
+            for total, encoder, prefill, decode in zip(
+                samples, stage_samples["encode_time"], stage_samples["prefill_time"],
+                stage_samples["decode_time"]
+            )
+        ])),
         "text": text,
     }
     if reference is not None:
