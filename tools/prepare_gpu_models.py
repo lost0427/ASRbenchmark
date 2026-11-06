@@ -193,6 +193,9 @@ def prepare_gpu(root, baseline, force=False):
         prepare_litert_fp32(baseline, root, manifest)
     if force or "mnn-fp32" not in manifest.get("engines", {}) or not (root / "mnn-fp32/model.mnn").exists():
         prepare_mnn_fp32(root, manifest)
+    if force or "mnn-fp32-static" not in manifest.get("engines", {}) or not (root / "mnn-fp32-static/model.mnn").exists():
+        subprocess.run([sys.executable, str(Path(__file__).with_name("prepare_gpu_static.py")),
+                        "--root", str(root)], check=True)
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print("GPU-ready bundle:", root.resolve())
 

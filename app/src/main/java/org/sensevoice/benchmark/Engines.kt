@@ -4,11 +4,10 @@ import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import ai.onnxruntime.providers.NNAPIFlags
+import com.google.ai.edge.litert.Accelerator
+import com.google.ai.edge.litert.CompiledModel
 import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.gpu.GpuDelegate
-import org.tensorflow.lite.gpu.GpuDelegateFactory
 import java.io.Closeable
 import java.io.File
 import java.nio.FloatBuffer
@@ -77,7 +76,7 @@ val cpuEngineSpecs = listOf(
     EngineSpec("ort", "ONNX Runtime", "onnx", "Dynamic INT8 (MatMul weights UINT8)", "ONNX Runtime 1.30.0 CPU EP"),
     EngineSpec("mnn", "MNN", "mnn", "Q8 weights / floating activations", "MNN 3.6.1 / sherpa-mnn CPU"),
     EngineSpec("ncnn", "ncnn", "ncnn", "INT8 mixed model", "ncnn c4193aa / sherpa-ncnn c61e50d CPU"),
-    EngineSpec("litert", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 1.4.2 / CPU, XNNPACK requested"),
+    EngineSpec("litert", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 2.3.2 / CPU, XNNPACK requested"),
 ) + listOf(4, 2).flatMap { bits ->
     listOf("sherpa" to "sherpa-onnx", "ort" to "ONNX Runtime").map { (id, title) ->
         EngineSpec("$id-q$bits", title, "onnx-q$bits", "W$bits / floating activations, MatMulNBits",
@@ -87,8 +86,8 @@ val cpuEngineSpecs = listOf(
     EngineSpec("mnn-q$bits", "MNN", "mnn-q$bits", "Q$bits weights / floating activations", "MNN 3.6.1 / sherpa-mnn CPU")
 } + listOf(
     EngineSpec("ncnn-fp16", "ncnn", "ncnn-fp16", "FP16 weight storage / CPU", "ncnn c4193aa / sherpa-ncnn c61e50d CPU"),
-    EngineSpec("litert-q4", "LiteRT", "litert-q4", "W4 / FP32 activations, requantized from W8", "LiteRT 1.4.2 / CPU, XNNPACK requested", "model.tflite"),
-    EngineSpec("litert-q2", "LiteRT", "litert-q2", "W2 / FP32 activations, requantized from W8", "LiteRT 1.4.2 / CPU, XNNPACK requested", "model.tflite"),
+    EngineSpec("litert-q4", "LiteRT", "litert-q4", "W4 / FP32 activations, requantized from W8", "LiteRT 2.3.2 / CPU, XNNPACK requested", "model.tflite"),
+    EngineSpec("litert-q2", "LiteRT", "litert-q2", "W2 / FP32 activations, requantized from W8", "LiteRT 2.3.2 / CPU, XNNPACK requested", "model.tflite"),
 ) + listOf("q8_0", "q6_k", "q5_0", "q5_k", "q4_0", "q4_1", "q4_k", "q3_k", "fp16").map { variant ->
     EngineSpec("gguf-$variant", "SenseVoice.cpp", "gguf-$variant", "${variant.uppercase()} mixed weights / floating activations",
         "SenseVoice.cpp 1.4.0 / GGML CPU", "model.gguf")
@@ -99,6 +98,8 @@ val gpuEngineSpecs = listOf(
         backend = "vulkan", fp16 = true, accelerator = "GPU Vulkan", compute = "FP16"),
     EngineSpec("ncnn-vk-int8", "ncnn", "ncnn", "INT8 mixed model", "ncnn c4193aa / Vulkan",
         backend = "vulkan", fp16 = false, accelerator = "GPU Vulkan", compute = "INT8 layers fall back to CPU"),
+    EngineSpec("ncnn-vk-fp32c", "ncnn", "ncnn-fp16", "FP16 weight storage", "ncnn c4193aa / Vulkan",
+        backend = "vulkan", fp16 = false, accelerator = "GPU Vulkan", compute = "FP16 storage / FP32 compute"),
     EngineSpec("mnn-cl-fp16", "MNN", "mnn-fp32", "FP32 weights", "MNN 3.6.1 / OpenCL",
         backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "FP16"),
     EngineSpec("mnn-cl-fp32", "MNN", "mnn-fp32", "FP32 weights", "MNN 3.6.1 / OpenCL",
@@ -109,6 +110,10 @@ val gpuEngineSpecs = listOf(
         backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "Q8 weights, partial fallback"),
     EngineSpec("mnn-cpu-fp32", "MNN", "mnn-fp32", "FP32 weights", "MNN 3.6.1 / CPU",
         backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
+    EngineSpec("mnn-cl-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / OpenCL",
+        backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "FP16, static"),
+    EngineSpec("mnn-cpu-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / CPU",
+        backend = "cpu", accelerator = "CPU", compute = "FP32 static control"),
     EngineSpec("ort-nnapi", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
         "model.onnx", backend = "nnapi", accelerator = "NNAPI", compute = "default flags"),
     EngineSpec("ort-nnapi-fp16", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
@@ -117,13 +122,13 @@ val gpuEngineSpecs = listOf(
         backend = "nnapi", accelerator = "NNAPI", compute = "dynamic INT8"),
     EngineSpec("sherpa-nnapi", "sherpa-onnx", "onnx-fp32", "FP32 (official unquantized ONNX)", "sherpa-onnx 1.13.8 / NNAPI",
         "model.onnx", backend = "nnapi", accelerator = "NNAPI", compute = "default flags"),
-    EngineSpec("litert-gpu-fp16", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 1.4.2 / GPU delegate",
+    EngineSpec("litert-gpu-fp16", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 2.3.2 / CompiledModel GPU",
         "model.tflite", backend = "gpu", fp16 = true, accelerator = "GPU delegate", compute = "FP16"),
-    EngineSpec("litert-gpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 1.4.2 / GPU delegate",
+    EngineSpec("litert-gpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 2.3.2 / CompiledModel GPU",
         "model.tflite", backend = "gpu", fp16 = false, accelerator = "GPU delegate", compute = "FP32"),
-    EngineSpec("litert-gpu-q8", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 1.4.2 / GPU delegate",
+    EngineSpec("litert-gpu-q8", "LiteRT", "litert", "Dynamic W8 / FP32 activations", "LiteRT 2.3.2 / CompiledModel GPU",
         backend = "gpu", fp16 = true, accelerator = "GPU delegate", compute = "dynamic INT8, partial fallback"),
-    EngineSpec("litert-cpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 1.4.2 / CPU, XNNPACK requested",
+    EngineSpec("litert-cpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 2.3.2 / CPU, XNNPACK requested",
         "model.tflite", backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
 )
 
@@ -145,10 +150,6 @@ fun liteRtBucket(frameCount: Int): Int =
     listOf(63, 125, 250, 500).firstOrNull { it >= frameCount }
         ?: error("Audio exceeds LiteRT bucket limit")
 
-val liteRtGpuSupported: Boolean by lazy {
-    runCatching { CompatibilityList().isDelegateSupportedOnThisDevice() }.getOrDefault(false)
-}
-
 fun createEngine(spec: EngineSpec, root: File, threads: Int): Engine {
     val folder = File(root, spec.folder)
     val tokens = File(folder, "tokens.txt").absolutePath
@@ -157,7 +158,9 @@ fun createEngine(spec: EngineSpec, root: File, threads: Int): Engine {
         "mnn" -> NativeEngine(MnnNative.create(File(folder, "model.mnn").absolutePath, tokens, threads, spec.backend), MnnNative::recognize, MnnNative::destroy, "MNN provider: ${spec.backend}")
         "ncnn" -> NativeEngine(NcnnNative.create(folder.absolutePath, tokens, threads, spec.backend != "cpu", spec.fp16), NcnnNative::recognize, NcnnNative::destroy, if (spec.backend == "cpu") "ncnn CPU" else NcnnNative.deviceInfo())
         "ort" -> OrtEngine(folder, threads, spec.modelFile.ifEmpty { "model.int8.onnx" }, spec.backend == "nnapi", spec.nnapiFp16)
-        "litert" -> LiteRtEngine(folder, threads, spec.modelFile.ifEmpty { "sensevoice_small_q8.tflite" }, spec.backend == "gpu", spec.fp16)
+        "litert" -> if (spec.backend == "gpu")
+            LiteRtCompiledEngine(folder, spec.modelFile.ifEmpty { "sensevoice_small_q8.tflite" }, spec.fp16)
+        else LiteRtEngine(folder, threads, spec.modelFile.ifEmpty { "sensevoice_small_q8.tflite" })
         "gguf" -> NativeEngine(GgufNative.create(File(folder, spec.modelFile).absolutePath, threads), GgufNative::recognize, GgufNative::destroy, "GGML CPU")
         else -> error("Unknown engine: ${spec.id}")
     }
@@ -268,25 +271,17 @@ private class LiteRtEngine(
     folder: File,
     threads: Int,
     modelFile: String,
-    gpu: Boolean,
-    private val fp16: Boolean,
 ) : Engine {
-    private val delegate: GpuDelegate? = if (!gpu) null else {
-        check(liteRtGpuSupported) { "GPU delegate is not supported on this device" }
-        GpuDelegate(GpuDelegateFactory.Options().apply { setPrecisionLossAllowed(fp16) })
-    }
     private val interpreter = Interpreter(File(folder, modelFile), Interpreter.Options().apply {
-        setNumThreads(if (gpu) 1 else threads)
+        setNumThreads(threads)
         setUseXNNPACK(true)
-        delegate?.let { addDelegate(it) }
     })
     private val cmvn = JSONObject(File(folder, "cmvn.json").readText())
     private val shift = cmvn.getJSONArray("shift").let { values -> FloatArray(values.length()) { values.getDouble(it).toFloat() } }
     private val scale = cmvn.getJSONArray("scale").let { values -> FloatArray(values.length()) { values.getDouble(it).toFloat() } }
     private val tokens = readTokens(File(folder, "tokens.txt"))
 
-    override val backendInfo: String?
-        get() = if (delegate == null) "CPU/XNNPACK" else "GPU delegate, compute=${if (fp16) "FP16" else "FP32"}, supported=$liteRtGpuSupported"
+    override val backendInfo: String? get() = "CPU/XNNPACK"
 
     override fun recognize(samples: FloatArray): String {
         val frames = features(samples, shift, scale)
@@ -300,8 +295,62 @@ private class LiteRtEngine(
         interpreter.runSignature(inputs, mapOf(names[0] to output), signature)
         return decode(output[0], frames.size + 4, tokens)
     }
-    override fun close() {
-        interpreter.close()
-        delegate?.close()
+
+    override fun close() = interpreter.close()
+}
+
+/** LiteRT 2.x GPU path: CompiledModel + Accelerator.GPU, no legacy delegate. */
+private class LiteRtCompiledEngine(
+    folder: File,
+    modelFile: String,
+    private val fp16: Boolean,
+) : Engine {
+    private val cacheDir = File(folder, ".gpu_cache").apply { mkdirs() }
+    private val model = CompiledModel.create(
+        File(folder, modelFile).absolutePath,
+        CompiledModel.Options(Accelerator.GPU).apply {
+            gpuOptions = CompiledModel.GpuOptions(
+                precision = if (fp16) CompiledModel.GpuOptions.Precision.FP16
+                else CompiledModel.GpuOptions.Precision.FP32,
+                serializationDir = cacheDir.absolutePath,
+                modelCacheKey = "sensevoice-${if (fp16) "fp16" else "fp32"}",
+                serializeProgramCache = true,
+            )
+        },
+    )
+    private val cmvn = JSONObject(File(folder, "cmvn.json").readText())
+    private val shift = cmvn.getJSONArray("shift").let { values -> FloatArray(values.length()) { values.getDouble(it).toFloat() } }
+    private val scale = cmvn.getJSONArray("scale").let { values -> FloatArray(values.length()) { values.getDouble(it).toFloat() } }
+    private val tokens = readTokens(File(folder, "tokens.txt"))
+
+    override val backendInfo: String?
+        get() = "GPU delegate (CompiledModel), precision=${if (fp16) "FP16" else "FP32"}"
+
+    override fun recognize(samples: FloatArray): String {
+        val frames = features(samples, shift, scale)
+        val bucket = liteRtBucket(frames.size)
+        val signature = "sv_$bucket"
+        val packed = FloatArray(bucket * 560)
+        frames.forEachIndexed { index, row -> row.copyInto(packed, index * 560) }
+        val inputs = model.createInputBuffers(signature)
+        val outputs = model.createOutputBuffers(signature)
+        try {
+            require(inputs.size == 4 && outputs.size == 1) { "Unexpected LiteRT signature contract" }
+            inputs[0].writeFloat(packed)
+            inputs[1].writeInt(intArrayOf(frames.size))
+            inputs[2].writeInt(intArrayOf(4))
+            inputs[3].writeInt(intArrayOf(15))
+            model.run(inputs, outputs, signature)
+            val flat = outputs[0].readFloat()
+            val rows = Array(bucket + 4) { row ->
+                FloatArray(25055) { column -> flat[row * 25055 + column] }
+            }
+            return decode(rows, frames.size + 4, tokens)
+        } finally {
+            inputs.forEach { it.close() }
+            outputs.forEach { it.close() }
+        }
     }
+
+    override fun close() = model.close()
 }

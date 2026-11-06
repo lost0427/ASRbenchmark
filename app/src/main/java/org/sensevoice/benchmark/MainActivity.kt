@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                             OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in state.installed }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
                             OutlinedButton(onClick = { selected = emptyList() }, enabled = !state.busy) { Text("Clear") }
                         }
-                        Text("LiteRT GPU delegate: ${if (liteRtGpuSupported) "available" else "unavailable"} · NNAPI and Vulkan/OpenCL are probed per run.",
+                        Text("LiteRT GPU uses CompiledModel; NNAPI and Vulkan/OpenCL are probed per run.",
                             style = MaterialTheme.typography.bodySmall)
                         engineSpecs.groupBy { it.engineId }.forEach { (_, variants) ->
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

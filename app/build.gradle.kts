@@ -56,8 +56,8 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.30.0")
-    implementation("com.google.ai.edge.litert:litert:1.4.2")
-    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
+    implementation("com.google.ai.edge.litert:litert:2.3.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:2.3.2")
 }
 
 val checkCpuRuntimes by tasks.registering {
