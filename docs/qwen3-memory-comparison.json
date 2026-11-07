@@ -1,0 +1,162 @@
+{
+  "0.6b": [
+    {
+      "configuration": "GGUF INT4 + Q4_K",
+      "corpusWER": 0.029819277108433736,
+      "medianMs": 299.15170000094804,
+      "p90Ms": 403.7951099999191,
+      "medianStagesMs": {
+        "encoderMs": 156.57460689544678,
+        "prefillMs": 41.877031326293945,
+        "decodeMs": 88.66941928863525
+      },
+      "idleBaselineMedianMiB": 1911,
+      "peakUsedMiB": 3153,
+      "peakDeltaOverIdleMiB": 1242,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "BF16 + EXL3 3 bpw",
+      "corpusWER": 0.029028614457831326,
+      "medianMs": 106.69380000035744,
+      "p90Ms": 235.4621600046812,
+      "medianStagesMs": {
+        "decoderGenerationMs": 79.43367958068848,
+        "decodeTokens": 21.0,
+        "preprocessingMs": 4.3517000012798235,
+        "totalMs": 106.64974999963306,
+        "promptTokens": 93.0,
+        "otherMs": 0.1979000007850118,
+        "decoderPrefillMs": 16.327381134033203,
+        "encoderMs": 5.9685999985958915,
+        "decoderMs": 96.15649999614106
+      },
+      "idleBaselineMedianMiB": 1909,
+      "peakUsedMiB": 3816,
+      "peakDeltaOverIdleMiB": 1907,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "BF16 + EXL3 4 bpw",
+      "corpusWER": 0.02422816265060241,
+      "medianMs": 109.99350000201957,
+      "p90Ms": 238.6806900023657,
+      "medianStagesMs": {
+        "preprocessingMs": 4.567500003759051,
+        "encoderMs": 5.996850002702558,
+        "otherMs": 0.22235000142245553,
+        "totalMs": 109.94149999896763,
+        "promptTokens": 93.0,
+        "decodeTokens": 21.0,
+        "decoderPrefillMs": 16.399383544921875,
+        "decoderMs": 99.139699999796,
+        "decoderGenerationMs": 82.33773708343506
+      },
+      "idleBaselineMedianMiB": 1908,
+      "peakUsedMiB": 3815,
+      "peakDeltaOverIdleMiB": 1907,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "INT8 + EXL3 4 bpw",
+      "corpusWER": 0.18177710843373493,
+      "medianMs": 111.80214999694726,
+      "p90Ms": 248.16197999971334,
+      "medianStagesMs": {
+        "decoderGenerationMs": 82.10623264312744,
+        "promptTokens": 93.0,
+        "decoderMs": 98.97730000375304,
+        "preprocessingMs": 4.618250000930857,
+        "decoderPrefillMs": 16.660094261169434,
+        "totalMs": 111.75960000036866,
+        "encoderMs": 7.988749999640277,
+        "decodeTokens": 21.0,
+        "otherMs": 0.25385000481037423
+      },
+      "idleBaselineMedianMiB": 1908,
+      "peakUsedMiB": 3597,
+      "peakDeltaOverIdleMiB": 1689,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    }
+  ],
+  "1.7b": [
+    {
+      "configuration": "GGUF INT4 + Q4_K",
+      "corpusWER": 0.020896084337349397,
+      "medianMs": 470.7218000003195,
+      "p90Ms": 676.430889997573,
+      "medianStagesMs": {
+        "encoderMs": 202.7881145477295,
+        "decodeMs": 171.0585355758667,
+        "prefillMs": 83.41515064239502
+      },
+      "idleBaselineMedianMiB": 1901,
+      "peakUsedMiB": 4003,
+      "peakDeltaOverIdleMiB": 2102,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "BF16 + EXL3 3 bpw",
+      "corpusWER": 0.02023719879518072,
+      "medianMs": 194.99595000161207,
+      "p90Ms": 430.45338000374613,
+      "medianStagesMs": {
+        "decoderMs": 181.35864999931073,
+        "encoderMs": 9.210100004565902,
+        "preprocessingMs": 4.2460499971639365,
+        "decoderPrefillMs": 26.142120361328125,
+        "totalMs": 194.9523000002955,
+        "otherMs": 0.20759999824804254,
+        "promptTokens": 93.0,
+        "decoderGenerationMs": 151.74877643585205,
+        "decodeTokens": 21.0
+      },
+      "idleBaselineMedianMiB": 1915,
+      "peakUsedMiB": 4444,
+      "peakDeltaOverIdleMiB": 2529,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "BF16 + EXL3 4 bpw",
+      "corpusWER": 0.019860692771084338,
+      "medianMs": 207.51225000276463,
+      "p90Ms": 448.2599399991159,
+      "medianStagesMs": {
+        "decoderGenerationMs": 159.5827341079712,
+        "decodeTokens": 22.0,
+        "otherMs": 0.21769999875687063,
+        "encoderMs": 9.248100002878346,
+        "decoderMs": 193.8918999985617,
+        "promptTokens": 93.0,
+        "preprocessingMs": 4.269699995347764,
+        "decoderPrefillMs": 33.574819564819336,
+        "totalMs": 207.466050000221
+      },
+      "idleBaselineMedianMiB": 1907,
+      "peakUsedMiB": 4698,
+      "peakDeltaOverIdleMiB": 2791,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
+      "configuration": "INT8 + EXL3 4 bpw",
+      "corpusWER": 0.020180722891566263,
+      "medianMs": 202.69065000320552,
+      "p90Ms": 436.7111100000329,
+      "medianStagesMs": {
+        "otherMs": 0.21765000565210357,
+        "promptTokens": 93.0,
+        "decodeTokens": 22.0,
+        "encoderMs": 4.893999997875653,
+        "preprocessingMs": 4.378199999337085,
+        "totalMs": 202.64210000095773,
+        "decoderPrefillMs": 33.52999687194824,
+        "decoderGenerationMs": 159.4315767288208,
+        "decoderMs": 193.4961500010104
+      },
+      "idleBaselineMedianMiB": 1905,
+      "peakUsedMiB": 4406,
+      "peakDeltaOverIdleMiB": 2501,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    }
+  ]
+}

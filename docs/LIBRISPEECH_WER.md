@@ -140,6 +140,54 @@ counts were 150 wins, 2,341 ties, and 129 losses for 3 bpw versus GGUF; 142,
 2,379, and 99 for 4 bpw versus GGUF; and 90, 2,422, and 108 for 3 bpw versus
 4 bpw.
 
+## GPU memory and INT8 encoder comparison
+
+This follow-up measured the GGUF INT4/Q4_K baseline, TensorRT BF16 encoder with
+EXL3 3 bpw and 4 bpw decoders, and TensorRT INT8 encoder with the 4 bpw decoder
+on the same full test-clean set. Each configuration has 2,620 utterances,
+53,120 reference words, and zero empty outputs. GGUF 0.6B was run with the
+explicit `model-0.6b` directory. The TensorRT runs used the matching 0.6B or
+1.7B encoder and decoder artifacts.
+
+![Qwen3-ASR 0.6B latency, accuracy, and memory](windows-librispeech-qwen3-0.6b-memory.png)
+
+[0.6B SVG](windows-librispeech-qwen3-0.6b-memory.svg)
+
+| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | GPU peak MiB (idle / peak / delta) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GGUF INT4 + Q4_K | 2.982% | 299.2 / 403.8 | 156.57 | 41.88 / 88.67 | 1,911 / 3,153 / 1,242 |
+| BF16 + EXL3 3 bpw | 2.903% | 106.7 / 235.5 | 5.97 | 16.33 / 79.43 | 1,909 / 3,816 / 1,907 |
+| BF16 + EXL3 4 bpw | **2.423%** | **110.0 / 238.7** | 6.00 | 16.40 / 82.34 | 1,908 / 3,815 / 1,907 |
+| INT8 + EXL3 4 bpw | 18.178% | 111.8 / 248.2 | 7.99 | 16.66 / 82.11 | 1,908 / 3,597 / 1,689 |
+
+![Qwen3-ASR 1.7B latency, accuracy, and memory](windows-librispeech-qwen3-1.7b-memory.png)
+
+[1.7B SVG](windows-librispeech-qwen3-1.7b-memory.svg)
+
+| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | GPU peak MiB (idle / peak / delta) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GGUF INT4 + Q4_K | 2.090% | 470.7 / 676.4 | 202.79 | 83.42 / 171.06 | 1,901 / 4,003 / 2,102 |
+| BF16 + EXL3 3 bpw | 2.024% | 195.0 / 430.5 | 9.21 | 26.14 / 151.75 | 1,915 / 4,444 / 2,529 |
+| BF16 + EXL3 4 bpw | **1.986%** | 207.5 / 448.3 | 9.25 | 33.57 / 159.58 | 1,907 / 4,698 / 2,791 |
+| INT8 + EXL3 4 bpw | 2.018% | 202.7 / 436.7 | 4.89 | 33.53 / 159.43 | 1,905 / 4,406 / 2,501 |
+
+The INT8 result depends strongly on model size. On 1.7B, INT8 reduced median
+encoder time from 9.25 ms to 4.89 ms and whole-GPU peak use by 292 MiB compared
+with BF16 + EXL3 4 bpw. End-to-end median latency improved by 2.3%, while WER
+increased by 0.032 percentage points (1.986% to 2.018%). On 0.6B, INT8 made
+the encoder slower (6.00 ms to 7.99 ms), changed median end-to-end latency from
+110.0 ms to 111.8 ms, and increased WER by 15.755 percentage points. It is not
+a suitable accuracy-preserving replacement for the 0.6B BF16 encoder in this
+measurement.
+
+Memory is sampled from `nvidia-smi` every 500 ms and represents total GPU memory
+use, including Windows and other GPU clients; delta is peak minus the idle
+baseline. The device reported by this run was an NVIDIA GeForce RTX 4060 Laptop
+GPU with 8,188 MiB. Stage values are per-utterance medians; GGUF's `decodeMs` is
+shown as decoder generation. Raw per-utterance records and memory samples are
+kept under `.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not
+committed. The machine-readable aggregate is `qwen3-memory-comparison.json`.
+
 ## What changed from the single clip
 
 The 23.86-second sample produced 5.80% WER for the Q8 engines; the full corpus
