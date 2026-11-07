@@ -195,6 +195,8 @@ def main():
     parser.add_argument("--gguf-model", type=Path, default=DEFAULT_GGUF_REPO / "model")
     parser.add_argument("--gguf-chunk", type=float, default=40.0)
     parser.add_argument("--trt-repo", type=Path, default=DEFAULT_TRT_REPO)
+    parser.add_argument("--trt-artifact-dir", type=Path,
+                        default=DEFAULT_TRT_REPO / "artifacts/qwen3-asr-0.6b")
     parser.add_argument("--trt-model", default="Qwen/Qwen3-ASR-0.6B-hf")
     parser.add_argument("--trt-engine", type=Path)
     parser.add_argument("--trt-decoder", type=Path)
@@ -240,12 +242,11 @@ def main():
             run, provider = gguf_runner(args.gguf_repo, args.gguf_model,
                                         args.gguf_chunk, args.max_new_tokens)
         elif engine == "tensorrt-exllama":
-            artifact_dir = args.trt_repo / "artifacts/qwen3-asr-0.6b"
             run, provider = tensorrt_exllama_runner(
                 args.trt_repo,
                 args.trt_model,
-                args.trt_engine or artifact_dir / "encoder-window.bf16.engine",
-                args.trt_decoder or artifact_dir / "decoder-exl3-4bpw",
+                args.trt_engine or args.trt_artifact_dir / "encoder-window.bf16.engine",
+                args.trt_decoder or args.trt_artifact_dir / "decoder-exl3-4bpw",
                 args.max_new_tokens,
             )
         else:

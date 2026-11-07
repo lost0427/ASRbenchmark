@@ -1,7 +1,7 @@
 # LibriSpeech test-clean: corpus WER
 
 This report covers full-corpus SenseVoiceSmall results, a 1,000-utterance
-Qwen3-ASR 1.7B comparison, and a full-corpus Qwen3-ASR 0.6B engine comparison.
+Qwen3-ASR 1.7B comparison, and full-corpus Qwen3-ASR 0.6B and 1.7B engine comparisons.
 The fixed 23.86-second sample used elsewhere is useful for latency and smoke
 testing, but it is too small to rank models.
 
@@ -113,6 +113,33 @@ On this run, EXL3 3 bpw was 1.88x faster than GGUF by median latency and had
 had the lowest WER. Compared with 4 bpw, 3 bpw was 6.2% slower and 0.480
 percentage points higher in WER.
 
+## Qwen3-ASR 1.7B: full-corpus engine comparison
+
+All three configurations ran on the same 2,620 test-clean utterances and
+53,120 reference words, using the same seed-1337 manifest. EXL3 runs use the
+BF16 TensorRT encoder and greedy decoding; GGUF uses its INT4 encoder and Q4_K
+decoder. Model initialization is excluded; each run includes two warmups.
+Per-utterance latency includes audio loading and inference. All runs produced
+zero empty outputs, and IDs and references match across engines.
+
+![Qwen3-ASR 1.7B speed and accuracy](windows-librispeech-qwen3-1.7b-speed-accuracy.png)
+
+[SVG version](windows-librispeech-qwen3-1.7b-speed-accuracy.svg); [separate metric panels](windows-librispeech-qwen3-1.7b-comparison.png)
+
+| Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.090% | 423.7 | 612.3 | 1,188.5 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 182.6 | 409.6 | 588.5 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.8** | **451.9** | **648.1** |
+
+EXL3 3 bpw was 2.32x faster than GGUF by median latency and had 0.066
+percentage points lower WER. EXL3 4 bpw was 2.04x faster and had 0.103
+percentage points lower WER. On this corpus, 4 bpw reduced WER by 0.038 points
+versus 3 bpw, while 3 bpw was 13.8% faster by median latency. Pairwise edit
+counts were 150 wins, 2,341 ties, and 129 losses for 3 bpw versus GGUF; 142,
+2,379, and 99 for 4 bpw versus GGUF; and 90, 2,422, and 108 for 3 bpw versus
+4 bpw.
+
 ## What changed from the single clip
 
 The 23.86-second sample produced 5.80% WER for the Q8 engines; the full corpus
@@ -122,8 +149,7 @@ the number to use for accuracy comparisons.
 
 The earlier single-clip Qwen3 numbers (5.80%) should not be compared directly
 to the full SenseVoice table. The 1,000-utterance Qwen3 1.7B subset and the
-2,620-utterance Qwen3 0.6B comparison above are the corpus-level results
-currently available for their respective configurations.
+full-corpus 0.6B/1.7B comparisons above use different model configurations.
 
 ## Coverage and limitations
 
@@ -131,17 +157,19 @@ currently available for their respective configurations.
   sherpa-onnx int8, ncnn INT8, and transcribe.cpp Q8.
 - The Qwen3 1.7B configurations above use a common 1,000-utterance subset:
   transcribe.cpp Q8/F16/BF16, ONNX Runtime int4/FP16, Qwen3-ASR-GGUF q4_k, and
-  sherpa-onnx int8. The separate 0.6B comparison uses all 2,620 utterances.
+  sherpa-onnx int8. The separate 0.6B and 1.7B engine comparisons use all
+  2,620 utterances.
   There is no ONNX BF16 export.
 - The 1.7B subset table does not include the custom `benchmark_gguf_smoke.exe`
-  or TensorRT runner. The 0.6B full-corpus comparison above includes GGUF and
-  TensorRT + ExLlamaV3. The transcribe.cpp result covers the same GGUF Q8
+  or TensorRT runner. The 0.6B and 1.7B full-corpus comparisons above include
+  GGUF and TensorRT + ExLlamaV3. The transcribe.cpp result covers the same GGUF Q8
   weights with a persistent model.
 - This is read English speech. It does not measure noisy audio, multilingual
   audio, long-form segmentation, or ITN.
 - Raw per-utterance JSONL and summaries are in
   `.native/librispeech/sensevoice-wer/`,
   `.native/librispeech/qwen3-wer-1000/`,
+  `.native/librispeech/qwen3-asr-1.7b-full-test-clean/`,
   `.native/librispeech/qwen3-transcribe-f16-1000/`,
   `.native/librispeech/qwen3-transcribe-bf16-1000/`, and
   `.native/librispeech/qwen3-ort-fp16-1000/` and are not committed.
