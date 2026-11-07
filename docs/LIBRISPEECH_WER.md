@@ -92,7 +92,7 @@ and only covers read English.
 
 ## Qwen3-ASR 0.6B: full-corpus engine comparison
 
-All three configurations ran on the same 2,620 LibriSpeech test-clean utterances
+The compared configurations ran on the same 2,620 LibriSpeech test-clean utterances
 and 53,120 reference words. WER uses the normalization and corpus-level formula
 described above. EXL3 runs use the BF16 TensorRT encoder and greedy decoding.
 Model initialization is excluded from full-run time; the run includes two warmup
@@ -105,13 +105,17 @@ utterances. Per-utterance latency includes audio loading and inference.
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.982% | 277.9 | 379.2 | 773.8 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.903% | 147.6 | 311.8 | 463.1 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.423%** | **139.0** | **305.2** | **445.7** |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.903% | 105.7 | 233.3 | 338.2 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw decoder, train-clean-100 calibration | 3.259% | 108.7 | 236.8 | 347.1 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.423%** | **104.1** | **231.2** | **335.0** |
 
-On this run, EXL3 3 bpw was 1.88x faster than GGUF by median latency and had
-0.079 percentage points lower WER. EXL3 4 bpw was 2.00x faster than GGUF and
-had the lowest WER. Compared with 4 bpw, 3 bpw was 6.2% slower and 0.480
-percentage points higher in WER.
+The GGUF row is the existing DML+Vulkan full-corpus run; the three EXL3 rows
+below it were rerun sequentially with the same BF16 encoder and benchmark
+settings. Their median latencies were 2.63x (3 bpw), 2.56x (2.5 bpw), and 2.67x
+(4 bpw) lower than GGUF. EXL3 3 and 4 bpw also had lower WER than GGUF by 0.079
+and 0.560 percentage points; 2.5 bpw was 0.277 points higher. Among the EXL3
+reruns, 4 bpw was 1.5% faster than 3 bpw and had 0.480 points lower WER. The
+2.5 bpw decoder was 4.4% slower than 4 bpw and had 0.835 points higher WER.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
@@ -140,36 +144,46 @@ counts were 150 wins, 2,341 ties, and 129 losses for 3 bpw versus GGUF; 142,
 2,379, and 99 for 4 bpw versus GGUF; and 90, 2,422, and 108 for 3 bpw versus
 4 bpw.
 
-## GPU memory and INT8 encoder comparison
+## GPU memory and INT4/INT8 encoder comparison
 
 This follow-up measured the GGUF INT4/Q4_K baseline, TensorRT BF16 encoder with
-EXL3 3 bpw and 4 bpw decoders, and TensorRT INT8 encoder with the 4 bpw decoder
-on the same full test-clean set. Each configuration has 2,620 utterances,
-53,120 reference words, and zero empty outputs. GGUF 0.6B was run with the
-explicit `model-0.6b` directory. The TensorRT runs used the matching 0.6B or
-1.7B encoder and decoder artifacts.
+EXL3 2.5 bpw, 3 bpw and 4 bpw decoders, and TensorRT INT4 and INT8 encoders
+with the 4 bpw decoder on the same full test-clean set. Each configuration has
+2,620 utterances, 53,120 reference words, and zero empty outputs. GGUF 0.6B was
+run with the explicit `model-0.6b` directory. The TensorRT runs used the
+matching 0.6B or 1.7B encoder and decoder artifacts.
 
 ![Qwen3-ASR 0.6B latency, accuracy, and memory](windows-librispeech-qwen3-0.6b-memory.png)
 
 [0.6B SVG](windows-librispeech-qwen3-0.6b-memory.svg)
 
-| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | GPU peak MiB (idle / peak / delta) |
+| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | Incremental GPU memory |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| GGUF INT4 + Q4_K | 2.982% | 299.2 / 403.8 | 156.57 | 41.88 / 88.67 | 1,911 / 3,153 / 1,242 |
-| BF16 + EXL3 3 bpw | 2.903% | 106.7 / 235.5 | 5.97 | 16.33 / 79.43 | 1,909 / 3,816 / 1,907 |
-| BF16 + EXL3 4 bpw | **2.423%** | **110.0 / 238.7** | 6.00 | 16.40 / 82.34 | 1,908 / 3,815 / 1,907 |
-| INT8 + EXL3 4 bpw | 18.178% | 111.8 / 248.2 | 7.99 | 16.66 / 82.11 | 1,908 / 3,597 / 1,689 |
+| GGUF INT4 + Q4_K | 2.982% | 299.2 / 403.8 | 156.57 | 41.88 / 88.67 | 1,242 MiB |
+| BF16 + EXL3 3 bpw | 2.903% | 105.7 / 233.3 | 5.96 | 16.16 / 78.76 | 1,945 MiB |
+| BF16 + EXL3 4 bpw | **2.423%** | **104.1 / 231.2** | 5.89 | 15.29 / 78.01 | 1,914 MiB |
+| INT4 encoder + EXL3 4 bpw | 2.613% | 132.4 / 276.6 | 6.11 | 21.40 / 100.75 | 2,423 MiB |
+| BF16 + EXL3 2.5 bpw, train-clean-100 calibration | 3.259% | 108.7 / 236.8 | 6.05 | 16.12 / 79.73 | 1,983 MiB* |
+| BF16 + EXL3 2 bpw, train-clean-100 calibration | 8.471% | 113.3 / 255.0 | 5.89 | 16.82 / 84.19 | 1,830 MiB |
+| INT8 + EXL3 4 bpw | 18.178% | 111.8 / 248.2 | 7.99 | 16.66 / 82.11 | 1,689 MiB |
 
 ![Qwen3-ASR 1.7B latency, accuracy, and memory](windows-librispeech-qwen3-1.7b-memory.png)
 
 [1.7B SVG](windows-librispeech-qwen3-1.7b-memory.svg)
 
-| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | GPU peak MiB (idle / peak / delta) |
+| Configuration | WER | Median / P90 ms | Encoder ms | Decoder prefill / generation ms | Incremental GPU memory |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| GGUF INT4 + Q4_K | 2.090% | 470.7 / 676.4 | 202.79 | 83.42 / 171.06 | 1,901 / 4,003 / 2,102 |
-| BF16 + EXL3 3 bpw | 2.024% | 195.0 / 430.5 | 9.21 | 26.14 / 151.75 | 1,915 / 4,444 / 2,529 |
-| BF16 + EXL3 4 bpw | **1.986%** | 207.5 / 448.3 | 9.25 | 33.57 / 159.58 | 1,907 / 4,698 / 2,791 |
-| INT8 + EXL3 4 bpw | 2.018% | 202.7 / 436.7 | 4.89 | 33.53 / 159.43 | 1,905 / 4,406 / 2,501 |
+| GGUF INT4 + Q4_K | 2.090% | 470.7 / 676.4 | 202.79 | 83.42 / 171.06 | 2,102 MiB |
+| BF16 + EXL3 3 bpw | 2.024% | 195.0 / 430.5 | 9.21 | 26.14 / 151.75 | 2,529 MiB |
+| BF16 + EXL3 4 bpw | **1.986%** | 207.5 / 448.3 | 9.25 | 33.57 / 159.58 | 2,791 MiB |
+| INT4 encoder + EXL3 4 bpw | 2.073% | 206.4 / 447.6 | 7.27 | 33.43 / 160.51 | 2,381 MiB |
+| INT8 + EXL3 4 bpw | 2.018% | 202.7 / 436.7 | 4.89 | 33.53 / 159.43 | 2,501 MiB |
+
+INT4's impact differs by model. On 1.7B, it lowered the measured GPU memory
+increase by 410 MiB and median latency by 0.6% versus BF16, with WER higher by
+0.087 percentage points. On 0.6B, it increased memory by 509 MiB and median
+latency by 27%, with WER higher by 0.190 percentage points. INT4 weight-only did not
+improve the 0.6B run.
 
 The INT8 result depends strongly on model size. On 1.7B, INT8 reduced median
 encoder time from 9.25 ms to 4.89 ms and whole-GPU peak use by 292 MiB compared
@@ -180,11 +194,96 @@ the encoder slower (6.00 ms to 7.99 ms), changed median end-to-end latency from
 a suitable accuracy-preserving replacement for the 0.6B BF16 encoder in this
 measurement.
 
+The calibrated 2.5 bpw decoder was slower than 4 bpw in the matched reruns,
+with higher WER and a 69 MiB higher whole-GPU memory delta. Its 568 MB weight
+file saves about 95 MB from the 4 bpw file, but this did not translate into a
+lower measured GPU peak. The 2 bpw candidate was also 8.9% slower than 4 bpw,
+with WER higher by 6.049 percentage points. It saved about 105 MB in weights
+and 84 MiB in measured GPU memory, which does not offset the quality loss.
+
+* The 2.5 bpw memory figure is one whole-GPU sample: idle 178 MiB and peak
+  2,161 MiB, sampled every 500 ms. The matched 4 bpw run had 203 MiB idle and
+  2,117 MiB peak. These samples include Windows GPU clients and are not
+  process-isolated allocations.
+
 Memory is sampled from `nvidia-smi` every 500 ms and represents total GPU memory
-use, including Windows and other GPU clients; delta is peak minus the idle
-baseline. The device reported by this run was an NVIDIA GeForce RTX 4060 Laptop
-GPU with 8,188 MiB. Stage values are per-utterance medians; GGUF's `decodeMs` is
-shown as decoder generation. Raw per-utterance records and memory samples are
+use, including Windows and other GPU clients; the displayed estimate is peak
+whole-GPU use minus the idle baseline, not process-isolated allocation. It also
+includes TensorRT/ExLlamaV3 runtime allocations and the decoder KV cache, so it
+is a run-level GPU increase rather than weights-only memory. The
+device reported by this run was an NVIDIA GeForce RTX 4060 Laptop GPU with
+8,188 MiB. Stage values are per-utterance medians. GGUF's `decodeMs` and
+TensorRT + ExLlamaV3's `decoderGenerationMs` are both decoder generation time.
+The latter runs in ExLlamaV3 on CUDA; TensorRT accelerates only the audio
+encoder. GGUF's `encoderMs` measures ONNX encoder time. Similar generation
+times are expected because both configurations use GPU-accelerated quantized
+decoder inference; the large overall speed difference comes mainly from the
+encoder stage.
+
+EXL3 decoder files occupy 607/662 MB (0.6B 3/4 bpw) and 1,399/1,575 MB (1.7B).
+The runtime preallocates an 8,192-token FP16 KV cache, about 896 MiB for each
+model at batch size one. The 0.6B 3/4-bpw weight files differ by 55 MB, while
+their sampled GPU peaks differ by only 1 MiB; allocator reservations and the
+GPU-wide peak sampling do not resolve that small change. For 1.7B, the weight
+files differ by 176 MB and the measured run deltas differ by 262 MiB. The GGUF and TensorRT
+figures are not strictly like-for-like process allocations: they are sampled
+whole-GPU peaks, include runtime/context/workspace overhead, and may miss short
+peaks between 500 ms samples. This explains why EXL3 can show a larger GPU
+increase than GGUF even when decoder weights are similar: TensorRT adds the
+encoder engine and workspace, and ExLlamaV3 adds its CUDA context and fixed KV
+cache. The GGUF baseline uses a different runtime and allocator.
+
+## Train-clean-100 calibration and low-precision encoders
+
+The earlier INT8 encoders were calibrated from `test-clean`, which overlaps the
+evaluation set. They were recalibrated using 32 speakers and chapters sampled
+from LibriSpeech `train-clean-100` (59 encoder windows per model). The complete
+official archive was verified, then its compressed copy was removed to reclaim
+space. The selected calibration chapters and packed decoder rows remain local;
+the full archive can be downloaded again if another sample needs to be extracted.
+
+Cosine is measured frame by frame between candidate TensorRT embeddings and the
+FP16 TensorRT encoder on all 2,620 test-clean utterances (253,326 frames). WER
+and latency use the same corpus and EXL3 4 bpw decoder. The model-level results
+are:
+
+| Model | Encoder | Embedding cosine mean / P05 | Encoder median ms | End-to-end median ms | WER |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 0.6B | FP16 reference | 1.000 / 1.000 | 6.00 | 110.0 | 2.423% |
+| 0.6B | INT4 weight-only | 0.963 / 0.925 | 6.10 | 135.8 | 2.613% |
+| 0.6B | INT8 QDQ, train-clean-100 | 0.756 / 0.598 | 8.81 | 127.3 | 16.860% |
+| 1.7B | FP16 reference | 1.000 / 1.000 | 9.25 | 207.5 | 1.986% |
+| 1.7B | INT4 weight-only | 0.974 / 0.952 | 7.46 | 210.7 | 2.073% |
+| 1.7B | INT8 QDQ, train-clean-100 | 0.934 / 0.850 | 11.90 | 210.1 | 2.033% |
+
+INT4 quantizes the 111/147 constant MatMul weights in the 0.6B/1.7B encoders
+using 64-value weight blocks; convolutions and activations remain FP16. The
+TensorRT engines build and run. The earlier precision runs showed a faster
+1.7B INT4 encoder stage but a 210.7 ms end-to-end median versus 207.5 ms for
+the FP16 reference. A later memory-profile rerun measured 206.4 ms versus
+207.5 ms for BF16; that 0.6% difference is too small to establish a repeatable
+speedup. INT8 retains near-reference WER on 1.7B but is slower than FP16 in the
+earlier stage run; 0.6B INT8 is unusable at 16.860% WER. The current recommended
+encoder remains BF16 on 4060 class hardware, with FP16 available for hardware
+without BF16.
+
+The cosine values describe embedding direction, not transcript accuracy. The
+low cosine tail, especially on 0.6B INT8, tracks the WER regression but does not
+establish a general cosine-to-WER relationship. Whole-GPU memory is sampled
+separately from these stage runs and includes Windows clients, TensorRT runtime
+allocations, and the decoder KV cache; it is not a process-only encoder memory
+measurement.
+
+Decoder calibration was packed from 1,603 paired `train-clean-100` audio
+requests and transcripts into 200 rows of 2,048 token IDs using the Qwen3-ASR
+tokenizer. Each request contains its actual audio placeholder span and English
+ASR task prefix. ExLlamaV3 consumes token IDs, so these rows represent the text
+prompt and transcript distribution; they do not contain encoder audio
+embeddings. The 0.6B 2.5 bpw decoder was converted from these rows and evaluated
+on all 2,620 test-clean utterances; its speed, WER and memory sample are listed
+above.
+
+Raw per-utterance records and memory samples are
 kept under `.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not
 committed. The machine-readable aggregate is `qwen3-memory-comparison.json`.
 
