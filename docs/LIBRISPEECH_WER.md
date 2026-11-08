@@ -232,10 +232,14 @@ device reported by this run was an NVIDIA GeForce RTX 4060 Laptop GPU with
 8,188 MiB. Stage values are per-utterance medians. GGUF's `decodeMs` and
 TensorRT + ExLlamaV3's `decoderGenerationMs` are both decoder generation time.
 The latter runs in ExLlamaV3 on CUDA; TensorRT accelerates only the audio
-encoder. GGUF's `encoderMs` measures ONNX encoder time. Similar generation
-times are expected because both configurations use GPU-accelerated quantized
-decoder inference; the large overall speed difference comes mainly from the
-encoder stage.
+encoder. GGUF's `encoderMs` measures ONNX encoder time. On 0.6B, EXL3 4 bpw
+reduced median decoder prefill from 41.88 to 15.29 ms (2.74x) and generation
+from 88.67 to 78.01 ms (1.14x). On 1.7B, EXL3 3 bpw reduced prefill from 83.42
+to 26.14 ms (3.19x) and generation from 171.06 to 151.75 ms (1.13x). Decoder
+generation gains are modest; most of the decoder-stage improvement is in
+prefill, and the larger end-to-end speedup also includes the much faster
+TensorRT encoder. These are per-utterance stage medians, not token-normalized
+throughput.
 
 EXL3 decoder files occupy 607/662 MB (0.6B 3/4 bpw) and 1,399/1,575 MB (1.7B).
 The runtime preallocates an 8,192-token FP16 KV cache, about 896 MiB for each
@@ -289,6 +293,13 @@ speedup. INT8 retains near-reference WER on 1.7B but is slower than FP16 in the
 earlier stage run; 0.6B INT8 is unusable at 16.860% WER. The current recommended
 encoder remains BF16 on 4060 class hardware, with FP16 available for hardware
 without BF16.
+
+For the tested full-pipeline configurations, 0.6B BF16 encoder + EXL3 4 bpw
+has the best WER (2.423%) and median latency (104.1 ms). For 1.7B, BF16 + EXL3
+3 bpw is the lowest-latency tested configuration with WER below GGUF
+(195.0 ms, 2.024%); BF16 + EXL3 4 bpw has the lowest WER (1.986%). The
+train-clean-100 calibrated 2.5 and 3 bpw variants did not improve on uncalibrated
+3 bpw. A calibrated 1.7B 2 bpw result has not been measured.
 
 The cosine values describe embedding direction, not transcript accuracy. The
 low cosine tail, especially on 0.6B INT8, tracks the WER regression but does not
