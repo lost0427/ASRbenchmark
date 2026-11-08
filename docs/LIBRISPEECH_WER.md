@@ -122,6 +122,35 @@ references, and IDs matched exactly between runs, so WER was unchanged. This
 single-run timing difference should not be treated as an isolated adapter
 speedup measurement.
 
+## Qwen3-ASR 0.6B: decoder calibration comparison
+
+The legacy 3 bpw decoder and the separately calibrated `train-clean-100`
+variant were each run once on the same 2,620 test-clean utterances. Both runs
+used the TensorRT BF16 encoder, ExLlamaV3 decoder, greedy decoding, and two
+warmup utterances. Their IDs and references match exactly. The legacy
+quantization metadata records 250 rows × 2,048 tokens but does not identify the
+calibration source. The new decoder uses 200 rows × 2,048 tokens packed from
+1,603 paired audio requests and transcripts in `train-clean-100`.
+
+![Qwen3-ASR 0.6B calibration comparison](windows-librispeech-qwen3-0.6b-calibration-comparison.png)
+
+[SVG version](windows-librispeech-qwen3-0.6b-calibration-comparison.svg)
+
+| Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Legacy EXL3 3 bpw | 250 × 2,048; source not recorded | 2.9029% | 1,542 | 103.69 | 224.72 | 330.55 |
+| EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.5715%** | **1,366** | 105.39 | 232.57 | 340.39 |
+
+The new calibration reduced WER by 0.3313 percentage points (176 fewer total
+edits). At utterance level it had fewer edits on 253 samples, the same count on
+2,155, and more edits on 212. Median latency increased by 1.70 ms (1.6%) and
+full-run time by 9.84 seconds (3.0%). With one run per variant, the timing
+difference is not a repeated-run estimate. Aggregate results and plotting code
+are in `docs/qwen3-0.6b-calibration-comparison.json` and
+`tools/plot_qwen3_calibration_comparison.py`; per-utterance outputs remain in
+the ignored `.native/librispeech/qwen3-asr-0.6b-3bpw-calibration-compare-20261108/`
+directory.
+
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
 All six configurations ran on the same 2,620 test-clean utterances and

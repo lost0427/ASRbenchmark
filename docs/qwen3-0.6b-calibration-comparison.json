@@ -1,0 +1,55 @@
+{
+  "benchmark": "LibriSpeech test-clean",
+  "conditions": {
+    "utterances": 2620,
+    "referenceWords": 53120,
+    "encoder": "TensorRT BF16",
+    "decoderRuntime": "ExLlamaV3",
+    "warmupUtterances": 2,
+    "runsPerVariant": 1
+  },
+  "variants": [
+    {
+      "name": "Legacy EXL3 3 bpw",
+      "decoder": "decoder-exl3-3bpw",
+      "directory": "old-250rows",
+      "calibration": {
+        "rows": 250,
+        "columns": 2048,
+        "source": "not recorded in quantization metadata"
+      },
+      "summary": {
+        "referenceWords": 53120,
+        "edits": 1542,
+        "corpusWER": 0.029028614457831326,
+        "medianMs": 103.69139999966137,
+        "p90Ms": 224.7193999995943,
+        "elapsedSeconds": 330.54680859998916
+      }
+    },
+    {
+      "name": "EXL3 3 bpw, train-clean-100",
+      "decoder": "decoder-exl3-3bpw-train-clean-100",
+      "directory": "train-clean-100-200rows",
+      "calibration": {
+        "dataset": "LibriSpeech train-clean-100",
+        "pairedAudioRequests": 1603,
+        "rows": 200,
+        "columns": 2048
+      },
+      "summary": {
+        "referenceWords": 53120,
+        "edits": 1366,
+        "corpusWER": 0.02571536144578313,
+        "medianMs": 105.39304999110755,
+        "p90Ms": 232.56922999280505,
+        "elapsedSeconds": 340.39096979997703
+      }
+    }
+  ],
+  "pairedUtteranceEditCounts": {
+    "fewerWithNewCalibration": 253,
+    "same": 2155,
+    "moreWithNewCalibration": 212
+  }
+}
