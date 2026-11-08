@@ -222,6 +222,27 @@
       "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
     },
     {
+      "configuration": "BF16 + EXL3 2 bpw, train-clean-100",
+      "corpusWER": 0.028990963855421686,
+      "medianMs": 158.1910999957472,
+      "p90Ms": 336.0962100006873,
+      "medianStagesMs": {
+        "decoderMs": 143.168449998484,
+        "encoderMs": 7.2257500141859055,
+        "preprocessingMs": 6.231449980987236,
+        "decoderPrefillMs": 26.316046714782715,
+        "promptTokens": 93.0,
+        "otherMs": 0.27670002600643784,
+        "decodeTokens": 21.0,
+        "decoderGenerationMs": 115.70847034454346,
+        "totalMs": 158.13865000382066
+      },
+      "idleBaselineMedianMiB": 515,
+      "peakUsedMiB": 2951,
+      "peakDeltaOverIdleMiB": 2436,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    {
       "configuration": "BF16 + EXL3 4 bpw",
       "corpusWER": 0.019860692771084338,
       "medianMs": 207.51225000276463,

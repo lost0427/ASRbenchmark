@@ -18,12 +18,14 @@ CONFIGS = [
     ("GGUF INT4 + Q4_K, DML adapter 1", ROOT / ".native/librispeech/qwen3-asr-1.7b-dml-device-1-full-test-clean", "gguf"),
     ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100",
      MEMORY_RUNS / "trt-bf16-exl3-2.5bpw-train100/results", "tensorrt-exllama"),
+    ("TensorRT BF16 + EXL3 2 bpw, train-clean-100",
+     MEMORY_RUNS / "trt-bf16-exl3-2bpw-train100", "tensorrt-exllama"),
     ("TensorRT BF16 + EXL3 3 bpw", MEMORY_RUNS / "trt-bf16-exl3-3bpw/results", "tensorrt-exllama"),
     ("TensorRT BF16 + EXL3 3 bpw, train-clean-100",
      MEMORY_RUNS / "trt-bf16-exl3-3bpw-train100/results", "tensorrt-exllama"),
     ("TensorRT BF16 + EXL3 4 bpw", MEMORY_RUNS / "trt-bf16-exl3-4bpw/results", "tensorrt-exllama"),
 ]
-COLORS = ["#3b6ea5", "#d98b3a", "#c44e52", "#b279a2", "#4c956c"]
+COLORS = ["#3b6ea5", "#d98b3a", "#c0a020", "#c44e52", "#b279a2", "#4c956c"]
 
 
 def main():
@@ -110,8 +112,9 @@ def main():
 
     fig, ax = plt.subplots(figsize=(8.8, 6.2))
     fig.subplots_adjust(left=0.14, right=0.96, top=0.83, bottom=0.15)
-    plot_labels = ["GGUF DML 1", "EXL3 2.5 cal.", "EXL3 3 bpw", "EXL3 3 bpw cal.", "EXL3 4 bpw"]
-    annotation_offsets = [(8, 8), (8, 8), (-48, -17), (8, 8), (8, -17)]
+    plot_labels = ["GGUF DML 1", "EXL3 2.5 cal.", "EXL3 2 cal.",
+                   "EXL3 3 bpw", "EXL3 3 bpw cal.", "EXL3 4 bpw"]
+    annotation_offsets = [(8, 8), (8, 8), (8, 8), (-48, -17), (8, 8), (8, -17)]
     for label, x, y, color, plot_label, offset in zip(
         labels, median, wer, colors, plot_labels, annotation_offsets
     ):
@@ -138,7 +141,7 @@ def main():
         bars = ax.bar(np.arange(len(labels)), values, color=colors, width=0.68)
         ax.set_title(title, fontsize=10)
         ax.set_xticks(np.arange(len(labels)), [
-            "GGUF", "2.5\nbpw cal.", "3 bpw", "3 bpw\ncal.", "4 bpw"
+            "GGUF", "2.5\nbpw cal.", "2\nbpw cal.", "3 bpw", "3 bpw\ncal.", "4 bpw"
         ], fontsize=8)
         ax.grid(axis="y", color="#e4e8ee", linewidth=0.8, zorder=0)
         ax.set_axisbelow(True)

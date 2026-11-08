@@ -124,7 +124,7 @@ speedup measurement.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
-All five configurations ran on the same 2,620 test-clean utterances and
+All six configurations ran on the same 2,620 test-clean utterances and
 53,120 reference words, using the same seed-1337 manifest. EXL3 runs use the
 BF16 TensorRT encoder and greedy decoding; GGUF uses its INT4 encoder and Q4_K
 decoder. EXL3 rows use the aligned memory-profile reruns; the GGUF row is a new
@@ -148,6 +148,7 @@ provider and adapter but not that every ONNX operator ran on DirectML.
 | --- | --- | ---: | ---: | ---: | ---: |
 | Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML adapter 1 + Vulkan | 2.090% | 391.8 | 568.4 | 1,099.4 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 | 433.1 | 624.6 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2 bpw, train-clean-100 calibration | 2.899% | 158.2 | 336.1 | 497.5 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 195.0 | 430.5 | 618.2 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 | 434.3 | 624.2 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.5** | **448.3** | **644.7** |
@@ -171,6 +172,11 @@ speed, accuracy, or memory tradeoff over uncalibrated 3 bpw in this run.
 Compared with uncalibrated 3 bpw, calibrated 3 bpw was 0.6% slower and WER was
 0.085 points higher; paired edit counts were 120 wins, 2,348 ties, and 152
 losses. Calibration did not improve this 3 bpw result on test-clean.
+
+The calibrated 2 bpw run was 23.8% faster than 4 bpw and 2.48x faster than
+GGUF, but its WER was 0.913 percentage points higher than 4 bpw and 0.809
+points higher than GGUF. It is recorded as a speed-oriented experiment, not a
+recommended configuration.
 
 The earlier unpinned GGUF run had a 423.7 ms median; the adapter-1 run measured
 391.8 ms. Its 2,620 IDs, references, and hypotheses exactly match the earlier
@@ -214,6 +220,7 @@ matching 0.6B or 1.7B encoder and decoder artifacts.
 | BF16 + EXL3 3 bpw | 2.024% | 195.0 / 430.5 | 9.21 | 26.14 / 151.75 | 2,529 MiB |
 | BF16 + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 / 434.3 | 9.30 | 25.80 / 150.92 | 2,538 MiB |
 | BF16 + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 / 433.1 | 9.23 | 33.94 / 148.00 | 2,576 MiB |
+| BF16 + EXL3 2 bpw, train-clean-100 calibration | 2.899% | 158.2 / 336.1 | 7.23 | 26.32 / 115.71 | 2,436 MiB |
 | BF16 + EXL3 4 bpw | **1.986%** | 207.5 / 448.3 | 9.25 | 33.57 / 159.58 | 2,791 MiB |
 | INT4 encoder + EXL3 4 bpw | 2.073% | 206.4 / 447.6 | 7.27 | 33.43 / 160.51 | 2,381 MiB |
 | INT8 + EXL3 4 bpw | 2.018% | 202.7 / 436.7 | 4.89 | 33.53 / 159.43 | 2,501 MiB |
@@ -331,7 +338,8 @@ has the best WER (2.423%) and median latency (104.1 ms). For 1.7B, BF16 + EXL3
 3 bpw is the lowest-latency tested configuration with WER below GGUF
 (195.0 ms, 2.024%); BF16 + EXL3 4 bpw has the lowest WER (1.986%). The
 train-clean-100 calibrated 2.5 and 3 bpw variants did not improve on uncalibrated
-3 bpw. A calibrated 1.7B 2 bpw result has not been measured.
+3 bpw. The calibrated 1.7B 2 bpw run measured 2.899% WER at 158.2 ms median;
+it is faster but substantially less accurate than GGUF and the 3/4 bpw options.
 
 The cosine values describe embedding direction, not transcript accuracy. The
 low cosine tail, especially on 0.6B INT8, tracks the WER regression but does not
@@ -345,10 +353,10 @@ requests and transcripts into 200 rows of 2,048 token IDs using the Qwen3-ASR
 tokenizer. Each request contains its actual audio placeholder span and English
 ASR task prefix. ExLlamaV3 consumes token IDs, so these rows represent the text
 prompt and transcript distribution; they do not contain encoder audio
-embeddings. These rows were used for the 0.6B and 1.7B 2.5 bpw decoders and
-the 1.7B 3 bpw decoder. Both calibrated 1.7B decoders were evaluated on all
-2,620 test-clean utterances; their speed, WER, stage timings and memory samples
-are listed above.
+embeddings. These rows were used for the 0.6B and 1.7B 2 and 2.5 bpw decoders,
+plus the 1.7B 3 bpw decoder. All three calibrated 1.7B decoders were
+evaluated on all 2,620 test-clean utterances; their speed, WER, stage timings
+and memory samples are listed above.
 
 Raw per-utterance records and memory samples are kept under
 `.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not committed.

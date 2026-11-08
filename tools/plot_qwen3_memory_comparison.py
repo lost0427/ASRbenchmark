@@ -66,7 +66,7 @@ def load_model(model):
         CONFIGS[:3] + [INT4_ENCODER, CALIBRATED_25BPW, CALIBRATED_20BPW, CONFIGS[3]]
         if model == "0.6b"
         else [CONFIGS[0], CALIBRATED_25BPW_17B, CONFIGS[1], CALIBRATED_30BPW,
-              CONFIGS[2], INT4_ENCODER, CONFIGS[3]]
+              CALIBRATED_20BPW, CONFIGS[2], INT4_ENCODER, CONFIGS[3]]
     )
     for label, folder, stem, engine in configs:
         directory = RUNS / model / folder
@@ -150,7 +150,7 @@ def plot(model, records):
             "GGUF": (7, 7), "2.5 cal.": (8, 28),
             "3 bpw": (-34, -18), "4 bpw": (10, 10),
             "INT4": (12, 22), "INT8": (22, -5),
-            "3 cal.": (-42, 14),
+            "3 cal.": (-42, 14), "2 cal.": (8, 8),
         },
     }
     offsets = [offsets_by_model[model][label] for label in point_labels]
