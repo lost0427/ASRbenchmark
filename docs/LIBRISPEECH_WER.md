@@ -104,34 +104,41 @@ utterances. Per-utterance latency includes audio loading and inference.
 
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
-| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.982% | 277.9 | 379.2 | 773.8 |
+| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML adapter 1 + Vulkan | 2.982% | 299.2 | 406.3 | 830.5 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.903% | 105.7 | 233.3 | 338.2 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw decoder, train-clean-100 calibration | 3.259% | 108.7 | 236.8 | 347.1 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.423%** | **104.1** | **231.2** | **335.0** |
 
-The GGUF row is the existing DML+Vulkan full-corpus run; the three EXL3 rows
-below it were rerun sequentially with the same BF16 encoder and benchmark
-settings. Their median latencies were 2.63x (3 bpw), 2.56x (2.5 bpw), and 2.67x
-(4 bpw) lower than GGUF. EXL3 3 and 4 bpw also had lower WER than GGUF by 0.079
-and 0.560 percentage points; 2.5 bpw was 0.277 points higher. Among the EXL3
+The GGUF encoder used DirectML adapter 1 (RTX 4060 Laptop); its Q4_K decoder
+used Vulkan. EXL3 3 and 4 bpw were 2.83x and 2.88x faster by median latency,
+with WER lower by 0.079 and 0.559 percentage points. The calibrated 2.5 bpw row
+was 2.75x faster than GGUF and had WER 0.277 points higher. Among the EXL3
 reruns, 4 bpw was 1.5% faster than 3 bpw and had 0.480 points lower WER. The
 2.5 bpw decoder was 4.4% slower than 4 bpw and had 0.835 points higher WER.
+
+The earlier GGUF run did not specify a DirectML adapter and had a 277.9 ms
+median. The pinned run had a 299.2 ms median, but all 2,620 hypotheses,
+references, and IDs matched exactly between runs, so WER was unchanged. This
+single-run timing difference should not be treated as an isolated adapter
+speedup measurement.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
 All five configurations ran on the same 2,620 test-clean utterances and
 53,120 reference words, using the same seed-1337 manifest. EXL3 runs use the
 BF16 TensorRT encoder and greedy decoding; GGUF uses its INT4 encoder and Q4_K
-decoder. The figures below use the aligned memory-profile reruns. Model
-initialization is excluded; each run includes two warmups.
+decoder. EXL3 rows use the aligned memory-profile reruns; the GGUF row is a new
+run with DirectML adapter 1. Model initialization is excluded; each run
+includes two warmup utterances.
 Per-utterance latency includes audio loading and inference. All runs produced
 zero empty outputs, and IDs and references match across engines.
 
-The GGUF full-corpus runner sets `onnx_provider="DML"` and
-`llm_use_gpu=True`; the benchmark environment had `DmlExecutionProvider`
-available, and the run is recorded as `DML+Vulkan`. No ONNX Runtime node-level
-profiling was saved, so this confirms the selected backend configuration but
-not that every ONNX operator ran on DirectML.
+The GGUF runner sets `onnx_provider="DML"` and `llm_use_gpu=True`. This rerun
+explicitly passed DirectML adapter 1 to both encoder ONNX sessions; Vulkan
+handles the GGUF decoder. The earlier run left the DirectML adapter at its
+default. Both runs produced identical hypotheses for all 2,620 utterances.
+No ONNX Runtime node-level profiling was saved, so this confirms the selected
+provider and adapter but not that every ONNX operator ran on DirectML.
 
 ![Qwen3-ASR 1.7B speed and accuracy](windows-librispeech-qwen3-1.7b-speed-accuracy.png)
 
@@ -139,15 +146,15 @@ not that every ONNX operator ran on DirectML.
 
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
-| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.090% | 470.7 | 676.4 | 1,319.5 |
+| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML adapter 1 + Vulkan | 2.090% | 391.8 | 568.4 | 1,099.4 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 | 433.1 | 624.6 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 195.0 | 430.5 | 618.2 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 | 434.3 | 624.2 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.5** | **448.3** | **644.7** |
 
-EXL3 3 bpw was 2.41x faster than GGUF by median latency and had 0.066
-percentage points lower WER. EXL3 4 bpw was 2.27x faster and had 0.104
-percentage points lower WER. Calibrated EXL3 3 bpw was 2.40x faster than GGUF,
+EXL3 3 bpw was 2.01x faster than GGUF by median latency and had 0.066
+percentage points lower WER. EXL3 4 bpw was 1.89x faster and had 0.104
+percentage points lower WER. Calibrated EXL3 3 bpw was 2.00x faster than GGUF,
 with WER 0.019 points higher. On this corpus, 4 bpw reduced WER by 0.038
 points versus uncalibrated 3 bpw, while uncalibrated 3 bpw was 6.4% faster by
 median latency. Pairwise edit counts were 133 wins, 2,296 ties, and 191 losses
@@ -165,7 +172,16 @@ Compared with uncalibrated 3 bpw, calibrated 3 bpw was 0.6% slower and WER was
 0.085 points higher; paired edit counts were 120 wins, 2,348 ties, and 152
 losses. Calibration did not improve this 3 bpw result on test-clean.
 
+The earlier unpinned GGUF run had a 423.7 ms median; the adapter-1 run measured
+391.8 ms. Its 2,620 IDs, references, and hypotheses exactly match the earlier
+run, so corpus WER is unchanged.
+
 ## GPU memory and INT4/INT8 encoder comparison
+
+The memory figures below come from separate earlier GPU-wide sampling runs.
+Those GGUF memory runs did not specify a DirectML adapter; the new adapter-1
+timing runs did not record a memory peak, so they do not update the GGUF memory
+rows.
 
 This follow-up measured the GGUF INT4/Q4_K baseline, TensorRT BF16 encoder with
 EXL3 2.5 bpw, 3 bpw and 4 bpw decoders, and TensorRT INT4 and INT8 encoders
@@ -334,9 +350,10 @@ the 1.7B 3 bpw decoder. Both calibrated 1.7B decoders were evaluated on all
 2,620 test-clean utterances; their speed, WER, stage timings and memory samples
 are listed above.
 
-Raw per-utterance records and memory samples are
-kept under `.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not
-committed. The machine-readable aggregate is `qwen3-memory-comparison.json`.
+Raw per-utterance records and memory samples are kept under
+`.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not committed.
+The calibration WER and latency results are recorded in the tables above; raw
+per-run summaries remain local.
 
 ## What changed from the single clip
 

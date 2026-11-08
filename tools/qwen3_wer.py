@@ -129,7 +129,7 @@ def ort_runner(model_dir, threads, max_new_tokens):
     return run, "cuda"
 
 
-def gguf_runner(repo, model_dir, chunk_size, max_new_tokens):
+def gguf_runner(repo, model_dir, chunk_size, max_new_tokens, dml_device_id=None):
     sys.path.insert(0, str(repo))
     from qwen_asr_gguf.inference import ASREngineConfig, QwenASREngine
     from qwen_asr_gguf.inference.audio import load_audio
@@ -147,7 +147,36 @@ def gguf_runner(repo, model_dir, chunk_size, max_new_tokens):
         enable_aligner=False,
         verbose=False,
     )
-    engine = QwenASREngine(config)
+    if dml_device_id is None:
+        engine = QwenASREngine(config)
+    else:
+        import onnxruntime as ort
+        original_session = ort.InferenceSession
+        configured_sessions = 0
+
+        def session_on_adapter(*args, **kwargs):
+            nonlocal configured_sessions
+            providers = kwargs.get("providers")
+            if providers:
+                configured = []
+                for provider in providers:
+                    if provider == "DmlExecutionProvider":
+                        provider = (provider, {"device_id": str(dml_device_id)})
+                        configured_sessions += 1
+                    configured.append(provider)
+                kwargs["providers"] = configured
+            return original_session(*args, **kwargs)
+
+        ort.InferenceSession = session_on_adapter
+        try:
+            engine = QwenASREngine(config)
+        finally:
+            ort.InferenceSession = original_session
+        if configured_sessions != 2 or "DmlExecutionProvider" not in engine.encoder.sess_be.get_providers():
+            raise RuntimeError(
+                f"Expected two DirectML encoder sessions on device {dml_device_id}; "
+                f"configured {configured_sessions}"
+            )
     def run(audio_path):
         pcm = load_audio(str(audio_path))
         with contextlib.redirect_stdout(io.StringIO()):
@@ -158,7 +187,8 @@ def gguf_runner(repo, model_dir, chunk_size, max_new_tokens):
                   "prefillMs": result.performance["prefill_time"] * 1000,
                   "decodeMs": result.performance["decode_time"] * 1000}
         return clean_text(result.text), stages
-    return run, "DML+Vulkan"
+    provider = "DML+Vulkan" if dml_device_id is None else f"DML device {dml_device_id}+Vulkan"
+    return run, provider
 
 
 def tensorrt_exllama_runner(repo, model, engine_path, decoder_dir, max_new_tokens):
@@ -194,6 +224,7 @@ def main():
     parser.add_argument("--gguf-repo", type=Path, default=DEFAULT_GGUF_REPO)
     parser.add_argument("--gguf-model", type=Path, default=DEFAULT_GGUF_REPO / "model")
     parser.add_argument("--gguf-chunk", type=float, default=40.0)
+    parser.add_argument("--gguf-dml-device-id", type=int)
     parser.add_argument("--trt-repo", type=Path, default=DEFAULT_TRT_REPO)
     parser.add_argument("--trt-artifact-dir", type=Path,
                         default=DEFAULT_TRT_REPO / "artifacts/qwen3-asr-0.6b")
@@ -240,7 +271,8 @@ def main():
             run, provider = ort_runner(args.ort_model, args.threads, args.max_new_tokens)
         elif engine == "gguf":
             run, provider = gguf_runner(args.gguf_repo, args.gguf_model,
-                                        args.gguf_chunk, args.max_new_tokens)
+                                        args.gguf_chunk, args.max_new_tokens,
+                                        args.gguf_dml_device_id)
         elif engine == "tensorrt-exllama":
             run, provider = tensorrt_exllama_runner(
                 args.trt_repo,

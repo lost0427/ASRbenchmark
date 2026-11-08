@@ -15,7 +15,7 @@ RUNS = ROOT / ".native/librispeech/qwen3-asr-1.7b-full-test-clean"
 MEMORY_RUNS = ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/1.7b"
 DOCS = ROOT / "docs"
 CONFIGS = [
-    ("GGUF INT4 + Q4_K", MEMORY_RUNS / "gguf-int4-q4k/results", "gguf"),
+    ("GGUF INT4 + Q4_K, DML adapter 1", ROOT / ".native/librispeech/qwen3-asr-1.7b-dml-device-1-full-test-clean", "gguf"),
     ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100",
      MEMORY_RUNS / "trt-bf16-exl3-2.5bpw-train100/results", "tensorrt-exllama"),
     ("TensorRT BF16 + EXL3 3 bpw", MEMORY_RUNS / "trt-bf16-exl3-3bpw/results", "tensorrt-exllama"),
@@ -110,7 +110,7 @@ def main():
 
     fig, ax = plt.subplots(figsize=(8.8, 6.2))
     fig.subplots_adjust(left=0.14, right=0.96, top=0.83, bottom=0.15)
-    plot_labels = ["GGUF", "EXL3 2.5 cal.", "EXL3 3 bpw", "EXL3 3 bpw cal.", "EXL3 4 bpw"]
+    plot_labels = ["GGUF DML 1", "EXL3 2.5 cal.", "EXL3 3 bpw", "EXL3 3 bpw cal.", "EXL3 4 bpw"]
     annotation_offsets = [(8, 8), (8, 8), (-48, -17), (8, 8), (8, -17)]
     for label, x, y, color, plot_label, offset in zip(
         labels, median, wer, colors, plot_labels, annotation_offsets
