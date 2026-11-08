@@ -23,6 +23,18 @@ CALIBRATED_25BPW = (
     "tensorrt-exllama",
     "tensorrt-exllama",
 )
+CALIBRATED_25BPW_17B = (
+    "BF16 + EXL3 2.5 bpw, train-clean-100",
+    "trt-bf16-exl3-2.5bpw-train100",
+    "tensorrt-exllama",
+    "tensorrt-exllama",
+)
+CALIBRATED_30BPW = (
+    "BF16 + EXL3 3 bpw, train-clean-100",
+    "trt-bf16-exl3-3bpw-train100",
+    "tensorrt-exllama",
+    "tensorrt-exllama",
+)
 CALIBRATED_20BPW = (
     "BF16 + EXL3 2 bpw, train-clean-100",
     "trt-bf16-exl3-2bpw-train100",
@@ -41,6 +53,7 @@ COLORS = {
     "BF16 + EXL3 4 bpw": "#4c956c",
     "INT4 encoder + EXL3 4 bpw": "#8e6eaa",
     "BF16 + EXL3 2.5 bpw, train-clean-100": "#d98b3a",
+    "BF16 + EXL3 3 bpw, train-clean-100": "#b279a2",
     "BF16 + EXL3 2 bpw, train-clean-100": "#c0a020",
     "INT8 + EXL3 4 bpw": "#55717d",
 }
@@ -52,7 +65,8 @@ def load_model(model):
     configs = (
         CONFIGS[:3] + [INT4_ENCODER, CALIBRATED_25BPW, CALIBRATED_20BPW, CONFIGS[3]]
         if model == "0.6b"
-        else CONFIGS[:3] + [INT4_ENCODER, CONFIGS[3]]
+        else [CONFIGS[0], CALIBRATED_25BPW_17B, CONFIGS[1], CALIBRATED_30BPW,
+              CONFIGS[2], INT4_ENCODER, CONFIGS[3]]
     )
     for label, folder, stem, engine in configs:
         directory = RUNS / model / folder
@@ -96,6 +110,8 @@ def load_model(model):
             raise ValueError(f"{model} {label}: memory command did not select INT8 encoder")
         elif folder == "trt-int4-exl3-4bpw" and "encoder-window.int4.engine" not in command:
             raise ValueError(f"{model} {label}: memory command did not select INT4 encoder")
+        elif folder == "trt-bf16-exl3-3bpw-train100" and "decoder-exl3-3bpw-train100" not in command:
+            raise ValueError(f"{model} {label}: memory command did not select calibrated 3 bpw decoder")
         elif "2bpw" in folder and "decoder-exl3-2bpw-train100" not in command:
             raise ValueError(f"{model} {label}: memory command did not select calibrated 2 bpw decoder")
         elif "2.5bpw" in folder and "decoder-exl3-2.5bpw-train100" not in command:
@@ -116,22 +132,25 @@ def plot(model, records):
     ax = axes[0]
     point_labels = [
         "GGUF" if "GGUF" in record["label"] else
-        "INT8 4 bpw" if "INT8" in record["label"] else
-        "INT4 encoder" if "INT4 encoder" in record["label"] else
-        "BF16 2.5 bpw" if "2.5 bpw" in record["label"] else
-        "BF16 2 bpw" if "2 bpw" in record["label"] else
-        "BF16 3 bpw" if "3 bpw" in record["label"] else "BF16 4 bpw"
+        "INT8" if "INT8" in record["label"] else
+        "INT4" if "INT4 encoder" in record["label"] else
+        "2.5 cal." if "2.5 bpw" in record["label"] else
+        "2 cal." if "2 bpw" in record["label"] else
+        "3 cal." if "3 bpw, train-clean-100" in record["label"] else
+        "3 bpw" if "3 bpw" in record["label"] else "4 bpw"
         for record in records
     ]
     offsets_by_model = {
         "0.6b": {
-            "GGUF": (7, 7), "BF16 3 bpw": (8, 48), "BF16 4 bpw": (8, 25),
-            "INT4 encoder": (10, 10), "BF16 2.5 bpw": (8, 82),
-            "BF16 2 bpw": (8, 0), "INT8 4 bpw": (12, -2),
+            "GGUF": (7, 7), "3 bpw": (8, 48), "4 bpw": (8, 25),
+            "INT4": (10, 10), "2.5 cal.": (8, 82),
+            "2 cal.": (8, 0), "INT8": (12, -2),
         },
         "1.7b": {
-            "GGUF": (7, 7), "BF16 3 bpw": (10, 26), "BF16 4 bpw": (10, 14),
-            "INT4 encoder": (10, 42), "INT8 4 bpw": (10, -8),
+            "GGUF": (7, 7), "2.5 cal.": (8, 28),
+            "3 bpw": (-34, -18), "4 bpw": (10, 10),
+            "INT4": (12, 22), "INT8": (22, -5),
+            "3 cal.": (-42, 14),
         },
     }
     offsets = [offsets_by_model[model][label] for label in point_labels]
@@ -184,7 +203,7 @@ def plot(model, records):
     ax.bar(x, delta, color=colors, width=0.68)
     for pos, record in enumerate(records):
         memory = record["memory"]
-        ax.text(pos, delta[pos] + 55, f"{delta[pos]:,} MiB",
+        ax.text(pos, delta[pos] + 55, f"{delta[pos]:,}",
                 ha="center", va="bottom", fontsize=7.5)
     ax.set_xticks(
         x, [label.replace(" ", "\n", 1) for label in point_labels], fontsize=7

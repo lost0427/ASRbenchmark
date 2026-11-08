@@ -119,10 +119,11 @@ reruns, 4 bpw was 1.5% faster than 3 bpw and had 0.480 points lower WER. The
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
-All three configurations ran on the same 2,620 test-clean utterances and
+All five configurations ran on the same 2,620 test-clean utterances and
 53,120 reference words, using the same seed-1337 manifest. EXL3 runs use the
 BF16 TensorRT encoder and greedy decoding; GGUF uses its INT4 encoder and Q4_K
-decoder. Model initialization is excluded; each run includes two warmups.
+decoder. The figures below use the aligned memory-profile reruns. Model
+initialization is excluded; each run includes two warmups.
 Per-utterance latency includes audio loading and inference. All runs produced
 zero empty outputs, and IDs and references match across engines.
 
@@ -132,17 +133,31 @@ zero empty outputs, and IDs and references match across engines.
 
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
-| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.090% | 423.7 | 612.3 | 1,188.5 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 182.6 | 409.6 | 588.5 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.8** | **451.9** | **648.1** |
+| Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML+Vulkan | 2.090% | 470.7 | 676.4 | 1,319.5 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 | 433.1 | 624.6 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 195.0 | 430.5 | 618.2 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 | 434.3 | 624.2 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.5** | **448.3** | **644.7** |
 
-EXL3 3 bpw was 2.32x faster than GGUF by median latency and had 0.066
-percentage points lower WER. EXL3 4 bpw was 2.04x faster and had 0.103
-percentage points lower WER. On this corpus, 4 bpw reduced WER by 0.038 points
-versus 3 bpw, while 3 bpw was 13.8% faster by median latency. Pairwise edit
-counts were 150 wins, 2,341 ties, and 129 losses for 3 bpw versus GGUF; 142,
-2,379, and 99 for 4 bpw versus GGUF; and 90, 2,422, and 108 for 3 bpw versus
-4 bpw.
+EXL3 3 bpw was 2.41x faster than GGUF by median latency and had 0.066
+percentage points lower WER. EXL3 4 bpw was 2.27x faster and had 0.104
+percentage points lower WER. Calibrated EXL3 3 bpw was 2.40x faster than GGUF,
+with WER 0.019 points higher. On this corpus, 4 bpw reduced WER by 0.038
+points versus uncalibrated 3 bpw, while uncalibrated 3 bpw was 6.4% faster by
+median latency. Pairwise edit counts were 133 wins, 2,296 ties, and 191 losses
+for calibrated 2.5 bpw versus GGUF; 150, 2,341, and 129 for 3 bpw versus GGUF;
+142, 2,379, and 99 for 4 bpw versus GGUF; 141, 2,315, and 164 for calibrated
+3 bpw versus GGUF; and 120, 2,348, and 152 for calibrated versus uncalibrated
+3 bpw.
+
+Calibrated 2.5 bpw was 2.35x faster than GGUF, with WER 0.115 points higher.
+It was 2.8% slower than uncalibrated 3 bpw and had WER 0.181 points higher;
+its measured GPU memory increase was 47 MiB higher. It did not improve the
+speed, accuracy, or memory tradeoff over uncalibrated 3 bpw in this run.
+
+Compared with uncalibrated 3 bpw, calibrated 3 bpw was 0.6% slower and WER was
+0.085 points higher; paired edit counts were 120 wins, 2,348 ties, and 152
+losses. Calibration did not improve this 3 bpw result on test-clean.
 
 ## GPU memory and INT4/INT8 encoder comparison
 
@@ -175,6 +190,8 @@ matching 0.6B or 1.7B encoder and decoder artifacts.
 | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | 2.090% | 470.7 / 676.4 | 202.79 | 83.42 / 171.06 | 2,102 MiB |
 | BF16 + EXL3 3 bpw | 2.024% | 195.0 / 430.5 | 9.21 | 26.14 / 151.75 | 2,529 MiB |
+| BF16 + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 / 434.3 | 9.30 | 25.80 / 150.92 | 2,538 MiB |
+| BF16 + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 / 433.1 | 9.23 | 33.94 / 148.00 | 2,576 MiB |
 | BF16 + EXL3 4 bpw | **1.986%** | 207.5 / 448.3 | 9.25 | 33.57 / 159.58 | 2,791 MiB |
 | INT4 encoder + EXL3 4 bpw | 2.073% | 206.4 / 447.6 | 7.27 | 33.43 / 160.51 | 2,381 MiB |
 | INT8 + EXL3 4 bpw | 2.018% | 202.7 / 436.7 | 4.89 | 33.53 / 159.43 | 2,501 MiB |
@@ -194,14 +211,14 @@ the encoder slower (6.00 ms to 7.99 ms), changed median end-to-end latency from
 a suitable accuracy-preserving replacement for the 0.6B BF16 encoder in this
 measurement.
 
-The calibrated 2.5 bpw decoder was slower than 4 bpw in the matched reruns,
+For 0.6B, the calibrated 2.5 bpw decoder was slower than 4 bpw in the matched reruns,
 with higher WER and a 69 MiB higher whole-GPU memory delta. Its 568 MB weight
 file saves about 95 MB from the 4 bpw file, but this did not translate into a
 lower measured GPU peak. The 2 bpw candidate was also 8.9% slower than 4 bpw,
 with WER higher by 6.049 percentage points. It saved about 105 MB in weights
 and 84 MiB in measured GPU memory, which does not offset the quality loss.
 
-* The 2.5 bpw memory figure is one whole-GPU sample: idle 178 MiB and peak
+* The 0.6B 2.5 bpw memory figure is one whole-GPU sample: idle 178 MiB and peak
   2,161 MiB, sampled every 500 ms. The matched 4 bpw run had 203 MiB idle and
   2,117 MiB peak. These samples include Windows GPU clients and are not
   process-isolated allocations.
@@ -237,10 +254,16 @@ cache. The GGUF baseline uses a different runtime and allocator.
 
 The earlier INT8 encoders were calibrated from `test-clean`, which overlaps the
 evaluation set. They were recalibrated using 32 speakers and chapters sampled
-from LibriSpeech `train-clean-100` (59 encoder windows per model). The complete
-official archive was verified, then its compressed copy was removed to reclaim
-space. The selected calibration chapters and packed decoder rows remain local;
-the full archive can be downloaded again if another sample needs to be extracted.
+from LibriSpeech `train-clean-100` (59 encoder windows per model). The official
+archive is retained locally at `.native/calibration/train-clean-100.tar.gz`
+(6,387,309,499 bytes). Its MD5 `2a93770f6f5c6c964bc36631d331a522` matches the
+OpenSLR checksum, and its SHA-256 is
+`d4ddd1d5a6ab303066f14971d768ee43278a5f2a0aa43dc716b0e64ecbbbf6e2`. The sample
+was extracted with `tools/extract_librispeech_calibration.py` using seed 1337:
+32 speakers, 32 chapters, 1,776 FLAC files, and 32 chapter transcripts. Repacking
+the sample reproduced the decoder calibration tensor used for the 2 bpw run
+byte-for-byte (SHA-256
+`51b54f6c1995d1dee36f3c1d01782c33501a3bb981f7f3f3109213749a2988a0`).
 
 Cosine is measured frame by frame between candidate TensorRT embeddings and the
 FP16 TensorRT encoder on all 2,620 test-clean utterances (253,326 frames). WER
@@ -279,9 +302,10 @@ requests and transcripts into 200 rows of 2,048 token IDs using the Qwen3-ASR
 tokenizer. Each request contains its actual audio placeholder span and English
 ASR task prefix. ExLlamaV3 consumes token IDs, so these rows represent the text
 prompt and transcript distribution; they do not contain encoder audio
-embeddings. The 0.6B 2.5 bpw decoder was converted from these rows and evaluated
-on all 2,620 test-clean utterances; its speed, WER and memory sample are listed
-above.
+embeddings. These rows were used for the 0.6B and 1.7B 2.5 bpw decoders and
+the 1.7B 3 bpw decoder. Both calibrated 1.7B decoders were evaluated on all
+2,620 test-clean utterances; their speed, WER, stage timings and memory samples
+are listed above.
 
 Raw per-utterance records and memory samples are
 kept under `.native/librispeech/qwen3-asr-memory-full-test-clean/` and are not

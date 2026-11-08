@@ -12,25 +12,30 @@ from windows_benchmark import normalize
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ROOT / ".native/librispeech/qwen3-asr-1.7b-full-test-clean"
+MEMORY_RUNS = ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/1.7b"
 DOCS = ROOT / "docs"
-CONFIGS = {
-    "GGUF INT4 + Q4_K": ("gguf", "gguf"),
-    "TensorRT BF16 + EXL3 3 bpw": ("exl3-3bpw", "tensorrt-exllama"),
-    "TensorRT BF16 + EXL3 4 bpw": ("exl3-4bpw", "tensorrt-exllama"),
-}
-COLORS = ["#3b6ea5", "#c44e52", "#4c956c"]
+CONFIGS = [
+    ("GGUF INT4 + Q4_K", MEMORY_RUNS / "gguf-int4-q4k/results", "gguf"),
+    ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100",
+     MEMORY_RUNS / "trt-bf16-exl3-2.5bpw-train100/results", "tensorrt-exllama"),
+    ("TensorRT BF16 + EXL3 3 bpw", MEMORY_RUNS / "trt-bf16-exl3-3bpw/results", "tensorrt-exllama"),
+    ("TensorRT BF16 + EXL3 3 bpw, train-clean-100",
+     MEMORY_RUNS / "trt-bf16-exl3-3bpw-train100/results", "tensorrt-exllama"),
+    ("TensorRT BF16 + EXL3 4 bpw", MEMORY_RUNS / "trt-bf16-exl3-4bpw/results", "tensorrt-exllama"),
+]
+COLORS = ["#3b6ea5", "#d98b3a", "#c44e52", "#b279a2", "#4c956c"]
 
 
 def main():
-    sample = [json.loads(line) for line in (RUNS / "gguf/sample.jsonl").read_text(encoding="utf-8").splitlines()]
+    sample = [json.loads(line) for line in
+              (MEMORY_RUNS / "gguf-int4-q4k/results/sample.jsonl").read_text(encoding="utf-8").splitlines()]
     ids = [row["id"] for row in sample]
     if len(ids) != 2620 or len(set(ids)) != len(ids):
         raise ValueError(f"Expected 2,620 unique utterances, got {len(ids)} rows")
 
     summaries = {}
     runs = {}
-    for label, (folder, stem) in CONFIGS.items():
-        directory = RUNS / folder
+    for label, directory, stem in CONFIGS:
         summary = json.loads((directory / f"{stem}.summary.json").read_text(encoding="utf-8"))
         rows = [json.loads(line) for line in (directory / f"{stem}.jsonl").read_text(encoding="utf-8").splitlines()]
         if [row["id"] for row in rows] != ids:
@@ -54,7 +59,9 @@ def main():
                 for row, base in zip(rows, baseline)
             ),
         }
-    three, four = list(runs.values())[1:]
+    three = runs["TensorRT BF16 + EXL3 3 bpw"]
+    calibrated_three = runs["TensorRT BF16 + EXL3 3 bpw, train-clean-100"]
+    four = runs["TensorRT BF16 + EXL3 4 bpw"]
     pairwise["TensorRT BF16 + EXL3 3 bpw vs 4 bpw"] = {
         "editWinsTiesLosses": [
             sum(a["edits"] < b["edits"] for a, b in zip(three, four)),
@@ -64,6 +71,17 @@ def main():
         "exactSameNormalizedText": sum(
             normalize(a["hypothesis"]) == normalize(b["hypothesis"])
             for a, b in zip(three, four)
+        ),
+    }
+    pairwise["TensorRT BF16 + EXL3 3 bpw, train-clean-100 vs uncalibrated 3 bpw"] = {
+        "editWinsTiesLosses": [
+            sum(a["edits"] < b["edits"] for a, b in zip(calibrated_three, three)),
+            sum(a["edits"] == b["edits"] for a, b in zip(calibrated_three, three)),
+            sum(a["edits"] > b["edits"] for a, b in zip(calibrated_three, three)),
+        ],
+        "exactSameNormalizedText": sum(
+            normalize(a["hypothesis"]) == normalize(b["hypothesis"])
+            for a, b in zip(calibrated_three, three)
         ),
     }
 
@@ -92,9 +110,15 @@ def main():
 
     fig, ax = plt.subplots(figsize=(8.8, 6.2))
     fig.subplots_adjust(left=0.14, right=0.96, top=0.83, bottom=0.15)
-    for label, x, y, color in zip(labels, median, wer, colors):
+    plot_labels = ["GGUF", "EXL3 2.5 cal.", "EXL3 3 bpw", "EXL3 3 bpw cal.", "EXL3 4 bpw"]
+    annotation_offsets = [(8, 8), (8, 8), (-48, -17), (8, 8), (8, -17)]
+    for label, x, y, color, plot_label, offset in zip(
+        labels, median, wer, colors, plot_labels, annotation_offsets
+    ):
         ax.scatter(x, y, s=115, color=color, edgecolor="white", linewidth=1.0, zorder=3)
-        ax.annotate(label, (x, y), xytext=(8, 8), textcoords="offset points", fontsize=8.8)
+        ax.annotate(plot_label, (x, y), xytext=offset, textcoords="offset points", fontsize=8)
+    spread = wer.max() - wer.min()
+    ax.set_ylim(wer.min() - spread * 0.12, wer.max() + spread * 0.12)
     ax.set_xlabel("Median end-to-end latency (ms) · lower is better")
     ax.set_ylabel("Corpus WER (%) · lower is better")
     ax.grid(color="#e4e8ee", linewidth=0.8)
@@ -107,13 +131,15 @@ def main():
     fig.savefig(DOCS / "windows-librispeech-qwen3-1.7b-speed-accuracy.svg", bbox_inches="tight")
     plt.close(fig)
 
-    fig, axes = plt.subplots(1, 3, figsize=(12.0, 5.8))
-    fig.subplots_adjust(left=0.10, right=0.98, top=0.79, bottom=0.23, wspace=0.38)
+    fig, axes = plt.subplots(1, 3, figsize=(14.5, 5.8))
+    fig.subplots_adjust(left=0.07, right=0.99, top=0.79, bottom=0.30, wspace=0.32)
     panels = [(median, "Median latency (ms)"), (p90, "P90 latency (ms)"), (wer, "Corpus WER (%)")]
     for ax, (values, title) in zip(axes, panels):
         bars = ax.bar(np.arange(len(labels)), values, color=colors, width=0.68)
         ax.set_title(title, fontsize=10)
-        ax.set_xticks(np.arange(len(labels)), ["GGUF", "EXL3\n3 bpw", "EXL3\n4 bpw"])
+        ax.set_xticks(np.arange(len(labels)), [
+            "GGUF", "2.5\nbpw cal.", "3 bpw", "3 bpw\ncal.", "4 bpw"
+        ], fontsize=8)
         ax.grid(axis="y", color="#e4e8ee", linewidth=0.8, zorder=0)
         ax.set_axisbelow(True)
         ax.spines[["top", "right"]].set_visible(False)
