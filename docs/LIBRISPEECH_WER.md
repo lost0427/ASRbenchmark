@@ -127,6 +127,12 @@ initialization is excluded; each run includes two warmups.
 Per-utterance latency includes audio loading and inference. All runs produced
 zero empty outputs, and IDs and references match across engines.
 
+The GGUF full-corpus runner sets `onnx_provider="DML"` and
+`llm_use_gpu=True`; the benchmark environment had `DmlExecutionProvider`
+available, and the run is recorded as `DML+Vulkan`. No ONNX Runtime node-level
+profiling was saved, so this confirms the selected backend configuration but
+not that every ONNX operator ran on DirectML.
+
 ![Qwen3-ASR 1.7B speed and accuracy](windows-librispeech-qwen3-1.7b-speed-accuracy.png)
 
 [SVG version](windows-librispeech-qwen3-1.7b-speed-accuracy.svg); [separate metric panels](windows-librispeech-qwen3-1.7b-comparison.png)
@@ -293,6 +299,16 @@ speedup. INT8 retains near-reference WER on 1.7B but is slower than FP16 in the
 earlier stage run; 0.6B INT8 is unusable at 16.860% WER. The current recommended
 encoder remains BF16 on 4060 class hardware, with FP16 available for hardware
 without BF16.
+
+This is weight-only INT4: TensorRT dequantizes the packed weights before
+high-precision GEMM, and does not quantize activations. The GGUF encoder
+quantization script also targets MatMul weights only, with 4-bit blocks of 16,
+and reads `.fp32.onnx` inputs. Its `test_quant_accuracy.py` compares one
+`test.mp3` on CPU and calculates one cosine over flattened embeddings. Those
+results are not directly comparable to this report's frame-wise mean and P05
+over 2,620 test-clean utterances against a TensorRT FP16 reference. The reported
+GGUF value near 96% is consistent in scale with this project's 96.3% (0.6B)
+and 97.4% (1.7B), but it is not the same measurement.
 
 For the tested full-pipeline configurations, 0.6B BF16 encoder + EXL3 4 bpw
 has the best WER (2.423%) and median latency (104.1 ms). For 1.7B, BF16 + EXL3
