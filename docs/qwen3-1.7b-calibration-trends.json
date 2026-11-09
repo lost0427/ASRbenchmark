@@ -1,0 +1,59 @@
+{
+  "benchmark": "LibriSpeech test-clean",
+  "model": "Qwen3-ASR 1.7B",
+  "conditions": {
+    "utterances": 2620,
+    "referenceWords": 53120,
+    "encoder": "TensorRT BF16",
+    "decoderRuntime": "ExLlamaV3",
+    "warmupUtterances": 2,
+    "runsPerVariant": 1
+  },
+  "sessionNote": "All EXL3 points are from the same 2026-11-09 session.",
+  "variants": [
+    {
+      "calibration": "legacy",
+      "bitrateBpw": 3.0,
+      "corpusWER": 0.02023719879518072,
+      "edits": 1075,
+      "medianMs": 189.1907499957597,
+      "p90Ms": 414.3868199927965,
+      "elapsedSeconds": 608.2994018000027
+    },
+    {
+      "calibration": "train-clean-100",
+      "bitrateBpw": 3.0,
+      "corpusWER": 0.021329066265060242,
+      "edits": 1133,
+      "medianMs": 194.2496999981813,
+      "p90Ms": 437.1738399961032,
+      "elapsedSeconds": 623.3257371000072
+    },
+    {
+      "calibration": "legacy",
+      "bitrateBpw": 4.0,
+      "corpusWER": 0.019841867469879516,
+      "edits": 1054,
+      "medianMs": 191.05434999801219,
+      "p90Ms": 435.14318000816274,
+      "elapsedSeconds": 609.869995999994
+    },
+    {
+      "calibration": "train-clean-100",
+      "bitrateBpw": 4.0,
+      "corpusWER": 0.01948418674698795,
+      "edits": 1035,
+      "medianMs": 196.26379999681376,
+      "p90Ms": 414.76025999872945,
+      "elapsedSeconds": 608.1147582999838
+    }
+  ],
+  "gguf": {
+    "configuration": "GGUF INT4 + Q4_K",
+    "corpusWER": 0.020896084337349397,
+    "edits": 1110,
+    "medianMs": 391.8084999968414,
+    "p90Ms": 568.4054300028947,
+    "elapsedSeconds": 1099.4416352999979
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "benchmark": "LibriSpeech test-clean",
+  "model": "Qwen3-ASR 0.6B",
+  "conditions": {
+    "utterances": 2620,
+    "referenceWords": 53120,
+    "encoder": "TensorRT BF16",
+    "decoderRuntime": "ExLlamaV3",
+    "warmupUtterances": 2,
+    "runsPerVariant": 1
+  },
+  "sessionNote": "3 bpw points are from the 2026-11-08 session; 4 bpw points are from the 2026-11-09 session.",
+  "variants": [
+    {
+      "calibration": "legacy",
+      "bitrateBpw": 3.0,
+      "corpusWER": 0.029028614457831326,
+      "edits": 1542,
+      "medianMs": 103.69139999966137,
+      "p90Ms": 224.7193999995943,
+      "elapsedSeconds": 330.54680859998916
+    },
+    {
+      "calibration": "train-clean-100",
+      "bitrateBpw": 3.0,
+      "corpusWER": 0.02571536144578313,
+      "edits": 1366,
+      "medianMs": 105.39304999110755,
+      "p90Ms": 232.56922999280505,
+      "elapsedSeconds": 340.39096979997703
+    },
+    {
+      "calibration": "legacy",
+      "bitrateBpw": 4.0,
+      "corpusWER": 0.02422816265060241,
+      "edits": 1287,
+      "medianMs": 154.94210000906605,
+      "p90Ms": 328.24863999267103,
+      "elapsedSeconds": 486.02390900001046
+    },
+    {
+      "calibration": "train-clean-100",
+      "bitrateBpw": 4.0,
+      "corpusWER": 0.023776355421686747,
+      "edits": 1263,
+      "medianMs": 144.78550001513213,
+      "p90Ms": 309.6464700036448,
+      "elapsedSeconds": 454.71449880002183
+    }
+  ],
+  "gguf": {
+    "configuration": "GGUF INT4 + Q4_K",
+    "corpusWER": 0.029819277108433736,
+    "edits": 1584,
+    "medianMs": 299.15170000094804,
+    "p90Ms": 403.7951099999191,
+    "elapsedSeconds": 827.8321489000009
+  }
+}
