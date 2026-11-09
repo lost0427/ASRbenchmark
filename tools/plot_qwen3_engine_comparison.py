@@ -75,7 +75,7 @@ def main():
             for a, b in zip(three, four)
         ),
     }
-    pairwise["TensorRT BF16 + EXL3 3 bpw, train-clean-100 vs uncalibrated 3 bpw"] = {
+    pairwise["TensorRT BF16 + EXL3 3 bpw, train-clean-100 vs legacy 3 bpw"] = {
         "editWinsTiesLosses": [
             sum(a["edits"] < b["edits"] for a, b in zip(calibrated_three, three)),
             sum(a["edits"] == b["edits"] for a, b in zip(calibrated_three, three)),
