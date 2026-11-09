@@ -127,9 +127,9 @@ speedup measurement.
 The legacy 3 bpw decoder and the separately calibrated `train-clean-100`
 variant were each run once on the same 2,620 test-clean utterances. Both runs
 used the TensorRT BF16 encoder, ExLlamaV3 decoder, greedy decoding, and two
-warmup utterances. Their IDs and references match exactly. The legacy
-quantization metadata records 250 rows × 2,048 tokens but does not identify the
-calibration source. The new decoder uses 200 rows × 2,048 tokens packed from
+warmup utterances. Their IDs and references match exactly. The legacy decoder
+was quantized with ExLlamaV3's default calibration data: 250 rows of 2,048
+tokens. The new decoder uses 200 rows × 2,048 tokens packed from
 1,603 paired audio requests and transcripts in `train-clean-100`.
 
 ![Qwen3-ASR 0.6B calibration comparison](windows-librispeech-qwen3-0.6b-calibration-comparison.png)
@@ -138,7 +138,7 @@ calibration source. The new decoder uses 200 rows × 2,048 tokens packed from
 
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Legacy EXL3 3 bpw | 250 × 2,048; source not recorded | 2.9029% | 1,542 | 103.69 | 224.72 | 330.55 |
+| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.9029% | 1,542 | 103.69 | 224.72 | 330.55 |
 | EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.5715%** | **1,366** | 105.39 | 232.57 | 340.39 |
 
 The new calibration reduced WER by 0.3313 percentage points (176 fewer total
@@ -151,13 +151,17 @@ are in `docs/qwen3-0.6b-calibration-comparison.json` and
 the ignored `.native/librispeech/qwen3-asr-0.6b-3bpw-calibration-compare-20261108/`
 directory.
 
+The `train-clean-100` variants are tuned for LibriSpeech-style English read
+speech. For general-purpose audio and Chinese ASR, the legacy decoders, which
+use ExLlamaV3's default calibration data, remain the default recommendation.
+
 ## Qwen3-ASR 0.6B: 4 bpw calibration comparison
 
 The legacy 4 bpw decoder and the separately calibrated `train-clean-100` 4 bpw
 variant were each run once on the same 2,620 test-clean utterances, together
 with the existing GGUF INT4 + Q4_K result. All runs use the same IDs and
-references. The legacy quantization metadata records 250 rows × 2,048 tokens
-but does not identify the calibration source. The new decoder uses 200 rows ×
+references. The legacy decoder was quantized with ExLlamaV3's default
+calibration data: 250 rows of 2,048 tokens. The new decoder uses 200 rows ×
 2,048 tokens packed from 1,603 paired audio requests and transcripts in
 `train-clean-100`.
 
@@ -177,7 +181,7 @@ and treat the latency positions as session-specific.
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | INT4 encoder, Q4_K decoder | 2.9819% | 1,584 | 299.15 | 403.80 | 827.83 |
-| Legacy EXL3 4 bpw | 250 × 2,048; source not recorded | 2.4228% | 1,287 | 154.94 | 328.25 | 486.02 |
+| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 2.4228% | 1,287 | 154.94 | 328.25 | 486.02 |
 | EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.3776%** | **1,263** | 144.79 | 309.65 | 454.71 |
 
 The calibrated 4 bpw decoder reduced WER by 0.0452 percentage points and 24
@@ -192,12 +196,18 @@ Aggregate results and plotting code are in
 `docs/qwen3-0.6b-calibration-trends.json`, and
 `tools/plot_qwen3_calibration_comparison.py`.
 
+The small test-clean improvement does not make the calibrated 4 bpw variant a
+general-purpose replacement. For Chinese and non-LibriSpeech audio, use the
+legacy decoder, which was quantized with ExLlamaV3's default calibration data.
+
 ## Qwen3-ASR 1.7B: decoder calibration comparison
 
 The legacy and `train-clean-100` 3 bpw and 4 bpw decoders were each run once on
 the same 2,620 test-clean utterances. The existing GGUF INT4 + Q4_K result is
 shown for reference. All TensorRT runs used the same BF16 encoder, greedy
-decoding, and two warmup utterances.
+decoding, and two warmup utterances. The legacy decoders were quantized with
+ExLlamaV3's default calibration data; the calibrated variants use 200 rows
+packed from `train-clean-100`.
 
 ![Qwen3-ASR 1.7B calibration comparison](windows-librispeech-qwen3-1.7b-calibration-comparison.png)
 
@@ -213,9 +223,9 @@ adds GGUF as a reference. All four EXL3 points are from the same session.
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | INT4 encoder, Q4_K decoder | 2.0896% | 1,110 | 391.81 | 568.41 | 1,099.44 |
-| Legacy EXL3 3 bpw | 250 × 2,048; source not recorded | 2.0237% | 1,075 | 189.19 | 414.39 | 608.30 |
+| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.0237% | 1,075 | 189.19 | 414.39 | 608.30 |
 | EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | 2.1329% | 1,133 | 194.25 | 437.17 | 623.33 |
-| Legacy EXL3 4 bpw | 250 × 2,048; source not recorded | 1.9842% | 1,054 | 191.05 | 435.14 | 609.87 |
+| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 1.9842% | 1,054 | 191.05 | 435.14 | 609.87 |
 | EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **1.9484%** | **1,035** | 196.26 | 414.76 | 608.11 |
 
 The calibrated 4 bpw decoder reduced WER by 0.0358 percentage points and 19
@@ -227,6 +237,10 @@ Its paired counts were 97 wins, 2,380 ties, and 143 losses. Calibration did not
 improve the 1.7B 3 bpw tradeoff on test-clean. Aggregate results are in
 `docs/qwen3-1.7b-calibration-comparison.json` and
 `docs/qwen3-1.7b-calibration-trends.json`.
+
+The calibrated 4 bpw variant has a small test-clean advantage, while the
+calibrated 3 bpw variant is worse than legacy. For general-purpose audio and
+Chinese ASR, the legacy decoders remain the default recommendation.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
@@ -263,19 +277,19 @@ EXL3 3 bpw was 2.01x faster than GGUF by median latency and had 0.066
 percentage points lower WER. EXL3 4 bpw was 1.89x faster and had 0.104
 percentage points lower WER. Calibrated EXL3 3 bpw was 2.00x faster than GGUF,
 with WER 0.019 points higher. On this corpus, 4 bpw reduced WER by 0.038
-points versus uncalibrated 3 bpw, while uncalibrated 3 bpw was 6.4% faster by
+points versus legacy 3 bpw, while legacy 3 bpw was 6.4% faster by
 median latency. Pairwise edit counts were 133 wins, 2,296 ties, and 191 losses
 for calibrated 2.5 bpw versus GGUF; 150, 2,341, and 129 for 3 bpw versus GGUF;
 142, 2,379, and 99 for 4 bpw versus GGUF; 141, 2,315, and 164 for calibrated
-3 bpw versus GGUF; and 120, 2,348, and 152 for calibrated versus uncalibrated
+and 120, 2,348, and 152 for calibrated versus legacy
 3 bpw.
 
 Calibrated 2.5 bpw was 2.35x faster than GGUF, with WER 0.115 points higher.
-It was 2.8% slower than uncalibrated 3 bpw and had WER 0.181 points higher;
+It was 2.8% slower than legacy 3 bpw and had WER 0.181 points higher;
 its measured GPU memory increase was 47 MiB higher. It did not improve the
-speed, accuracy, or memory tradeoff over uncalibrated 3 bpw in this run.
+speed, accuracy, or memory tradeoff over legacy 3 bpw in this run.
 
-Compared with uncalibrated 3 bpw, calibrated 3 bpw was 0.6% slower and WER was
+Compared with legacy 3 bpw, calibrated 3 bpw was 0.6% slower and WER was
 0.085 points higher; paired edit counts were 120 wins, 2,348 ties, and 152
 losses. Calibration did not improve this 3 bpw result on test-clean.
 
@@ -444,12 +458,17 @@ and 97.4% (1.7B), but it is not the same measurement.
 For the tested full-pipeline configurations, 0.6B BF16 encoder + EXL3 4 bpw
 with `train-clean-100` calibration has the lowest measured WER (2.378%); the
 legacy 4 bpw variant measured 2.423%. For 1.7B, BF16 + EXL3 4 bpw with
-`train-clean-100` calibration has the lowest WER (1.948%); uncalibrated 4 bpw
+`train-clean-100` calibration has the lowest WER (1.948%); legacy 4 bpw
 measured 1.984%. The calibrated 3 bpw variants did not improve on their
-uncalibrated counterparts: 1.7B calibrated 3 bpw was 0.109 points worse.
+legacy counterparts: 1.7B calibrated 3 bpw was 0.109 points worse.
 Median latency for 0.6B in this session is higher than earlier tables and
 should only be compared within the calibration figure. The 2 bpw experiment is
 retired and is not part of the supported decoder set.
+
+These test-clean gains do not establish a general improvement. The
+`train-clean-100` variants are tuned for LibriSpeech-style English read speech;
+for general-purpose audio and Chinese ASR, the legacy decoders, which use
+ExLlamaV3's default calibration data, remain the default recommendation.
 
 The cosine values describe embedding direction, not transcript accuracy. The
 low cosine tail, especially on 0.6B INT8, tracks the WER regression but does not
