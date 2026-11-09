@@ -9,6 +9,7 @@
     "warmupUtterances": 2,
     "runsPerVariant": 1
   },
+  "recommendation": "Legacy decoders use ExLlamaV3 default calibration data and remain the default for general-purpose and Chinese ASR. The train-clean-100 variants are tuned for LibriSpeech-style English read speech.",
   "variants": [
     {
       "name": "GGUF INT4 + Q4_K",
@@ -33,7 +34,7 @@
       "calibration": {
         "rows": 250,
         "columns": 2048,
-        "source": "not recorded in quantization metadata"
+        "source": "ExLlamaV3 default calibration data"
       },
       "summary": {
         "referenceWords": 53120,
@@ -72,7 +73,7 @@
       "calibration": {
         "rows": 250,
         "columns": 2048,
-        "source": "not recorded in quantization metadata"
+        "source": "ExLlamaV3 default calibration data"
       },
       "summary": {
         "referenceWords": 53120,

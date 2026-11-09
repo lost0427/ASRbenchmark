@@ -10,9 +10,11 @@
     "runsPerVariant": 1
   },
   "sessionNote": "3 bpw points are from the 2026-11-08 session; 4 bpw points are from the 2026-11-09 session.",
+  "recommendation": "Legacy decoders use ExLlamaV3 default calibration data and remain the default for general-purpose and Chinese ASR. The train-clean-100 variants are tuned for LibriSpeech-style English read speech.",
   "variants": [
     {
       "calibration": "legacy",
+      "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 3.0,
       "corpusWER": 0.029028614457831326,
       "edits": 1542,
@@ -22,6 +24,7 @@
     },
     {
       "calibration": "train-clean-100",
+      "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 3.0,
       "corpusWER": 0.02571536144578313,
       "edits": 1366,
@@ -31,6 +34,7 @@
     },
     {
       "calibration": "legacy",
+      "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 4.0,
       "corpusWER": 0.02422816265060241,
       "edits": 1287,
@@ -40,6 +44,7 @@
     },
     {
       "calibration": "train-clean-100",
+      "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 4.0,
       "corpusWER": 0.023776355421686747,
       "edits": 1263,

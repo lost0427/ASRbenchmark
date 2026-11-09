@@ -16,7 +16,7 @@
       "calibration": {
         "rows": 250,
         "columns": 2048,
-        "source": "not recorded in quantization metadata"
+        "source": "ExLlamaV3 default calibration data"
       },
       "summary": {
         "referenceWords": 53120,

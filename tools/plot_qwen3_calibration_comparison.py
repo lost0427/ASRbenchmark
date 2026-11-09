@@ -21,6 +21,12 @@ COMMON = {
     "runsPerVariant": 1,
 }
 
+RECOMMENDATION = (
+    "Legacy decoders use ExLlamaV3 default calibration data and remain the "
+    "default for general-purpose and Chinese ASR. The train-clean-100 variants "
+    "are tuned for LibriSpeech-style English read speech."
+)
+
 GGUF_06B = RUNS / "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json"
 GGUF_17B = RUNS / "qwen3-asr-1.7b-full-test-clean/comparison.json"
 
@@ -45,7 +51,7 @@ MODELS = {
                 "calibration": {
                     "rows": 250,
                     "columns": 2048,
-                    "source": "not recorded in quantization metadata",
+                    "source": "ExLlamaV3 default calibration data",
                 },
             },
             {
@@ -85,7 +91,7 @@ MODELS = {
                 "calibration": {
                     "rows": 250,
                     "columns": 2048,
-                    "source": "not recorded in quantization metadata",
+                    "source": "ExLlamaV3 default calibration data",
                 },
             },
             {
@@ -108,7 +114,7 @@ MODELS = {
                 "calibration": {
                     "rows": 250,
                     "columns": 2048,
-                    "source": "not recorded in quantization metadata",
+                    "source": "ExLlamaV3 default calibration data",
                 },
             },
             {
@@ -243,6 +249,7 @@ def write_report(key, model, summaries, paired):
         "benchmark": "LibriSpeech test-clean",
         "model": model["title"],
         "conditions": COMMON,
+        "recommendation": RECOMMENDATION,
         "variants": [
             {
                 **{
@@ -376,6 +383,11 @@ def load_trend(model):
         records.append(
             {
                 "calibration": family,
+                "calibrationSource": (
+                    "ExLlamaV3 default calibration data"
+                    if family == "legacy"
+                    else "LibriSpeech train-clean-100"
+                ),
                 "bitrateBpw": bpw,
                 "corpusWER": summary["corpusWER"],
                 "edits": summary["edits"],
@@ -399,6 +411,7 @@ def write_trend_report(model, records, gguf):
         "model": model["title"],
         "conditions": COMMON,
         "sessionNote": model["sessionNote"],
+        "recommendation": RECOMMENDATION,
         "variants": records,
         "gguf": {
             "configuration": "GGUF INT4 + Q4_K",

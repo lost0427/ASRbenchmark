@@ -10,9 +10,11 @@
     "runsPerVariant": 1
   },
   "sessionNote": "All EXL3 points are from the same 2026-11-09 session.",
+  "recommendation": "Legacy decoders use ExLlamaV3 default calibration data and remain the default for general-purpose and Chinese ASR. The train-clean-100 variants are tuned for LibriSpeech-style English read speech.",
   "variants": [
     {
       "calibration": "legacy",
+      "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 3.0,
       "corpusWER": 0.02023719879518072,
       "edits": 1075,
@@ -22,6 +24,7 @@
     },
     {
       "calibration": "train-clean-100",
+      "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 3.0,
       "corpusWER": 0.021329066265060242,
       "edits": 1133,
@@ -31,6 +34,7 @@
     },
     {
       "calibration": "legacy",
+      "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 4.0,
       "corpusWER": 0.019841867469879516,
       "edits": 1054,
@@ -40,6 +44,7 @@
     },
     {
       "calibration": "train-clean-100",
+      "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 4.0,
       "corpusWER": 0.01948418674698795,
       "edits": 1035,
