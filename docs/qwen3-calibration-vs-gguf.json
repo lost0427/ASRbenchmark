@@ -21,7 +21,8 @@
           "decodeTokens": 21.0,
           "encoderMs": 6.297675005043857
         },
-        "speedupVsGguf": 2.597589330728987
+        "speedupVsGguf": 2.597589330728987,
+        "speedupVsOfficial": 6.83470842338764
       },
       {
         "name": "3bpw train100",
@@ -39,7 +40,8 @@
           "decoderPrefillMs": 17.017483711242676,
           "promptTokens": 93.0
         },
-        "speedupVsGguf": 2.615627751414929
+        "speedupVsGguf": 2.615627751414929,
+        "speedupVsOfficial": 6.88217063935394
       },
       {
         "name": "4bpw legacy",
@@ -57,7 +59,8 @@
           "preprocessingMs": 4.742824981804006,
           "decoderMs": 102.62467501161154
         },
-        "speedupVsGguf": 2.624329364163609
+        "speedupVsGguf": 2.624329364163609,
+        "speedupVsOfficial": 6.905066092937348
       },
       {
         "name": "4bpw train100",
@@ -75,7 +78,8 @@
           "promptTokens": 93.0,
           "preprocessingMs": 4.776199988555163
         },
-        "speedupVsGguf": 2.600162057952801
+        "speedupVsGguf": 2.600162057952801,
+        "speedupVsOfficial": 6.841477715292124
       },
       {
         "name": "GGUF Q4_K",
@@ -115,7 +119,8 @@
           "decoderPrefillMs": 26.04389190673828,
           "promptTokens": 93.0
         },
-        "speedupVsGguf": 2.0709707002357303
+        "speedupVsGguf": 2.0709707002357303,
+        "speedupVsOfficial": 4.56430824467414
       },
       {
         "name": "3bpw train100",
@@ -133,7 +138,8 @@
           "encoderMs": 9.013050002977252,
           "promptTokens": 93.0
         },
-        "speedupVsGguf": 2.0170352901472164
+        "speedupVsGguf": 2.0170352901472164,
+        "speedupVsOfficial": 4.445437496324653
       },
       {
         "name": "4bpw legacy",
@@ -151,7 +157,8 @@
           "decoderPrefillMs": 28.7245512008667,
           "decodeTokens": 22.0
         },
-        "speedupVsGguf": 2.050769846386214
+        "speedupVsGguf": 2.050769846386214,
+        "speedupVsOfficial": 4.519786647258827
       },
       {
         "name": "4bpw train100",
@@ -169,7 +176,8 @@
           "encoderMs": 8.582349997595884,
           "decoderGenerationMs": 151.131272315979
         },
-        "speedupVsGguf": 1.9963360538377541
+        "speedupVsGguf": 1.9963360538377541,
+        "speedupVsOfficial": 4.399817490722939
       },
       {
         "name": "GGUF Q4_K",

@@ -258,14 +258,14 @@ was not tested: vLLM 0.14.0 has no native Windows wheel.
 
 [SVG version](windows-librispeech-qwen3-0.6b-stage-latency.svg)
 
-| 0.6B decoder | WER | Median ms | Speed vs GGUF |
-| --- | ---: | ---: | ---: |
-| EXL3 3 bpw legacy | 2.9029% | 115.17 | ×2.60 |
-| EXL3 3 bpw train-clean-100 | 2.5715% | 114.37 | ×2.62 |
-| EXL3 4 bpw legacy | 2.4228% | 113.99 | ×2.62 |
-| EXL3 4 bpw train-clean-100 | **2.3776%** | 115.05 | ×2.60 |
-| GGUF Q4_K | 2.9819% | 299.15 | reference |
-| Official Transformers | **2.3212%** | 787.12 | ×0.38 |
+| 0.6B decoder | WER | Median ms | Speed vs GGUF | Speed vs official |
+| --- | ---: | ---: | ---: | ---: |
+| EXL3 3 bpw legacy | 2.9029% | 115.17 | ×2.60 | ×6.83 |
+| EXL3 3 bpw train-clean-100 | 2.5715% | 114.37 | ×2.62 | ×6.88 |
+| EXL3 4 bpw legacy | 2.4228% | 113.99 | ×2.62 | ×6.91 |
+| EXL3 4 bpw train-clean-100 | **2.3776%** | 115.05 | ×2.60 | ×6.84 |
+| GGUF Q4_K | 2.9819% | 299.15 | reference | ×2.63 |
+| Official Transformers | **2.3212%** | 787.12 | ×0.38 | reference |
 
 ![Qwen3-ASR 1.7B calibration vs GGUF](windows-librispeech-qwen3-1.7b-calibration-vs-gguf.png)
 
@@ -275,19 +275,19 @@ was not tested: vLLM 0.14.0 has no native Windows wheel.
 
 [SVG version](windows-librispeech-qwen3-1.7b-stage-latency.svg)
 
-| 1.7B decoder | WER | Median ms | Speed vs GGUF |
-| --- | ---: | ---: | ---: |
-| EXL3 3 bpw legacy | 2.0237% | 189.19 | ×2.07 |
-| EXL3 3 bpw train-clean-100 | 2.1329% | 194.25 | ×2.02 |
-| EXL3 4 bpw legacy | 1.9842% | 191.05 | ×2.05 |
-| EXL3 4 bpw train-clean-100 | **1.9484%** | 196.26 | ×2.00 |
-| GGUF Q4_K | 2.0896% | 391.81 | reference |
-| Official Transformers | **1.8863%** | 863.52 | ×0.45 |
+| 1.7B decoder | WER | Median ms | Speed vs GGUF | Speed vs official |
+| --- | ---: | ---: | ---: | ---: |
+| EXL3 3 bpw legacy | 2.0237% | 189.19 | ×2.07 | ×4.56 |
+| EXL3 3 bpw train-clean-100 | 2.1329% | 194.25 | ×2.02 | ×4.45 |
+| EXL3 4 bpw legacy | 1.9842% | 191.05 | ×2.05 | ×4.52 |
+| EXL3 4 bpw train-clean-100 | **1.9484%** | 196.26 | ×2.00 | ×4.40 |
+| GGUF Q4_K | 2.0896% | 391.81 | reference | ×2.20 |
+| Official Transformers | **1.8863%** | 863.52 | ×0.45 | reference |
 
 The EXL3 decoder paths are about 2.6× faster than GGUF Q4_K on 0.6B and
 about 2.0–2.1× faster on 1.7B. The official Transformers backend has the lowest
-WER in both tables, but it is 6.8× slower than EXL3 on 0.6B and 4.4× slower on
-1.7B. The stage chart shows that most of the gap is in the encoder and decoder
+WER in both tables, but it is 6.8–6.9× slower than EXL3 on 0.6B and 4.4–4.6×
+slower on 1.7B. The stage chart shows that most of the gap is in the encoder and decoder
 generation stages; the exact stage values are printed on the bars. For 0.6B,
 all four EXL3 points come from the 2026-11-10 two-pass rerun; GGUF is the
 2026-11-09 run.

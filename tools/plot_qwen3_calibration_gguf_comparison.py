@@ -117,8 +117,10 @@ def collect(model):
         }
     )
     gguf_latency = records[-2]["medianMs"]
+    official_latency = records[-1]["medianMs"]
     for record in records[:-2]:
         record["speedupVsGguf"] = gguf_latency / record["medianMs"]
+        record["speedupVsOfficial"] = official_latency / record["medianMs"]
     return records
 
 
@@ -156,24 +158,34 @@ def plot_flat(model, records):
     fig, ax = plt.subplots(figsize=(10.4, 6.4))
     fig.subplots_adjust(left=0.11, right=0.97, top=0.82, bottom=0.19)
     gguf_latency = records[-2]["medianMs"]
+    official_latency = records[-1]["medianMs"]
     callouts = None
     if model == "0.6b":
         callouts = {
-            "3bpw legacy": (155, 2.93),
+            "3bpw legacy": (155, 2.95),
             "3bpw train100": (155, 2.64),
             "4bpw legacy": (155, 2.43),
-            "4bpw train100": (155, 2.24),
+            "4bpw train100": (155, 2.22),
+        }
+    else:
+        callouts = {
+            "3bpw train100": (240, 2.14),
+            "3bpw legacy": (240, 2.05),
+            "4bpw legacy": (240, 1.96),
+            "4bpw train100": (240, 1.87),
         }
     for record, color, offset, align in zip(records, colors, offsets, aligns):
         x = record["medianMs"]
         y = record["corpusWER"] * 100
         ax.scatter(x, y, s=55, color=color, edgecolor="white", linewidth=0.7, zorder=3)
         if record["name"].startswith("GGUF"):
-            detail = f"{y:.3f}% / {x:.1f} ms · reference"
+            detail = (f"{y:.3f}% / {x:.1f} ms\n"
+                      f"×{official_latency / x:.2f} vs official · reference")
         elif record["name"].startswith("Official"):
-            detail = f"{y:.3f}% / {x:.1f} ms · official backend"
+            detail = f"{y:.3f}% / {x:.1f} ms · official reference"
         else:
-            detail = f"{y:.3f}% / {x:.1f} ms · ×{gguf_latency / x:.2f}"
+            detail = (f"{y:.3f}% / {x:.1f} ms\n"
+                      f"×{gguf_latency / x:.2f} vs GGUF · ×{official_latency / x:.2f} vs official")
         text = f"{record['name']}\n{detail}"
         if callouts and record["name"] in callouts:
             label_x, label_y = callouts[record["name"]]
@@ -211,7 +223,7 @@ def plot_flat(model, records):
     fig.text(0.02, 0.95, f"Qwen3-ASR {model.upper()} · calibration vs GGUF and official backend",
              fontsize=15, fontweight="bold", color="#1d2733")
     fig.text(0.02, 0.90,
-             "LibriSpeech test-clean · 2,620 utterances · train100 = train-clean-100 · ×N faster than GGUF",
+             "LibriSpeech test-clean · 2,620 utterances · train100 = train-clean-100 · ×N vs GGUF / official",
              fontsize=8.4, color="#5b6675")
     fig.text(0.02, 0.045, MODELS[model]["note"], fontsize=7.6, color="#6b7685")
     save(fig, f"windows-librispeech-{MODELS[model]['flat']}")
