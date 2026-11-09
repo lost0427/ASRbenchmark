@@ -136,6 +136,35 @@ MODELS = {
     },
 }
 
+TRENDS = {
+    "0.6b": {
+        "title": "Qwen3-ASR 0.6B",
+        "figure": "windows-librispeech-qwen3-0.6b-calibration-speed-accuracy",
+        "report": "qwen3-0.6b-calibration-trends.json",
+        "gguf": GGUF_06B,
+        "sessionNote": "3 bpw points are from the 2026-11-08 session; 4 bpw points are from the 2026-11-09 session.",
+        "runs": {
+            ("legacy", 3.0): RUNS / "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/old-250rows/tensorrt-exllama.summary.json",
+            ("train-clean-100", 3.0): RUNS / "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/train-clean-100-200rows/tensorrt-exllama.summary.json",
+            ("legacy", 4.0): RUNS / "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 4.0): RUNS / "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-train100/tensorrt-exllama.summary.json",
+        },
+    },
+    "1.7b": {
+        "title": "Qwen3-ASR 1.7B",
+        "figure": "windows-librispeech-qwen3-1.7b-calibration-speed-accuracy",
+        "report": "qwen3-1.7b-calibration-trends.json",
+        "gguf": GGUF_17B,
+        "sessionNote": "All EXL3 points are from the same 2026-11-09 session.",
+        "runs": {
+            ("legacy", 3.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 3.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-train100/tensorrt-exllama.summary.json",
+            ("legacy", 4.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/4bpw-legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 4.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/4bpw-train100/tensorrt-exllama.summary.json",
+        },
+    },
+}
+
 
 def gguf_summary_17b():
     data = json.loads(GGUF_17B.read_text(encoding="utf-8"))
@@ -338,6 +367,154 @@ def paired_counts(model, loaded):
     return counts
 
 
+def load_trend(model):
+    records = []
+    for (family, bpw), path in sorted(model["runs"].items(), key=lambda item: (item[0][1], item[0][0])):
+        summary = json.loads(path.read_text(encoding="utf-8"))
+        if summary["utterances"] != COMMON["utterances"] or summary["emptyOutputs"] != 0:
+            raise ValueError(f"{model['title']} {family} {bpw}: invalid summary")
+        records.append(
+            {
+                "calibration": family,
+                "bitrateBpw": bpw,
+                "corpusWER": summary["corpusWER"],
+                "edits": summary["edits"],
+                "medianMs": summary["medianMs"],
+                "p90Ms": summary["p90Ms"],
+                "elapsedSeconds": summary["elapsedSeconds"],
+            }
+        )
+    if "comparison" in str(model["gguf"]):
+        gguf = gguf_summary_17b()
+    else:
+        gguf = json.loads(model["gguf"].read_text(encoding="utf-8"))
+    if gguf["utterances"] != COMMON["utterances"] or gguf["emptyOutputs"] != 0:
+        raise ValueError(f"{model['title']} GGUF: invalid summary")
+    return records, gguf
+
+
+def write_trend_report(model, records, gguf):
+    report = {
+        "benchmark": "LibriSpeech test-clean",
+        "model": model["title"],
+        "conditions": COMMON,
+        "sessionNote": model["sessionNote"],
+        "variants": records,
+        "gguf": {
+            "configuration": "GGUF INT4 + Q4_K",
+            "corpusWER": gguf["corpusWER"],
+            "edits": gguf["edits"],
+            "medianMs": gguf["medianMs"],
+            "p90Ms": gguf["p90Ms"],
+            "elapsedSeconds": gguf["elapsedSeconds"],
+        },
+    }
+    (OUTPUT / model["report"]).write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8"
+    )
+
+
+def plot_trend(model, records, gguf):
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "font.size": 9,
+            "axes.edgecolor": "#c9ced6",
+            "axes.linewidth": 0.8,
+            "figure.facecolor": "#ffffff",
+            "svg.fonttype": "none",
+        }
+    )
+    fig, ax = plt.subplots(figsize=(9.4, 6.4))
+    fig.subplots_adjust(left=0.13, right=0.80, top=0.82, bottom=0.19)
+    styles = {
+        "legacy": ("#3b6ea5", "o", "Legacy calibration"),
+        "train-clean-100": ("#4c956c", "s", "train-clean-100 calibration"),
+    }
+    for family in ("legacy", "train-clean-100"):
+        points = sorted(
+            (record for record in records if record["calibration"] == family),
+            key=lambda record: record["bitrateBpw"],
+        )
+        color, marker, label = styles[family]
+        ax.plot(
+            [point["medianMs"] for point in points],
+            [point["corpusWER"] * 100 for point in points],
+            color=color,
+            marker=marker,
+            markersize=8,
+            linewidth=1.8,
+            label=label,
+        )
+        for point in points:
+            ax.annotate(
+                f"{point['bitrateBpw']:g} bpw",
+                (point["medianMs"], point["corpusWER"] * 100),
+                xytext=(7, 7 if family == "legacy" else -13),
+                textcoords="offset points",
+                fontsize=8,
+                color=color,
+            )
+
+    ax.scatter(
+        gguf["medianMs"],
+        gguf["corpusWER"] * 100,
+        s=150,
+        marker="*",
+        color="#8c8c8c",
+        edgecolor="white",
+        linewidth=0.8,
+        zorder=3,
+        label="GGUF INT4 + Q4_K",
+    )
+    ax.annotate(
+        "GGUF",
+        (gguf["medianMs"], gguf["corpusWER"] * 100),
+        xytext=(8, 6),
+        textcoords="offset points",
+        fontsize=8.5,
+        color="#5b6675",
+    )
+
+    wer_values = [record["corpusWER"] * 100 for record in records] + [gguf["corpusWER"] * 100]
+    spread = max(wer_values) - min(wer_values)
+    ax.set_ylim(min(wer_values) - spread * 0.15, max(wer_values) + spread * 0.18)
+    ax.set_xlabel("Median end-to-end latency (ms) · lower is better")
+    ax.set_ylabel("Corpus WER (%) · lower is better")
+    ax.grid(color="#e4e8ee", linewidth=0.8)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(frameon=False, fontsize=8.5, loc="upper right")
+    fig.text(
+        0.02,
+        0.95,
+        f"{model['title']} · calibration speed and accuracy",
+        fontsize=15,
+        fontweight="bold",
+        color="#1d2733",
+    )
+    fig.text(
+        0.02,
+        0.90,
+        "LibriSpeech test-clean · 2,620 utterances · lines connect 3 and 4 bpw",
+        fontsize=8.8,
+        color="#5b6675",
+    )
+    fig.text(0.02, 0.045, model["sessionNote"], fontsize=7.8, color="#6b7685")
+    for extension, options in (("png", {"dpi": 220}), ("svg", {})):
+        output_path = OUTPUT / f"{model['figure']}.{extension}"
+        fig.savefig(output_path, bbox_inches="tight", **options)
+        if extension == "svg":
+            output_path.write_text(
+                "\n".join(
+                    line.rstrip()
+                    for line in output_path.read_text(encoding="utf-8").splitlines()
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+    plt.close(fig)
+
+
 def main():
     for key, model in MODELS.items():
         summaries, loaded = load_model(model)
@@ -346,6 +523,14 @@ def main():
         print(f"{model['title']}: " + ", ".join(
             f"{variant['name']}={summary['corpusWER'] * 100:.4f}%"
             for variant, summary in zip(model["variants"], summaries)
+        ))
+    for key, model in TRENDS.items():
+        records, gguf = load_trend(model)
+        write_trend_report(model, records, gguf)
+        plot_trend(model, records, gguf)
+        print(f"{model['title']} trend: " + ", ".join(
+            f"{record['calibration']} {record['bitrateBpw']:g}bpw={record['corpusWER'] * 100:.4f}%"
+            for record in records
         ))
 
 
