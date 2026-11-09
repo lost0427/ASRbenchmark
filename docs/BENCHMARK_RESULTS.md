@@ -407,6 +407,10 @@
 - ncnn INT8 的 Vulkan 路径能跑出正确文本，但比同引擎 CPU 慢 1.83 倍，且 WER 13.04%，不建议使用。
 - 本次为 8 线程，与第 2～9 节的 4 线程结果不可直接横向比较；ncnn CPU 从 1,714 ms 降到 752 ms
   主要来自线程数与 aggressive 构建。
+- **MNN OpenCL 静态模型会崩溃**：`mnn-cl-static` 在 `/encoder/embed/Add_1` 报
+  `Broad cast error, dim1 = 402, dim2 = 401`，MNN 返回 code=3 后 wrapper 读取空结果，
+  触发 SIGSEGV（logcat 已确认）。同模型 CPU（`mnn-cpu-static`）正常，WER 5.80%。
+  该组合已标记为 experimental，不参与 **Run all**；新增 `mnn-vk-static`（Vulkan）绕过 OpenCL 路径。
 
 待排查：MNN GPU 空输出（倾向 GPU 后端读取输出或模型形状问题）；LiteRT 兼容性检查返回 false
 但 Adreno 840 实际可能可用，需要改为“强制创建 delegate 并记录结果”再验证。

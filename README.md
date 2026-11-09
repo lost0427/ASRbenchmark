@@ -91,6 +91,7 @@ row on the same model so the report can separate backend gain from model change.
 | `ncnn-vk-int8` | Official INT8 ncnn export | Vulkan | INT8 layers fall back to CPU |
 | `mnn-cl-fp16` / `mnn-cl-fp32` | `mnn-fp32` | OpenCL | FP16 / FP32 |
 | `mnn-cl-static` / `mnn-cpu-static` | `mnn-fp32-static` | OpenCL / CPU | FP16, static shapes / FP32 control |
+| `mnn-vk-static` | `mnn-fp32-static` | Vulkan | FP16, static shapes |
 | `mnn-vk-fp16` | `mnn-fp32` | Vulkan | FP16 |
 | `mnn-cl-q8` | PocketASR Q8 | OpenCL | Q8 weights, partial fallback |
 | `ort-nnapi` / `ort-nnapi-fp16` | `onnx-fp32` | NNAPI | default / `USE_FP16` |
