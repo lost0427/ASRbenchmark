@@ -285,9 +285,10 @@ was not tested: vLLM 0.14.0 has no native Windows wheel.
 | Official Transformers | **1.8863%** | 863.52 | ×0.45 | reference |
 
 The EXL3 decoder paths are about 2.6× faster than GGUF Q4_K on 0.6B and
-about 2.0–2.1× faster on 1.7B. The official Transformers backend has the lowest
-WER in both tables, but it is 6.8–6.9× slower than EXL3 on 0.6B and 4.4–4.6×
-slower on 1.7B. The stage chart shows that most of the gap is in the encoder and decoder
+about 2.0–2.1× faster on 1.7B. GGUF Q4_K is itself 2.63× faster than the
+official backend on 0.6B and 2.20× faster on 1.7B. The official Transformers
+backend has the lowest WER in both tables, but it is 6.8–6.9× slower than EXL3
+on 0.6B and 4.4–4.6× slower on 1.7B. The stage chart shows that most of the gap is in the encoder and decoder
 generation stages; the exact stage values are printed on the bars. For 0.6B,
 all four EXL3 points come from the 2026-11-10 two-pass rerun; GGUF is the
 2026-11-09 run.
