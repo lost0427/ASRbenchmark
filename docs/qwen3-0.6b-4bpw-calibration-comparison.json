@@ -1,0 +1,75 @@
+{
+  "benchmark": "LibriSpeech test-clean",
+  "model": "Qwen3-ASR 0.6B",
+  "conditions": {
+    "utterances": 2620,
+    "referenceWords": 53120,
+    "encoder": "TensorRT BF16",
+    "decoderRuntime": "ExLlamaV3",
+    "warmupUtterances": 2,
+    "runsPerVariant": 1
+  },
+  "variants": [
+    {
+      "name": "GGUF INT4 + Q4_K",
+      "kind": "gguf",
+      "calibration": {
+        "source": "GGUF INT4 encoder with Q4_K decoder"
+      },
+      "summary": {
+        "referenceWords": 53120,
+        "edits": 1584,
+        "corpusWER": 0.029819277108433736,
+        "medianMs": 299.15170000094804,
+        "p90Ms": 403.7951099999191,
+        "elapsedSeconds": 827.8321489000009
+      }
+    },
+    {
+      "name": "EXL3 4 bpw, legacy",
+      "kind": "legacy",
+      "directory": "4bpw-legacy",
+      "decoder": "decoder-exl3-4bpw",
+      "calibration": {
+        "rows": 250,
+        "columns": 2048,
+        "source": "not recorded in quantization metadata"
+      },
+      "summary": {
+        "referenceWords": 53120,
+        "edits": 1287,
+        "corpusWER": 0.02422816265060241,
+        "medianMs": 154.94210000906605,
+        "p90Ms": 328.24863999267103,
+        "elapsedSeconds": 486.02390900001046
+      }
+    },
+    {
+      "name": "EXL3 4 bpw, train-clean-100",
+      "kind": "calibrated",
+      "directory": "4bpw-train100",
+      "decoder": "decoder-exl3-4bpw-train-clean-100",
+      "calibration": {
+        "dataset": "LibriSpeech train-clean-100",
+        "pairedAudioRequests": 1603,
+        "rows": 200,
+        "columns": 2048
+      },
+      "summary": {
+        "referenceWords": 53120,
+        "edits": 1263,
+        "corpusWER": 0.023776355421686747,
+        "medianMs": 144.78550001513213,
+        "p90Ms": 309.6464700036448,
+        "elapsedSeconds": 454.71449880002183
+      }
+    }
+  ],
+  "pairedUtteranceEditCounts": {
+    "4bpw-legacy vs 4bpw-train100": {
+      "fewerWithCalibration": 118,
+      "same": 2397,
+      "moreWithCalibration": 105
+    }
+  }
+}
