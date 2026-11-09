@@ -250,6 +250,21 @@ def main():
     patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/session.cc",
           '#include "sherpa-mnn/csrc/session.h"\n',
           '#include "sherpa-mnn/csrc/session.h"\n\n#include <MNN/MNNForwardType.h>  // NOLINT\n')
+    patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/offline-sense-voice-model.cc",
+          "#include <algorithm>\n",
+          "#include <algorithm>\n#include <stdexcept>\n")
+    patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/offline-sense-voice-model.cc",
+          """    auto ans =
+        sess_->onForward(inputs);
+    return std::move(ans[0]);""",
+          """    auto ans =
+        sess_->onForward(inputs);
+    if (ans.empty()) {
+      // MNN GPU backends can reject an unsupported shape and return no output;
+      // indexing an empty vector used to segfault the whole benchmark process.
+      throw std::runtime_error("MNN onForward returned no output");
+    }
+    return std::move(ans[0]);""")
     patch(mnn, "apps/frameworks/sherpa-mnn/sherpa-mnn/csrc/session.cc",
           """  MNN::ScheduleConfig config;
   config.numThread = num_threads;
