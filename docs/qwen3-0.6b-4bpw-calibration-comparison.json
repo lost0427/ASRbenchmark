@@ -29,7 +29,7 @@
     {
       "name": "EXL3 4 bpw, legacy",
       "kind": "legacy",
-      "directory": "4bpw-legacy",
+      "directory": "4legacy",
       "decoder": "decoder-exl3-4bpw",
       "calibration": {
         "rows": 250,
@@ -40,15 +40,15 @@
         "referenceWords": 53120,
         "edits": 1287,
         "corpusWER": 0.02422816265060241,
-        "medianMs": 154.94210000906605,
-        "p90Ms": 328.24863999267103,
-        "elapsedSeconds": 486.02390900001046
+        "medianMs": 113.9916750107659,
+        "p90Ms": 249.9838700081454,
+        "elapsedSeconds": 363.92200399999274
       }
     },
     {
       "name": "EXL3 4 bpw, train-clean-100",
       "kind": "calibrated",
-      "directory": "4bpw-train100",
+      "directory": "4train",
       "decoder": "decoder-exl3-4bpw-train-clean-100",
       "calibration": {
         "dataset": "LibriSpeech train-clean-100",
@@ -60,14 +60,14 @@
         "referenceWords": 53120,
         "edits": 1263,
         "corpusWER": 0.023776355421686747,
-        "medianMs": 144.78550001513213,
-        "p90Ms": 309.6464700036448,
-        "elapsedSeconds": 454.71449880002183
+        "medianMs": 115.05117501656059,
+        "p90Ms": 253.1811349967029,
+        "elapsedSeconds": 368.05792684998596
       }
     }
   ],
   "pairedUtteranceEditCounts": {
-    "4bpw-legacy vs 4bpw-train100": {
+    "4legacy vs 4train": {
       "fewerWithCalibration": 118,
       "same": 2397,
       "moreWithCalibration": 105

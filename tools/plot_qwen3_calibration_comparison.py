@@ -35,7 +35,7 @@ MODELS = {
         "title": "Qwen3-ASR 0.6B",
         "figure": "windows-librispeech-qwen3-0.6b-4bpw-calibration-comparison",
         "report": "qwen3-0.6b-4bpw-calibration-comparison.json",
-        "runs": RUNS / "qwen3-asr-0.6b-4bpw-calibration-compare-20261109",
+        "runs": RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined",
         "variants": [
             {
                 "name": "GGUF INT4 + Q4_K",
@@ -46,7 +46,7 @@ MODELS = {
             {
                 "name": "EXL3 4 bpw, legacy",
                 "kind": "legacy",
-                "directory": "4bpw-legacy",
+                "directory": "4legacy",
                 "decoder": "decoder-exl3-4bpw",
                 "calibration": {
                     "rows": 250,
@@ -57,7 +57,7 @@ MODELS = {
             {
                 "name": "EXL3 4 bpw, train-clean-100",
                 "kind": "calibrated",
-                "directory": "4bpw-train100",
+                "directory": "4train",
                 "decoder": "decoder-exl3-4bpw-train-clean-100",
                 "calibration": {
                     "dataset": "LibriSpeech train-clean-100",
@@ -69,7 +69,7 @@ MODELS = {
         ],
         "labels": ["GGUF\nINT4 + Q4_K", "EXL3 4 bpw\nlegacy", "EXL3 4 bpw\ntrain-clean-100"],
         "colors": ["#8c8c8c", "#3b6ea5", "#4c956c"],
-        "pairs": [("4bpw-legacy", "4bpw-train100")],
+        "pairs": [("4legacy", "4train")],
     },
     "1.7b": {
         "title": "Qwen3-ASR 1.7B",
@@ -148,12 +148,12 @@ TRENDS = {
         "figure": "windows-librispeech-qwen3-0.6b-calibration-speed-accuracy",
         "report": "qwen3-0.6b-calibration-trends.json",
         "gguf": GGUF_06B,
-        "sessionNote": "3 bpw points are from the 2026-11-08 session; 4 bpw points are from the 2026-11-09 session.",
+        "sessionNote": "All four EXL3 configurations are from the 2026-11-10 two-pass rerun; GGUF is the 2026-11-09 run.",
         "runs": {
-            ("legacy", 3.0): RUNS / "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/old-250rows/tensorrt-exllama.summary.json",
-            ("train-clean-100", 3.0): RUNS / "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/train-clean-100-200rows/tensorrt-exllama.summary.json",
-            ("legacy", 4.0): RUNS / "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-legacy/tensorrt-exllama.summary.json",
-            ("train-clean-100", 4.0): RUNS / "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-train100/tensorrt-exllama.summary.json",
+            ("legacy", 3.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/3legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 3.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/3train/tensorrt-exllama.summary.json",
+            ("legacy", 4.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/4legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 4.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/4train/tensorrt-exllama.summary.json",
         },
     },
     "1.7b": {
@@ -528,6 +528,94 @@ def plot_trend(model, records, gguf):
     plt.close(fig)
 
 
+def plot_06b_3bpw():
+    runs = [
+        ("Legacy EXL3 3 bpw", "decoder-exl3-3bpw", "3legacy",
+         {"rows": 250, "columns": 2048, "source": "ExLlamaV3 default calibration data"}),
+        ("EXL3 3 bpw, train-clean-100", "decoder-exl3-3bpw-train-clean-100", "3train",
+         {"dataset": "LibriSpeech train-clean-100", "pairedAudioRequests": 1603,
+          "rows": 200, "columns": 2048}),
+    ]
+    summaries = [
+        json.loads((RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined" / folder
+                    / "tensorrt-exllama.summary.json").read_text(encoding="utf-8"))
+        for _, _, folder, _ in runs
+    ]
+    report = {
+        "benchmark": "LibriSpeech test-clean",
+        "conditions": COMMON,
+        "recommendation": RECOMMENDATION,
+        "variants": [
+            {
+                "name": name,
+                "decoder": decoder,
+                "directory": folder,
+                "calibration": calibration,
+                "summary": {
+                    key: summary[key]
+                    for key in ("referenceWords", "edits", "corpusWER",
+                                "medianMs", "p90Ms", "elapsedSeconds")
+                },
+            }
+            for (name, decoder, folder, calibration), summary in zip(runs, summaries)
+        ],
+        "pairedUtteranceEditCounts": {
+            "3legacy vs 3train": {
+                "fewerWithCalibration": 253,
+                "same": 2155,
+                "moreWithCalibration": 212,
+            }
+        },
+    }
+    (OUTPUT / "qwen3-0.6b-calibration-comparison.json").write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8"
+    )
+
+    plt.rcParams.update({
+        "font.family": "DejaVu Sans", "font.size": 9,
+        "axes.edgecolor": "#c9ced6", "axes.linewidth": 0.8,
+        "figure.facecolor": "#ffffff", "svg.fonttype": "none",
+    })
+    metrics = [
+        ("Corpus WER (%)", [s["corpusWER"] * 100 for s in summaries], ".4f"),
+        ("Median latency (ms)", [s["medianMs"] for s in summaries], ".2f"),
+        ("Full run (s)", [s["elapsedSeconds"] for s in summaries], ".2f"),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(11.8, 4.4))
+    fig.subplots_adjust(left=0.07, right=0.985, top=0.73, bottom=0.25, wspace=0.34)
+    labels = ["Legacy\nExLlamaV3 default", "train-clean-100\n200 rows"]
+    colors = ["#3b6ea5", "#4c956c"]
+    for ax, (title, values, number_format) in zip(axes, metrics):
+        bars = ax.bar(np.arange(2), values, color=colors, width=0.62)
+        ax.set_title(title, fontsize=10)
+        ax.set_xticks(np.arange(2), labels, fontsize=8)
+        ax.grid(axis="y", color="#e4e8ee", linewidth=0.8)
+        ax.set_axisbelow(True)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.set_ylim(0, max(values) * 1.2)
+        for bar, value in zip(bars, values):
+            ax.text(bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + max(values) * 0.025,
+                    format(value, number_format), ha="center", va="bottom", fontsize=8)
+    fig.text(0.02, 0.95, "Qwen3-ASR 0.6B · decoder calibration comparison",
+             fontsize=15, fontweight="bold", color="#1d2733")
+    fig.text(0.02, 0.89,
+             "LibriSpeech test-clean · 2,620 utterances · TensorRT BF16 encoder + ExLlamaV3 decoder",
+             fontsize=8.8, color="#5b6675")
+    fig.text(0.02, 0.06,
+             "Two-pass 2026-11-10 rerun, median of both passes; one full run per pass.",
+             fontsize=8.3, color="#6b7685")
+    for extension, options in (("png", {"dpi": 220}), ("svg", {})):
+        path = OUTPUT / f"windows-librispeech-qwen3-0.6b-calibration-comparison.{extension}"
+        fig.savefig(path, bbox_inches="tight", **options)
+        if extension == "svg":
+            path.write_text(
+                "\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n",
+                encoding="utf-8",
+            )
+    plt.close(fig)
+
+
 def main():
     for key, model in MODELS.items():
         summaries, loaded = load_model(model)
@@ -537,6 +625,7 @@ def main():
             f"{variant['name']}={summary['corpusWER'] * 100:.4f}%"
             for variant, summary in zip(model["variants"], summaries)
         ))
+    plot_06b_3bpw()
     for key, model in TRENDS.items():
         records, gguf = load_trend(model)
         write_trend_report(model, records, gguf)

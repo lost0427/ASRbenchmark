@@ -24,12 +24,13 @@ MODELS = {
     "0.6b": {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
-        "note": "3 bpw points are from the 2026-11-08 session; 4 bpw and GGUF points are from the 2026-11-09 session.",
+        "note": "All four EXL3 configurations are from the 2026-11-10 two-pass rerun; GGUF is the 2026-11-09 run.",
+        "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
-            ("3bpw legacy", "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/old-250rows/tensorrt-exllama.summary.json", "exl3"),
-            ("3bpw train100", "qwen3-asr-0.6b-3bpw-calibration-compare-20261108/train-clean-100-200rows/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw legacy", "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-legacy/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw train100", "qwen3-asr-0.6b-4bpw-calibration-compare-20261109/4bpw-train100/tensorrt-exllama.summary.json", "exl3"),
+            ("3bpw legacy", "qwen3-asr-0.6b-speed-rerun-20261110/combined/3legacy/tensorrt-exllama.summary.json", "exl3"),
+            ("3bpw train100", "qwen3-asr-0.6b-speed-rerun-20261110/combined/3train/tensorrt-exllama.summary.json", "exl3"),
+            ("4bpw legacy", "qwen3-asr-0.6b-speed-rerun-20261110/combined/4legacy/tensorrt-exllama.summary.json", "exl3"),
+            ("4bpw train100", "qwen3-asr-0.6b-speed-rerun-20261110/combined/4train/tensorrt-exllama.summary.json", "exl3"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
@@ -37,6 +38,7 @@ MODELS = {
         "flat": "qwen3-1.7b-calibration-vs-gguf",
         "stage": "qwen3-1.7b-stage-latency",
         "note": "All four EXL3 configurations are from the same 2026-11-09 session.",
+        "official": "qwen3-asr-1.7b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-legacy/tensorrt-exllama.summary.json", "exl3"),
             ("3bpw train100", "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-train100/tensorrt-exllama.summary.json", "exl3"),
@@ -104,8 +106,18 @@ def collect(model):
                 "stages": stage,
             }
         )
-    gguf_latency = records[-1]["medianMs"]
-    for record in records[:-1]:
+    official = load_summary(MODELS[model]["official"])
+    records.append(
+        {
+            "name": "Official Transformers",
+            "corpusWER": official["corpusWER"],
+            "medianMs": official["medianMs"],
+            "edits": official["edits"],
+            "stages": None,
+        }
+    )
+    gguf_latency = records[-2]["medianMs"]
+    for record in records[:-2]:
         record["speedupVsGguf"] = gguf_latency / record["medianMs"]
     return records
 
@@ -138,31 +150,57 @@ def save(fig, stem):
 
 def plot_flat(model, records):
     setup()
-    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#8c8c8c"]
-    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (-10, 12)]
-    aligns = ["left", "left", "left", "left", "right"]
+    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#8c8c8c", "#8e6eaa"]
+    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (-10, 12)]
+    aligns = ["left", "left", "left", "left", "left", "right"]
     fig, ax = plt.subplots(figsize=(10.4, 6.4))
     fig.subplots_adjust(left=0.11, right=0.97, top=0.82, bottom=0.19)
-    gguf_latency = records[-1]["medianMs"]
+    gguf_latency = records[-2]["medianMs"]
+    callouts = None
+    if model == "0.6b":
+        callouts = {
+            "3bpw legacy": (155, 2.93),
+            "3bpw train100": (155, 2.64),
+            "4bpw legacy": (155, 2.43),
+            "4bpw train100": (155, 2.24),
+        }
     for record, color, offset, align in zip(records, colors, offsets, aligns):
         x = record["medianMs"]
         y = record["corpusWER"] * 100
         ax.scatter(x, y, s=55, color=color, edgecolor="white", linewidth=0.7, zorder=3)
         if record["name"].startswith("GGUF"):
             detail = f"{y:.3f}% / {x:.1f} ms · reference"
+        elif record["name"].startswith("Official"):
+            detail = f"{y:.3f}% / {x:.1f} ms · official backend"
         else:
             detail = f"{y:.3f}% / {x:.1f} ms · ×{gguf_latency / x:.2f}"
-        ax.annotate(
-            f"{record['name']}\n{detail}",
-            (x, y),
-            xytext=offset,
-            textcoords="offset points",
-            fontsize=7.6,
-            color=color,
-            ha=align,
-            va="top" if offset[1] < 0 else "bottom",
-            annotation_clip=False,
-        )
+        text = f"{record['name']}\n{detail}"
+        if callouts and record["name"] in callouts:
+            label_x, label_y = callouts[record["name"]]
+            ax.annotate(
+                text,
+                (x, y),
+                xytext=(label_x, label_y),
+                textcoords="data",
+                fontsize=7.6,
+                color=color,
+                ha="left",
+                va="center",
+                arrowprops={"arrowstyle": "-", "color": color, "lw": 0.7,
+                            "shrinkA": 0, "shrinkB": 3},
+            )
+        else:
+            ax.annotate(
+                text,
+                (x, y),
+                xytext=offset,
+                textcoords="offset points",
+                fontsize=7.6,
+                color=color,
+                ha=align,
+                va="top" if offset[1] < 0 else "bottom",
+                annotation_clip=False,
+            )
     values = [record["corpusWER"] * 100 for record in records]
     spread = max(values) - min(values)
     ax.set_ylim(min(values) - spread * 0.35, max(values) + spread * 0.22)
@@ -170,7 +208,7 @@ def plot_flat(model, records):
     ax.set_ylabel("Corpus WER (%) · lower is better")
     ax.grid(color="#e4e8ee", linewidth=0.8)
     ax.spines[["top", "right"]].set_visible(False)
-    fig.text(0.02, 0.95, f"Qwen3-ASR {model.upper()} · calibration vs GGUF Q4_K",
+    fig.text(0.02, 0.95, f"Qwen3-ASR {model.upper()} · calibration vs GGUF and official backend",
              fontsize=15, fontweight="bold", color="#1d2733")
     fig.text(0.02, 0.90,
              "LibriSpeech test-clean · 2,620 utterances · train100 = train-clean-100 · ×N faster than GGUF",
@@ -230,7 +268,7 @@ def main():
         records = collect(model)
         report["models"][model] = records
         plot_flat(model, records)
-        plot_stage(model, records)
+        plot_stage(model, [record for record in records if record["stages"] is not None])
         print(model, [f"{r['name']}={r['corpusWER'] * 100:.4f}%" for r in records])
     (DOCS / "qwen3-calibration-vs-gguf.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"

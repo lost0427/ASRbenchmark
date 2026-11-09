@@ -8,74 +8,74 @@
       {
         "name": "3bpw legacy",
         "corpusWER": 0.029028614457831326,
-        "medianMs": 103.69139999966137,
+        "medianMs": 115.1651250111172,
         "edits": 1542,
         "stages": {
+          "decoderPrefillMs": 17.11106300354004,
+          "otherMs": 0.25372499658260494,
+          "preprocessingMs": 5.433499987702817,
+          "totalMs": 115.11020000034478,
           "promptTokens": 93.0,
-          "decoderMs": 93.35629998531658,
-          "decoderPrefillMs": 16.52216911315918,
-          "totalMs": 103.64434999064542,
+          "decoderMs": 101.95827501593158,
+          "decoderGenerationMs": 84.42443609237671,
           "decodeTokens": 21.0,
-          "otherMs": 0.2278999745612964,
-          "encoderMs": 5.226800014497712,
-          "preprocessingMs": 4.731249995529652,
-          "decoderGenerationMs": 77.89170742034912
+          "encoderMs": 6.297675005043857
         },
-        "speedupVsGguf": 2.8850193941052487
+        "speedupVsGguf": 2.597589330728987
       },
       {
         "name": "3bpw train100",
         "corpusWER": 0.02571536144578313,
-        "medianMs": 105.39304999110755,
+        "medianMs": 114.37090000254102,
         "edits": 1366,
         "stages": {
-          "preprocessingMs": 4.648600006476045,
-          "decoderPrefillMs": 16.28899574279785,
-          "promptTokens": 93.0,
+          "decoderMs": 102.89552500762511,
           "decodeTokens": 21.0,
-          "otherMs": 0.22200000239536166,
-          "decoderGenerationMs": 79.0705680847168,
-          "totalMs": 105.33765000582207,
-          "encoderMs": 5.882550001842901,
-          "decoderMs": 94.54775000631344
+          "encoderMs": 6.250950013054535,
+          "totalMs": 114.31792500661686,
+          "otherMs": 0.23865001276135445,
+          "decoderGenerationMs": 84.95897054672241,
+          "preprocessingMs": 4.756349997478537,
+          "decoderPrefillMs": 17.017483711242676,
+          "promptTokens": 93.0
         },
-        "speedupVsGguf": 2.8384385879921754
+        "speedupVsGguf": 2.615627751414929
       },
       {
         "name": "4bpw legacy",
         "corpusWER": 0.02422816265060241,
-        "medianMs": 154.94210000906605,
+        "medianMs": 113.9916750107659,
         "edits": 1287,
         "stages": {
-          "decoderMs": 139.98159999027848,
-          "decoderPrefillMs": 21.752357482910156,
+          "decoderPrefillMs": 16.68727397918701,
           "decodeTokens": 21.0,
-          "totalMs": 154.8798000003444,
-          "encoderMs": 6.78655001684092,
+          "totalMs": 113.93754999153316,
+          "otherMs": 0.2430749882478267,
+          "decoderGenerationMs": 85.27261018753052,
+          "encoderMs": 6.291224985034205,
           "promptTokens": 93.0,
-          "decoderGenerationMs": 116.96028709411621,
-          "preprocessingMs": 7.478550003725104,
-          "otherMs": 0.3925999772036448
+          "preprocessingMs": 4.742824981804006,
+          "decoderMs": 102.62467501161154
         },
-        "speedupVsGguf": 1.930732189530437
+        "speedupVsGguf": 2.624329364163609
       },
       {
         "name": "4bpw train100",
         "corpusWER": 0.023776355421686747,
-        "medianMs": 144.78550001513213,
+        "medianMs": 115.05117501656059,
         "edits": 1263,
         "stages": {
-          "decoderGenerationMs": 111.24062538146973,
-          "decoderMs": 132.36309999774676,
-          "decoderPrefillMs": 20.471930503845215,
-          "totalMs": 144.72335000755265,
           "decodeTokens": 21.0,
-          "otherMs": 0.3704999980982393,
-          "preprocessingMs": 6.009150005411357,
+          "encoderMs": 6.292100006248802,
+          "decoderGenerationMs": 86.56388521194458,
+          "totalMs": 114.95217499032151,
+          "decoderMs": 103.81262500595767,
+          "otherMs": 0.24137500440701842,
+          "decoderPrefillMs": 16.76774024963379,
           "promptTokens": 93.0,
-          "encoderMs": 6.432950001908466
+          "preprocessingMs": 4.776199988555163
         },
-        "speedupVsGguf": 2.066171681347113
+        "speedupVsGguf": 2.600162057952801
       },
       {
         "name": "GGUF Q4_K",
@@ -89,6 +89,13 @@
           "decoderGenerationMs": 88.66941928863525,
           "otherMs": 12.030642490572063
         }
+      },
+      {
+        "name": "Official Transformers",
+        "corpusWER": 0.02321159638554217,
+        "medianMs": 787.1200499939732,
+        "edits": 1233,
+        "stages": null
       }
     ],
     "1.7b": [
@@ -176,6 +183,13 @@
           "decoderGenerationMs": 129.4175386428833,
           "otherMs": 13.606538479507435
         }
+      },
+      {
+        "name": "Official Transformers",
+        "corpusWER": 0.018862951807228915,
+        "medianMs": 863.52490002173,
+        "edits": 1002,
+        "stages": null
       }
     ]
   }
