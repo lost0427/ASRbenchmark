@@ -57,9 +57,12 @@ class MainActivity : ComponentActivity() {
                         Text("${audio.getString("utterance")} · $audioDuration s · 16 kHz mono\n${audio.getString("reference")}", style = MaterialTheme.typography.bodyMedium)
                         OutlinedButton(onClick = { importModels.launch(null) }, enabled = !state.busy) { Text("Import model folder") }
                         Text("Import the low-precision model bundle once, then choose variants to compare. Models run offline.", style = MaterialTheme.typography.bodySmall)
+                        val runnable = remember(state.installed) {
+                            state.installed.filter { id -> engineSpecs.none { it.id == id && it.experimental } }.toSet()
+                        }
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(onClick = { vm.run(state.installed, config) }, enabled = !state.busy && valid && state.installed.isNotEmpty()) { Text("Run all imported") }
-                            OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in state.installed }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
+                            Button(onClick = { vm.run(runnable, config) }, enabled = !state.busy && valid && runnable.isNotEmpty()) { Text("Run all imported") }
+                            OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in runnable }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
                             OutlinedButton(onClick = { selected = emptyList() }, enabled = !state.busy) { Text("Clear") }
                         }
                         Text("LiteRT GPU uses CompiledModel; NNAPI and Vulkan/OpenCL are probed per run.",

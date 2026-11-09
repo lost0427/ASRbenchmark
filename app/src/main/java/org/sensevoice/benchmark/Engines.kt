@@ -58,6 +58,8 @@ data class EngineSpec(
     val accelerator: String = "CPU",
     val compute: String = "",
     val nnapiFp16: Boolean = false,
+    /** Excluded from "Run all" / "Select imported"; still manually selectable. */
+    val experimental: Boolean = false,
 ) {
     val engineId get() = id.substringBefore('-')
     val variant get() = id.substringAfter('-', "q8")
@@ -110,10 +112,10 @@ val gpuEngineSpecs = listOf(
         backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "Q8 weights, partial fallback"),
     EngineSpec("mnn-cpu-fp32", "MNN", "mnn-fp32", "FP32 weights", "MNN 3.6.1 / CPU",
         backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
-    EngineSpec("mnn-cl-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / OpenCL",
-        backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "FP16, static"),
     EngineSpec("mnn-cpu-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / CPU",
         backend = "cpu", accelerator = "CPU", compute = "FP32 static control"),
+    EngineSpec("mnn-vk-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / Vulkan",
+        backend = "vulkan", fp16 = true, accelerator = "GPU Vulkan", compute = "FP16, static"),
     EngineSpec("ort-nnapi", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
         "model.onnx", backend = "nnapi", accelerator = "NNAPI", compute = "default flags"),
     EngineSpec("ort-nnapi-fp16", "ONNX Runtime", "onnx-fp32", "FP32 (official unquantized ONNX)", "ONNX Runtime 1.30.0 NNAPI EP",
@@ -130,6 +132,12 @@ val gpuEngineSpecs = listOf(
         backend = "gpu", fp16 = true, accelerator = "GPU delegate", compute = "dynamic INT8, partial fallback"),
     EngineSpec("litert-cpu-fp32", "LiteRT", "litert-fp32", "FP32 (dequantized from W8)", "LiteRT 2.3.2 / CPU, XNNPACK requested",
         "model.tflite", backend = "cpu", accelerator = "CPU", compute = "FP32 control"),
+    // Kept last and unselected by default: MNN's OpenCL backend mis-computes one
+    // encoder frame for this graph (402 vs 401) and the wrapper segfaults on the
+    // null result. Run it alone only when collecting that failure.
+    EngineSpec("mnn-cl-static", "MNN", "mnn-fp32-static", "FP32 weights, static shapes", "MNN 3.6.1 / OpenCL",
+        backend = "opencl", fp16 = true, accelerator = "GPU OpenCL", compute = "FP16, static (OpenCL crashes)",
+        experimental = true),
 )
 
 val engineSpecs = cpuEngineSpecs + gpuEngineSpecs
