@@ -165,6 +165,15 @@ but does not identify the calibration source. The new decoder uses 200 rows ×
 
 [SVG version](windows-librispeech-qwen3-0.6b-4bpw-calibration-comparison.svg)
 
+![Qwen3-ASR 0.6B calibration speed and accuracy](windows-librispeech-qwen3-0.6b-calibration-speed-accuracy.png)
+
+[SVG version](windows-librispeech-qwen3-0.6b-calibration-speed-accuracy.svg)
+
+The line chart connects the 3 and 4 bpw points for each calibration family and
+adds GGUF as a reference. The 3 bpw points come from the 2026-11-08 session and
+the 4 bpw points from the 2026-11-09 session, so compare WER across the lines
+and treat the latency positions as session-specific.
+
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | INT4 encoder, Q4_K decoder | 2.9819% | 1,584 | 299.15 | 403.80 | 827.83 |
@@ -179,7 +188,8 @@ in this session are higher than the earlier 0.6B runs, which measured about
 104 ms for 4 bpw; that difference predates the decoder change and applies to
 both variants, so compare within this figure rather than mixing sessions.
 Aggregate results and plotting code are in
-`docs/qwen3-0.6b-4bpw-calibration-comparison.json` and
+`docs/qwen3-0.6b-4bpw-calibration-comparison.json`,
+`docs/qwen3-0.6b-calibration-trends.json`, and
 `tools/plot_qwen3_calibration_comparison.py`.
 
 ## Qwen3-ASR 1.7B: decoder calibration comparison
@@ -192,6 +202,13 @@ decoding, and two warmup utterances.
 ![Qwen3-ASR 1.7B calibration comparison](windows-librispeech-qwen3-1.7b-calibration-comparison.png)
 
 [SVG version](windows-librispeech-qwen3-1.7b-calibration-comparison.svg)
+
+![Qwen3-ASR 1.7B calibration speed and accuracy](windows-librispeech-qwen3-1.7b-calibration-speed-accuracy.png)
+
+[SVG version](windows-librispeech-qwen3-1.7b-calibration-speed-accuracy.svg)
+
+The line chart connects the 3 and 4 bpw points for each calibration family and
+adds GGUF as a reference. All four EXL3 points are from the same session.
 
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
@@ -208,7 +225,8 @@ and more edits on 73. The calibrated 3 bpw decoder moved the other way: WER was
 0.1092 points higher with 58 more edits, and median latency was 5.06 ms higher.
 Its paired counts were 97 wins, 2,380 ties, and 143 losses. Calibration did not
 improve the 1.7B 3 bpw tradeoff on test-clean. Aggregate results are in
-`docs/qwen3-1.7b-calibration-comparison.json`.
+`docs/qwen3-1.7b-calibration-comparison.json` and
+`docs/qwen3-1.7b-calibration-trends.json`.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
