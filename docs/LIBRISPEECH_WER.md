@@ -242,6 +242,51 @@ The calibrated 4 bpw variant has a small test-clean advantage, while the
 calibrated 3 bpw variant is worse than legacy. For general-purpose audio and
 Chinese ASR, the legacy decoders remain the default recommendation.
 
+## Calibration comparison against GGUF Q4_K
+
+The four EXL3 variants for each model are compared with the Qwen3-ASR-GGUF
+INT4 encoder + Q4_K decoder reference. All five configurations use all 2,620
+test-clean utterances. Multipliers are GGUF median latency divided by the
+EXL3 median latency, so larger is faster.
+
+![Qwen3-ASR 0.6B calibration vs GGUF](windows-librispeech-qwen3-0.6b-calibration-vs-gguf.png)
+
+[SVG version](windows-librispeech-qwen3-0.6b-calibration-vs-gguf.svg)
+
+![Qwen3-ASR 0.6B median latency by stage](windows-librispeech-qwen3-0.6b-stage-latency.png)
+
+[SVG version](windows-librispeech-qwen3-0.6b-stage-latency.svg)
+
+| 0.6B decoder | WER | Median ms | Speed vs GGUF |
+| --- | ---: | ---: | ---: |
+| EXL3 3 bpw legacy | 2.9029% | 103.69 | ×2.89 |
+| EXL3 3 bpw train-clean-100 | 2.5715% | 105.39 | ×2.84 |
+| EXL3 4 bpw legacy | 2.4228% | 154.94 | ×1.93 |
+| EXL3 4 bpw train-clean-100 | **2.3776%** | 144.79 | ×2.07 |
+| GGUF Q4_K | 2.9819% | 299.15 | reference |
+
+![Qwen3-ASR 1.7B calibration vs GGUF](windows-librispeech-qwen3-1.7b-calibration-vs-gguf.png)
+
+[SVG version](windows-librispeech-qwen3-1.7b-calibration-vs-gguf.svg)
+
+![Qwen3-ASR 1.7B median latency by stage](windows-librispeech-qwen3-1.7b-stage-latency.png)
+
+[SVG version](windows-librispeech-qwen3-1.7b-stage-latency.svg)
+
+| 1.7B decoder | WER | Median ms | Speed vs GGUF |
+| --- | ---: | ---: | ---: |
+| EXL3 3 bpw legacy | 2.0237% | 189.19 | ×2.07 |
+| EXL3 3 bpw train-clean-100 | 2.1329% | 194.25 | ×2.02 |
+| EXL3 4 bpw legacy | 1.9842% | 191.05 | ×2.05 |
+| EXL3 4 bpw train-clean-100 | **1.9484%** | 196.26 | ×2.00 |
+| GGUF Q4_K | 2.0896% | 391.81 | reference |
+
+The EXL3 decoder paths are about 1.9–2.9× faster than GGUF Q4_K on 0.6B and
+about 2.0–2.1× faster on 1.7B. The stage chart shows that most of the gap is in
+the encoder and decoder generation stages; the exact stage values are printed
+on the bars. For 0.6B, the 3 bpw points come from the 2026-11-08 session and
+the 4 bpw/GGUF points from the 2026-11-09 session.
+
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
 All six configurations ran on the same 2,620 test-clean utterances and
