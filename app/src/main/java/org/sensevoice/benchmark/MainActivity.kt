@@ -60,8 +60,23 @@ class MainActivity : ComponentActivity() {
                         val runnable = remember(state.installed) {
                             state.installed.filter { id -> engineSpecs.none { it.id == id && it.experimental } }.toSet()
                         }
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        val gpuRunnable = remember(state.installed) {
+                            engineSpecs.filter {
+                                it.id in state.installed && it.accelerator.startsWith("GPU") && !it.experimental
+                            }.map { it.id }
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = {
+                                    selected = gpuRunnable
+                                    vm.run(gpuRunnable.toSet(), config)
+                                },
+                                enabled = !state.busy && valid && gpuRunnable.isNotEmpty()
+                            ) { Text("Run GPU only") }
                             Button(onClick = { vm.run(runnable, config) }, enabled = !state.busy && valid && runnable.isNotEmpty()) { Text("Run all imported") }
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = { selected = gpuRunnable }, enabled = !state.busy && gpuRunnable.isNotEmpty()) { Text("GPU only") }
                             OutlinedButton(onClick = { selected = engineSpecs.filter { it.id in runnable }.map { it.id } }, enabled = !state.busy) { Text("Select imported") }
                             OutlinedButton(onClick = { selected = emptyList() }, enabled = !state.busy) { Text("Clear") }
                         }
