@@ -543,14 +543,16 @@ Raw per-utterance records and memory samples are kept under
 The calibration WER and latency results are recorded in the tables above; raw
 per-run summaries remain local.
 
-## Qwen3-ForcedAligner 0.6B: TensorRT + EXL3
+## Qwen3-ForcedAligner 0.6B: TensorRT encoder + decoder backends
 
 The Qwen3-ForcedAligner 0.6B encoder was exported to ONNX and built with
-TensorRT BF16. Its text decoder was exported to EXL3 4 bpw with a zero-padded
-152,064-row LM head kept at 16 bits, because the aligner classification head
-only has 5,000 real rows. The runtime performs one full-prompt forward pass and
-takes the argmax at every `<timestamp>` position. The official Transformers,
-GGUF, and TensorRT+EXL3 backends were run on all 2,620 test-clean utterances
+TensorRT BF16. Two decoder builds are measured: EXL3 4 bpw and a fully
+TensorRT decoder. The aligner decoder is a single forward pass with no KV cache,
+so the TensorRT build takes pre-built `inputs_embeds`, gathers the hidden states
+at the timestamp positions, and applies only the 5,000-row classification head,
+which removes both the padded 152,064-row head and all per-layer Python dispatch.
+Both bf16 and fp16 engines were built and benchmarked. The official Transformers,
+GGUF, EXL3, and TensorRT backends were run on all 2,620 test-clean utterances
 with the reference transcript as input.
 
 ![Qwen3 aligner comparison](windows-librispeech-qwen3-aligner-comparison.png)
@@ -561,28 +563,52 @@ with the reference transcript as input.
 
 [SVG version](windows-librispeech-qwen3-aligner-stage-latency.svg)
 
-| Backend | Median ms | P90 ms | RTF | Items |
-| --- | ---: | ---: | ---: | ---: |
-| Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | 52,576 |
-| GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 52,576 |
-| TensorRT BF16 + EXL3 4 bpw | **42.96** | **74.65** | **0.0067** | 52,576 |
+| Backend | Median ms | P90 ms | RTF | Exact boundaries | Boundary MAE |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | — | — |
+| GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 96.2% | 8.73 ms |
+| TensorRT + EXL3 4 bpw | 42.96 | 74.65 | 0.0067 | 96.7% | 8.24 ms |
+| TensorRT bf16 decoder | 26.10 | 47.21 | 0.0043 | 97.4% | 6.60 ms |
+| **TensorRT fp16 decoder** | **24.12** | **43.02** | **0.0040** | 97.3% | 7.02 ms |
 
-The TensorRT timing is 2.17× faster than the official backend and 3.41× faster
-than GGUF by median latency. All three backends produced the same token sequence
-on every utterance. Against the official backend, 96.7% of TensorRT start/end
-boundaries and 96.2% of GGUF boundaries are exactly equal; the mean absolute
-boundary difference is 8.24 ms and 8.73 ms respectively, and P90 is 0.0 ms for
-both. The largest single boundary difference is 2.48 s for TensorRT and 2.08 s
-for GGUF.
+The TensorRT decoder is 3.86× faster than the official backend and 6.08× faster
+than GGUF by median latency. All five backends produced the same token sequence
+on every utterance. The TensorRT decoder stage drops from 25.0 ms with EXL3 to
+9.5 ms with the fp16 engine, because the same forward pass went from 956 kernel
+launches to a single engine call.
 
-The stage chart shows the TensorRT run's median 43.0 ms split into preprocessing
-5.9 ms, encoder 8.5 ms, decoder 25.0 ms, and 3.4 ms other. GGUF's 146.7 ms is
-dominated by its 116.0 ms encoder; its decoder contributes 8.9 ms. The official
-backend is shown as a 93.1 ms reference line because it does not expose a stage
-profile.
+### Where the residual boundary differences come from
+
+Decoder precision is not the source. Feeding PyTorch audio embeddings into the
+TensorRT decoder produced zero argmax differences over 1,486 timestamp positions,
+and an fp32 TensorRT decoder scored 97.9% exact against an fp32 official run,
+versus 97.8% for the bf16 engine. Building the encoder in fp16 or fp32 instead of
+bf16 did not change the agreement either.
+
+Splitting the full benchmark by audio length isolates the real cause:
+
+| Audio length | Encoder windows | Exact boundaries | Boundary MAE |
+| --- | ---: | ---: | ---: |
+| ≤ 8 s | 1 | 99.4% | 1.15 ms |
+| > 8 s | 2+ | 95.9% | 10.57 ms |
+
+Audio longer than the 800-frame inference window is encoded as independent
+windows, and the tokens from the second window onward diverge from the official
+single-pass result. Decoder-side precision only contributes the remaining
+fraction of a percent. Fixing the multi-window encoder path is the next accuracy
+item; it affects the ASR audio encoder too, which shares this code.
+
+The stage chart shows the TensorRT fp16 run's median 24.1 ms split into
+preprocessing 5.4 ms, encoder 9.1 ms, decoder 9.5 ms, and a small remainder.
+GGUF's 146.7 ms is dominated by its 116.0 ms encoder; its decoder contributes
+8.9 ms. The official backend is shown as a 93.1 ms reference line because it does
+not expose a stage profile.
 
 The CLI supports `--format json`, `--format srt`, and `--format txt` for the same
 aligned item list, so the output can be consumed directly or converted to subtitles.
+`--decoder-precision fp16` is the default; `--backend tensorrt-exllama` selects the
+EXL3 decoder instead.
+
 
 ## What changed from the single clip
 

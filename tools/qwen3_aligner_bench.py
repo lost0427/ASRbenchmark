@@ -13,7 +13,7 @@ DEFAULT_DATA = ROOT / ".native/librispeech"
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--backend", choices=("official", "tensorrt", "gguf"), required=True)
+    parser.add_argument("--backend", choices=("official", "tensorrt", "trt-bf16", "trt-fp16", "exllama", "gguf"), required=True)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_DATA / "manifest.jsonl")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -21,8 +21,10 @@ def main():
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--language", default="English")
     parser.add_argument("--aligner-model", default="Qwen/Qwen3-ForcedAligner-0.6B")
+    parser.add_argument("--official-dtype", default="bfloat16")
     parser.add_argument("--trt-repo", type=Path, default=ROOT.parent / "Qwen3-ASR-TensorRT")
     parser.add_argument("--engine", type=Path)
+    parser.add_argument("--decoder-engine", type=Path)
     parser.add_argument("--decoder-dir", type=Path)
     parser.add_argument("--gguf-repo", type=Path, default=ROOT / ".native/qwen3-asr-gguf")
     parser.add_argument("--gguf-model-dir", type=Path)
@@ -47,7 +49,7 @@ def main():
         from qwen_asr import Qwen3ForcedAligner
 
         runner = Qwen3ForcedAligner.from_pretrained(
-            args.aligner_model, device_map="cuda:0", dtype=torch.bfloat16
+            args.aligner_model, device_map="cuda:0", dtype=getattr(torch, args.official_dtype)
         )
 
         def align(audio, text):
@@ -97,21 +99,37 @@ def main():
         import torch
 
         sys.path.insert(0, str(args.trt_repo / "src"))
-        from qwen3_asr_trt.aligner import TensorRTExLlamaAligner
 
         aligner_dir = args.trt_repo / "artifacts/qwen3-forcedaligner-0.6b"
-        runner = TensorRTExLlamaAligner(
-            args.aligner_model,
-            args.decoder_dir or aligner_dir / "decoder-exl3-4bpw",
-            args.engine or aligner_dir / "aligner-encoder-window.bf16.engine",
-        )
+        engine = args.engine or aligner_dir / "aligner-encoder-window.bf16.engine"
+
+        if args.backend == "exllama":
+            from qwen3_asr_trt.aligner import TensorRTExLlamaAligner
+
+            runner = TensorRTExLlamaAligner(
+                args.aligner_model,
+                args.decoder_dir or aligner_dir / "decoder-exl3-4bpw",
+                engine,
+            )
+        else:
+            from qwen3_asr_trt.aligner import TensorRTAligner
+
+            precision = "fp16" if args.backend == "trt-fp16" else "bf16"
+            runner = TensorRTAligner(
+                args.aligner_model,
+                engine,
+                args.decoder_engine
+                or aligner_dir / f"aligner-decoder-window.{precision}.engine",
+                precision,
+            )
 
         def align(audio, text):
             items = runner.align(Path(audio), text, args.language)
             return items, dict(runner.last_timings)
 
     load_seconds = time.perf_counter() - load_started
-    output = args.output_dir / f"{args.backend}.jsonl"
+    tag = {"tensorrt": "trt-bf16"}.get(args.backend, args.backend)
+    output = args.output_dir / f"{tag}.jsonl"
     done = set()
     if args.resume and output.exists():
         done = {json.loads(line)["id"] for line in output.read_text(encoding="utf-8").splitlines()}
@@ -143,7 +161,7 @@ def main():
     latencies = [row["elapsedMs"] for row in all_rows]
     stage_names = {name for row in all_rows for name in row.get("stages", {})}
     summary = {
-        "engine": f"aligner-{args.backend}",
+        "engine": f"aligner-{tag}",
         "utterances": len(all_rows),
         "items": sum(len(row["items"]) for row in all_rows),
         "elapsedSeconds": time.perf_counter() - started,
@@ -160,7 +178,7 @@ def main():
         "sampleSize": len(sample),
         "seed": args.seed,
     }
-    (args.output_dir / f"{args.backend}.summary.json").write_text(
+    (args.output_dir / f"{tag}.summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, sort_keys=True), flush=True)

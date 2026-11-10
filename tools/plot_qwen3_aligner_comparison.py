@@ -1,4 +1,4 @@
-"""Compare the official, GGUF, and TensorRT+EXL3 Qwen3-ForcedAligner backends."""
+"""Compare the official, GGUF, EXL3, and TensorRT Qwen3-ForcedAligner backends."""
 import json
 import re
 from pathlib import Path
@@ -12,15 +12,12 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ROOT / ".native/librispeech"
 DOCS = ROOT / "docs"
-RUN_DIRS = {
-    "Official Transformers": RUNS / "qwen3-asr-aligner-official-full-test-clean",
-    "GGUF INT4 + Q4_K": RUNS / "qwen3-asr-aligner-gguf-full-test-clean",
-    "TensorRT BF16 + EXL3 4 bpw": RUNS / "qwen3-asr-aligner-tensorrt-full-test-clean",
-}
-FILES = {
-    "Official Transformers": ("official.jsonl", "official.summary.json"),
-    "GGUF INT4 + Q4_K": ("gguf.jsonl", "gguf.summary.json"),
-    "TensorRT BF16 + EXL3 4 bpw": ("tensorrt.jsonl", "tensorrt.summary.json"),
+BACKENDS = {
+    "official": ("Official Transformers", RUNS / "qwen3-asr-aligner-official-full-test-clean", "official"),
+    "gguf": ("GGUF INT4 + Q4_K", RUNS / "qwen3-asr-aligner-gguf-full-test-clean", "gguf"),
+    "exllama": ("TRT+EXL3 4 bpw", RUNS / "qwen3-asr-aligner-tensorrt-full-test-clean", "tensorrt"),
+    "trt-bf16": ("TRT bf16", RUNS / "qwen3-asr-aligner-trt-bf16-full-test-clean", "trt-bf16"),
+    "trt-fp16": ("TRT fp16", RUNS / "qwen3-asr-aligner-trt-fp16-full-test-clean", "trt-fp16"),
 }
 
 
@@ -49,20 +46,26 @@ def flatten(items):
 
 
 def main():
-    data = {}
-    summaries = {}
-    for name, directory in RUN_DIRS.items():
-        jsonl, summary_name = FILES[name]
-        data[name] = load(directory / jsonl)
-        summaries[name] = json.loads((directory / summary_name).read_text(encoding="utf-8"))
+    data, summaries = {}, {}
+    for key, (_, directory, stem) in BACKENDS.items():
+        data[key] = load(directory / f"{stem}.jsonl")
+        summaries[key] = json.loads(
+            (directory / f"{stem}.summary.json").read_text(encoding="utf-8")
+        )
 
-    reference = data["Official Transformers"]
-    agreement = {}
-    for name in ("GGUF INT4 + Q4_K", "TensorRT BF16 + EXL3 4 bpw"):
-        differences = []
-        exact = 0
-        mismatched = 0
-        for left, right in zip(reference, data[name]):
+    reference = data["official"]
+    agreement = {
+        "official": {
+            "tokenMismatchUtterances": 0,
+            "boundaryMaeSeconds": 0.0,
+            "boundaryP90Seconds": 0.0,
+            "boundaryMaxSeconds": 0.0,
+            "exactBoundaryFraction": 1.0,
+        }
+    }
+    for key in ("gguf", "exllama", "trt-bf16", "trt-fp16"):
+        differences, exact, mismatched = [], 0, 0
+        for left, right in zip(reference, data[key]):
             left_words = flatten(left["items"])
             right_words = flatten(right["items"])
             if [word[0] for word in left_words] != [word[0] for word in right_words]:
@@ -73,20 +76,13 @@ def main():
                     value = abs(a[offset] - b[offset])
                     differences.append(value)
                     exact += value < 1e-9
-        agreement[name] = {
+        agreement[key] = {
             "tokenMismatchUtterances": mismatched,
             "boundaryMaeSeconds": float(np.mean(differences)),
             "boundaryP90Seconds": float(np.percentile(differences, 90)),
             "boundaryMaxSeconds": float(np.max(differences)),
             "exactBoundaryFraction": exact / max(1, len(differences)),
         }
-    agreement["Official Transformers"] = {
-        "tokenMismatchUtterances": 0,
-        "boundaryMaeSeconds": 0.0,
-        "boundaryP90Seconds": 0.0,
-        "boundaryMaxSeconds": 0.0,
-        "exactBoundaryFraction": 1.0,
-    }
 
     report = {
         "benchmark": "LibriSpeech test-clean",
@@ -97,8 +93,8 @@ def main():
             "seed": 1337,
             "warmupUtterances": 2,
         },
-        "backends": summaries,
-        "agreement": agreement,
+        "backends": {name: summaries[key] for key, (name, _, _) in BACKENDS.items()},
+        "agreement": {name: agreement[key] for key, (name, _, _) in BACKENDS.items()},
     }
     (DOCS / "qwen3-aligner-comparison.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
@@ -109,37 +105,36 @@ def main():
         "axes.edgecolor": "#c9ced6", "axes.linewidth": 0.8,
         "figure.facecolor": "#ffffff", "svg.fonttype": "none",
     })
-    labels = ["Official\nTransformers", "GGUF\nINT4 + Q4_K", "TensorRT BF16\n+ EXL3 4 bpw"]
-    colors = ["#8c8c8c", "#d98b3a", "#3b6ea5"]
-    names = list(RUN_DIRS)
-    fig, axes = plt.subplots(1, 3, figsize=(12.8, 5.0))
-    fig.subplots_adjust(left=0.07, right=0.985, top=0.76, bottom=0.27, wspace=0.34)
+    order = ["official", "gguf", "exllama", "trt-bf16", "trt-fp16"]
+    labels = ["Official\nTransformers", "GGUF\nINT4+Q4_K", "TRT+EXL3\n4 bpw", "TRT\nbf16", "TRT\nfp16"]
+    colors = ["#8c8c8c", "#d98b3a", "#a4636f", "#3b6ea5", "#2f8f83"]
+    fig, axes = plt.subplots(1, 3, figsize=(13.4, 5.0))
+    fig.subplots_adjust(left=0.065, right=0.99, top=0.76, bottom=0.27, wspace=0.32)
     metrics = [
-        ("Median latency (ms)", [summaries[name]["medianMs"] for name in names], ".2f"),
-        ("P90 latency (ms)", [summaries[name]["p90Ms"] for name in names], ".2f"),
-        ("Boundary MAE (ms)", [agreement[name]["boundaryMaeSeconds"] * 1000 for name in names], ".2f"),
+        ("Median latency (ms)", [summaries[key]["medianMs"] for key in order], ".2f"),
+        ("P90 latency (ms)", [summaries[key]["p90Ms"] for key in order], ".2f"),
+        ("Boundary MAE (ms)", [agreement[key]["boundaryMaeSeconds"] * 1000 for key in order], ".2f"),
     ]
     for ax, (title, values, number_format) in zip(axes, metrics):
-        bars = ax.bar(np.arange(3), values, color=colors, width=0.62)
+        bars = ax.bar(np.arange(len(order)), values, color=colors, width=0.68)
         ax.set_title(title, fontsize=10)
-        ax.set_xticks(np.arange(3), labels, fontsize=8)
+        ax.set_xticks(np.arange(len(order)), labels, fontsize=7.4)
         ax.grid(axis="y", color="#e4e8ee", linewidth=0.8)
         ax.set_axisbelow(True)
         ax.spines[["top", "right"]].set_visible(False)
         ax.set_ylim(0, max(max(values) * 1.25, 0.1))
         for bar, value in zip(bars, values):
             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + max(values) * 0.025,
-                    format(value, number_format), ha="center", va="bottom", fontsize=8)
-    fig.text(0.02, 0.95, "Qwen3-ForcedAligner 0.6B · official vs GGUF vs TensorRT + EXL3",
+                    format(value, number_format), ha="center", va="bottom", fontsize=7.4)
+    fig.text(0.02, 0.95, "Qwen3-ForcedAligner 0.6B · decoder backend comparison",
              fontsize=15, fontweight="bold", color="#1d2733")
     fig.text(0.02, 0.89,
              "LibriSpeech test-clean · 2,620 utterances · boundary MAE measured against the official backend",
              fontsize=8.8, color="#5b6675")
-    fig.text(0.02, 0.05,
-             f"Token mismatch: GGUF {agreement['GGUF INT4 + Q4_K']['tokenMismatchUtterances']} · "
-             f"TensorRT {agreement['TensorRT BF16 + EXL3 4 bpw']['tokenMismatchUtterances']} utterances · "
-             f"exact boundaries: GGUF {agreement['GGUF INT4 + Q4_K']['exactBoundaryFraction'] * 100:.1f}%, "
-             f"TensorRT {agreement['TensorRT BF16 + EXL3 4 bpw']['exactBoundaryFraction'] * 100:.1f}%",
+    fig.text(0.02, 0.045,
+             f"Token mismatch: 0 for every backend · exact boundaries: GGUF {agreement['gguf']['exactBoundaryFraction'] * 100:.1f}%, "
+             f"EXL3 {agreement['exllama']['exactBoundaryFraction'] * 100:.1f}%, TRT bf16 {agreement['trt-bf16']['exactBoundaryFraction'] * 100:.1f}%, "
+             f"TRT fp16 {agreement['trt-fp16']['exactBoundaryFraction'] * 100:.1f}%",
              fontsize=8.0, color="#6b7685")
     for ext, options in (("png", {"dpi": 220}), ("svg", {})):
         path = DOCS / f"windows-librispeech-qwen3-aligner-comparison.{ext}"
@@ -148,18 +143,18 @@ def main():
             path.write_text("\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
     plt.close(fig)
 
-    figure, ax = plt.subplots(figsize=(8.6, 5.8))
-    figure.subplots_adjust(left=0.12, right=0.97, top=0.76, bottom=0.24)
-    x = np.arange(2)
-    stack_names = ["GGUF INT4 + Q4_K", "TensorRT BF16 + EXL3 4 bpw"]
-    bottoms = np.zeros(2)
+    figure, ax = plt.subplots(figsize=(9.2, 5.8))
+    figure.subplots_adjust(left=0.11, right=0.975, top=0.76, bottom=0.24)
+    stack_keys = ["gguf", "exllama", "trt-bf16", "trt-fp16"]
+    stack_labels = ["GGUF\nINT4+Q4_K", "TRT+EXL3\n4 bpw", "TRT\nbf16", "TRT\nfp16"]
+    x = np.arange(len(stack_keys))
+    bottoms = np.zeros(len(stack_keys))
     stage_colors = {"Preprocess": "#8b9aa8", "Encoder": "#3b6ea5", "Decoder": "#c44e52", "Other": "#bdc3c7"}
     for stage in ("Preprocess", "Encoder", "Decoder", "Other"):
         values = []
-        for name in stack_names:
-            summary = summaries[name]
-            stages = summary["medianStagesMs"]
-            total = summary["medianMs"]
+        for key in stack_keys:
+            stages = summaries[key]["medianStagesMs"]
+            total = summaries[key]["medianMs"]
             if stage == "Preprocess":
                 value = stages["preprocessingMs"]
             elif stage == "Encoder":
@@ -169,21 +164,19 @@ def main():
             else:
                 value = max(0.0, total - stages["preprocessingMs"] - stages["encoderMs"] - stages["decoderMs"])
             values.append(value)
-        ax.bar(x, values, bottom=bottoms, color=stage_colors[stage], width=0.55, label=stage)
+        ax.bar(x, values, bottom=bottoms, color=stage_colors[stage], width=0.6, label=stage)
         for position, (value, bottom) in enumerate(zip(values, bottoms)):
-            if value > 2:
+            if value > 4.9:
                 ax.text(position, bottom + value / 2, f"{value:.1f}", ha="center", va="center",
-                        fontsize=8, color="white" if stage in ("Encoder", "Decoder") else "#26313d")
+                        fontsize=7.6, color="white" if stage in ("Encoder", "Decoder") else "#26313d")
         bottoms += values
-    official_total = summaries["Official Transformers"]["medianMs"]
-    max_total = max(summaries[name]["medianMs"] for name in stack_names)
-    ax.axhline(official_total, color="#8c8c8c", linestyle="--", linewidth=1.2,
-               label="Official total")
-    ax.text(1.3, official_total, f"official {official_total:.1f} ms",
+    official_total = summaries["official"]["medianMs"]
+    ax.axhline(official_total, color="#8c8c8c", linestyle="--", linewidth=1.2, label="Official total")
+    ax.text(len(stack_keys) - 0.55, official_total, f"official {official_total:.1f} ms",
             va="bottom", fontsize=8, color="#5b6675")
-    ax.set_xticks(x, ["GGUF\nINT4 + Q4_K", "TensorRT BF16\n+ EXL3 4 bpw"], fontsize=8)
+    ax.set_xticks(x, stack_labels, fontsize=8)
     ax.set_ylabel("Median latency (ms)")
-    ax.set_ylim(0, max_total * 1.18)
+    ax.set_ylim(0, max(summaries[key]["medianMs"] for key in stack_keys) * 1.18)
     ax.grid(axis="y", color="#e4e8ee", linewidth=0.8)
     ax.set_axisbelow(True)
     ax.spines[["top", "right"]].set_visible(False)

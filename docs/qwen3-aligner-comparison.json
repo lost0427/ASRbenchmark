@@ -43,7 +43,7 @@
       "sampleSize": 2620,
       "seed": 1337
     },
-    "TensorRT BF16 + EXL3 4 bpw": {
+    "TRT+EXL3 4 bpw": {
       "engine": "aligner-tensorrt",
       "utterances": 2620,
       "items": 52576,
@@ -62,9 +62,56 @@
       },
       "sampleSize": 2620,
       "seed": 1337
+    },
+    "TRT bf16": {
+      "engine": "aligner-trt-bf16",
+      "utterances": 2620,
+      "items": 52576,
+      "elapsedSeconds": 84.14062049996573,
+      "meanMs": 31.960573359010457,
+      "medianMs": 26.099200011231005,
+      "p90Ms": 47.209649987053126,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.00430467989223906,
+      "loadSeconds": 4.904821400006767,
+      "medianStagesMs": {
+        "totalMs": 26.067550003062934,
+        "preprocessingMs": 4.338150029070675,
+        "encoderMs": 8.918200008338317,
+        "decoderMs": 12.633400008780882
+      },
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TRT fp16": {
+      "engine": "aligner-trt-fp16",
+      "utterances": 2620,
+      "items": 52576,
+      "elapsedSeconds": 78.30955330003053,
+      "meanMs": 29.740650381471692,
+      "medianMs": 24.117149965604767,
+      "p90Ms": 43.01547999493778,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.004005684699118205,
+      "loadSeconds": 4.756198599992786,
+      "medianStagesMs": {
+        "preprocessingMs": 5.353549990104511,
+        "encoderMs": 9.071649983525276,
+        "totalMs": 24.08264999394305,
+        "decoderMs": 9.510350006166846
+      },
+      "sampleSize": 2620,
+      "seed": 1337
     }
   },
   "agreement": {
+    "Official Transformers": {
+      "tokenMismatchUtterances": 0,
+      "boundaryMaeSeconds": 0.0,
+      "boundaryP90Seconds": 0.0,
+      "boundaryMaxSeconds": 0.0,
+      "exactBoundaryFraction": 1.0
+    },
     "GGUF INT4 + Q4_K": {
       "tokenMismatchUtterances": 0,
       "boundaryMaeSeconds": 0.008725036138161899,
@@ -72,19 +119,26 @@
       "boundaryMaxSeconds": 2.08,
       "exactBoundaryFraction": 0.9623877814972611
     },
-    "TensorRT BF16 + EXL3 4 bpw": {
+    "TRT+EXL3 4 bpw": {
       "tokenMismatchUtterances": 0,
       "boundaryMaeSeconds": 0.008241222230675594,
       "boundaryP90Seconds": 0.0,
       "boundaryMaxSeconds": 2.4800000000000004,
       "exactBoundaryFraction": 0.9670952525867316
     },
-    "Official Transformers": {
+    "TRT bf16": {
       "tokenMismatchUtterances": 0,
-      "boundaryMaeSeconds": 0.0,
+      "boundaryMaeSeconds": 0.006602775030432137,
       "boundaryP90Seconds": 0.0,
-      "boundaryMaxSeconds": 0.0,
-      "exactBoundaryFraction": 1.0
+      "boundaryMaxSeconds": 2.4800000000000004,
+      "exactBoundaryFraction": 0.97400905356056
+    },
+    "TRT fp16": {
+      "tokenMismatchUtterances": 0,
+      "boundaryMaeSeconds": 0.007016842285453439,
+      "boundaryP90Seconds": 0.0,
+      "boundaryMaxSeconds": 2.4800000000000004,
+      "exactBoundaryFraction": 0.9726300973828362
     }
   }
 }
