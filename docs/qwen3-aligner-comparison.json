@@ -67,18 +67,18 @@
       "engine": "aligner-trt-bf16",
       "utterances": 2620,
       "items": 52576,
-      "elapsedSeconds": 77.90101269999286,
-      "meanMs": 29.576894618439283,
-      "medianMs": 25.8975499891676,
-      "p90Ms": 45.25311997858807,
+      "elapsedSeconds": 75.6721243999782,
+      "meanMs": 28.708675419707347,
+      "medianMs": 25.057499995455146,
+      "p90Ms": 42.02395995962433,
       "audioSeconds": 19452.480625,
-      "rtf": 0.003983628895161072,
-      "loadSeconds": 7.86264280002797,
+      "rtf": 0.003866690888922721,
+      "loadSeconds": 7.503949499980081,
       "medianStagesMs": {
-        "encoderMs": 8.205249963793904,
-        "decoderMs": 12.541650037746876,
-        "preprocessingMs": 4.508949990849942,
-        "totalMs": 25.866150012006983
+        "decoderMs": 11.46254999912344,
+        "totalMs": 25.015150022227317,
+        "preprocessingMs": 5.111299979034811,
+        "encoderMs": 8.107200032100081
       },
       "sampleSize": 2620,
       "seed": 1337
@@ -87,18 +87,18 @@
       "engine": "aligner-trt-fp16",
       "utterances": 2620,
       "items": 52576,
-      "elapsedSeconds": 73.44343189999927,
-      "meanMs": 27.874577634026764,
-      "medianMs": 24.54559996840544,
-      "p90Ms": 40.722490003099665,
+      "elapsedSeconds": 68.72010550001869,
+      "meanMs": 26.056920152529898,
+      "medianMs": 23.906600021291524,
+      "p90Ms": 34.38131997245364,
       "audioSeconds": 19452.480625,
-      "rtf": 0.0037543486000079294,
-      "loadSeconds": 7.072932999988552,
+      "rtf": 0.003509533417136013,
+      "loadSeconds": 5.38470039999811,
       "medianStagesMs": {
-        "totalMs": 24.49959999648854,
-        "preprocessingMs": 5.6055499881040305,
-        "encoderMs": 8.385349996387959,
-        "decoderMs": 9.7453499911353
+        "encoderMs": 7.780299987643957,
+        "decoderMs": 9.73260001046583,
+        "totalMs": 23.863299982622266,
+        "preprocessingMs": 5.908449995331466
       },
       "sampleSize": 2620,
       "seed": 1337
@@ -135,10 +135,10 @@
     },
     "TRT fp16": {
       "tokenMismatchUtterances": 0,
-      "boundaryMaeSeconds": 0.0020869122793670107,
+      "boundaryMaeSeconds": 0.001716153758368837,
       "boundaryP90Seconds": 0.0,
-      "boundaryMaxSeconds": 2.24,
-      "exactBoundaryFraction": 0.9897576841144249
+      "boundaryMaxSeconds": 1.3599999999999994,
+      "exactBoundaryFraction": 0.9901190657334145
     }
   }
 }

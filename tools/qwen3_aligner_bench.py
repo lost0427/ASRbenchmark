@@ -101,7 +101,11 @@ def main():
         sys.path.insert(0, str(args.trt_repo / "src"))
 
         aligner_dir = args.trt_repo / "artifacts/qwen3-forcedaligner-0.6b"
-        engine = args.engine or aligner_dir / "aligner-encoder-window.bf16.engine"
+        precision = "fp16" if args.backend == "trt-fp16" else "bf16"
+        engine = args.engine or aligner_dir / f"aligner-encoder-window.{precision}.engine"
+        if not engine.is_file():
+            engine = aligner_dir / "aligner-encoder-window.bf16.engine"
+            print(f"!! {precision} encoder engine missing, falling back to bf16", flush=True)
 
         if args.backend == "exllama":
             from qwen3_asr_trt.aligner import TensorRTExLlamaAligner
@@ -114,13 +118,17 @@ def main():
         else:
             from qwen3_asr_trt.aligner import TensorRTAligner
 
-            precision = "fp16" if args.backend == "trt-fp16" else "bf16"
             runner = TensorRTAligner(
                 args.aligner_model,
                 engine,
                 args.decoder_engine
                 or aligner_dir / f"aligner-decoder-window.{precision}.engine",
                 precision,
+            )
+            print(
+                f"{args.backend}: encoder {runner.encoder.embedding_dtype} "
+                f"decoder {runner.decoder.dtype} embedding {runner.token_embedding.weight.dtype}",
+                flush=True,
             )
 
         def align(audio, text):

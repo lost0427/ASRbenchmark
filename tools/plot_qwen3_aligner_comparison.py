@@ -16,8 +16,8 @@ BACKENDS = {
     "official": ("Official Transformers", RUNS / "qwen3-asr-aligner-official-full-test-clean", "official"),
     "gguf": ("GGUF INT4 + Q4_K", RUNS / "qwen3-asr-aligner-gguf-full-test-clean", "gguf"),
     "exllama": ("TRT+EXL3 4 bpw", RUNS / "qwen3-asr-aligner-exl3-dyn-full-test-clean", "exllama"),
-    "trt-bf16": ("TRT bf16", RUNS / "qwen3-asr-aligner-trt-bf16-dyn-full-test-clean", "trt-bf16"),
-    "trt-fp16": ("TRT fp16", RUNS / "qwen3-asr-aligner-trt-fp16-dyn-full-test-clean", "trt-fp16"),
+    "trt-bf16": ("TRT bf16", RUNS / "qwen3-asr-aligner-trt-bf16-pure-full", "trt-bf16"),
+    "trt-fp16": ("TRT fp16", RUNS / "qwen3-asr-aligner-trt-fp16-pure-full", "trt-fp16"),
 }
 
 
@@ -115,6 +115,8 @@ def main():
         ("P90 latency (ms)", [summaries[key]["p90Ms"] for key in order], ".2f"),
         ("Boundary MAE (ms)", [agreement[key]["boundaryMaeSeconds"] * 1000 for key in order], ".2f"),
     ]
+    baseline_median = summaries["official"]["medianMs"]
+    baseline_p90 = summaries["official"]["p90Ms"]
     for ax, (title, values, number_format) in zip(axes, metrics):
         bars = ax.bar(np.arange(len(order)), values, color=colors, width=0.68)
         ax.set_title(title, fontsize=10)
@@ -122,14 +124,21 @@ def main():
         ax.grid(axis="y", color="#e4e8ee", linewidth=0.8)
         ax.set_axisbelow(True)
         ax.spines[["top", "right"]].set_visible(False)
-        ax.set_ylim(0, max(max(values) * 1.25, 0.1))
+        ax.set_ylim(0, max(max(values) * 1.42, 0.1))
         for bar, value in zip(bars, values):
             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + max(values) * 0.025,
                     format(value, number_format), ha="center", va="bottom", fontsize=7.4)
+        if title.startswith(("Median", "P90")):
+            baseline = baseline_median if title.startswith("Median") else baseline_p90
+            for bar, value in zip(bars, values):
+                multiple = baseline / value if value else float("inf")
+                ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + max(values) * 0.105,
+                        f"×{multiple:.2f}", ha="center", va="bottom", fontsize=7.4,
+                        color="#1d2733" if multiple >= 1 else "#a44a3f", fontweight="bold")
     fig.text(0.02, 0.95, "Qwen3-ForcedAligner 0.6B · decoder backend comparison",
              fontsize=15, fontweight="bold", color="#1d2733")
     fig.text(0.02, 0.89,
-             "LibriSpeech test-clean · 2,620 utterances · boundary MAE measured against the official backend",
+             "LibriSpeech test-clean · 2,620 utterances · TRT columns run encoder and decoder in the same precision",
              fontsize=8.8, color="#5b6675")
     fig.text(0.02, 0.045,
              f"Token mismatch: 0 for every backend · exact boundaries: GGUF {agreement['gguf']['exactBoundaryFraction'] * 100:.1f}%, "
@@ -166,7 +175,7 @@ def main():
             values.append(value)
         ax.bar(x, values, bottom=bottoms, color=stage_colors[stage], width=0.6, label=stage)
         for position, (value, bottom) in enumerate(zip(values, bottoms)):
-            if value > 4.9:
+            if value > 2.0:
                 ax.text(position, bottom + value / 2, f"{value:.1f}", ha="center", va="center",
                         fontsize=7.6, color="white" if stage in ("Encoder", "Decoder") else "#26313d")
         bottoms += values
@@ -174,6 +183,10 @@ def main():
     ax.axhline(official_total, color="#8c8c8c", linestyle="--", linewidth=1.2, label="Official total")
     ax.text(len(stack_keys) - 0.55, official_total, f"official {official_total:.1f} ms",
             va="bottom", fontsize=8, color="#5b6675")
+    for position, key in enumerate(stack_keys):
+        total = summaries[key]["medianMs"]
+        ax.text(position, total + 2.5, f"×{official_total / total:.2f}", ha="center", va="bottom",
+                fontsize=8.2, color="#1d2733", fontweight="bold")
     ax.set_xticks(x, stack_labels, fontsize=8)
     ax.set_ylabel("Median latency (ms)")
     ax.set_ylim(0, max(summaries[key]["medianMs"] for key in stack_keys) * 1.18)

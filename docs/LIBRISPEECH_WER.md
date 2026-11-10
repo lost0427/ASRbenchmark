@@ -568,14 +568,16 @@ with the reference transcript as input.
 | Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | — | — |
 | GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 96.2% | 8.73 ms |
 | TensorRT + EXL3 4 bpw | 39.52 | 63.87 | 0.0058 | 98.0% | 4.71 ms |
-| **TensorRT bf16 decoder** | **25.90** | **45.25** | **0.0040** | **99.2%** | **1.50 ms** |
-| TensorRT fp16 decoder | 24.55 | 40.72 | 0.0038 | 98.98% | 2.09 ms |
+| **TensorRT bf16 (encoder + decoder)** | 25.06 | 42.02 | 0.0039 | **99.2%** | **1.50 ms** |
+| **TensorRT fp16 (encoder + decoder)** | **23.91** | **34.38** | **0.0035** | 99.0% | 1.72 ms |
 
-The TensorRT decoder is 3.60× faster than the official backend and 5.67× faster
-than GGUF by median latency. All five backends produced the same token sequence
-on every utterance. The TensorRT decoder stage drops from 25.5 ms with EXL3 to
-12.5 ms with the bf16 engine, because the same forward pass went from 956 kernel
-launches to a single engine call.
+Both TensorRT columns run the audio encoder and the text decoder in the same
+precision, so each column measures one dtype end to end. The TensorRT decoder is
+3.90× faster than the official backend and 6.14× faster than GGUF by median
+latency. All five backends produced the same token sequence on every utterance.
+The TensorRT decoder stage drops from 25.5 ms with EXL3 to 11.5 ms with the bf16
+engine and 9.7 ms with the fp16 engine, because the same forward pass went from
+956 kernel launches to a single engine call.
 
 ### Whole-utterance audio encoding
 
@@ -608,7 +610,10 @@ under 3 s now costs about 6 ms instead of a flat 8.7 ms.
 The remaining differences are bf16 rounding between two different execution
 graphs: feeding PyTorch audio embeddings into the TensorRT decoder produces zero
 argmax differences over 1,486 timestamp positions, and an fp32 TensorRT decoder
-scores the same as the bf16 engine.
+scores the same as the bf16 engine. Running the whole pipeline in fp16 instead of
+bf16 keeps the same token sequence and lands within 0.2 points of the bf16
+boundary agreement, so the two TensorRT columns differ by dtype rather than by
+implementation.
 
 The ASR audio encoder shares this code, so both ASR encoders were rebuilt and the
 full corpora re-run. WER for 0.6B is unchanged at 2.423% (1,287 edits); 1.7B
@@ -618,17 +623,18 @@ moves by about 1 ms in both directions: 0.6B 5.63 → 6.82 ms, 1.7B 9.25 → 8.9
 because the dynamic engine trades some kernel specialisation for correctness. The
 ASR stage charts in this document were produced before this encoder change.
 
-The stage chart shows the TensorRT bf16 run's median 25.9 ms split into
-preprocessing 4.5 ms, encoder 8.2 ms, decoder 12.5 ms, and a small remainder.
+The stage chart shows the TensorRT bf16 run's median 25.1 ms split into
+preprocessing 5.1 ms, encoder 8.1 ms, decoder 11.5 ms, and a small remainder.
 GGUF's 146.7 ms is dominated by its 116.0 ms encoder; its decoder contributes
 8.9 ms. The official backend is shown as a 93.1 ms reference line because it does
 not expose a stage profile.
 
 The CLI supports `--format json`, `--format srt`, and `--format txt` for the same
 aligned item list, so the output can be consumed directly or converted to subtitles.
-`--decoder-precision bf16` is the default, which matches the reference dtype;
-`--decoder-precision fp16` is about 5% faster with a slightly larger boundary
-difference. `--backend tensorrt-exllama` selects the EXL3 decoder instead.
+`--decoder-precision bf16` is the default, which matches the reference dtype.
+`--decoder-precision fp16` is about 8% faster; the encoder follows the decoder
+unless `--encoder-precision` is set, so each column stays single-precision.
+`--backend tensorrt-exllama` selects the EXL3 decoder instead.
 
 
 ## What changed from the single clip
