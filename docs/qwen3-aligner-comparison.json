@@ -44,21 +44,21 @@
       "seed": 1337
     },
     "TRT+EXL3 4 bpw": {
-      "engine": "aligner-tensorrt",
+      "engine": "aligner-exllama",
       "utterances": 2620,
       "items": 52576,
-      "elapsedSeconds": 131.0680965000065,
-      "meanMs": 49.83152980922423,
-      "medianMs": 42.95750000164844,
-      "p90Ms": 74.65205995831639,
+      "elapsedSeconds": 113.72135979996528,
+      "meanMs": 43.23932190731395,
+      "medianMs": 39.517350000096485,
+      "p90Ms": 63.871620007557794,
       "audioSeconds": 19452.480625,
-      "rtf": 0.006711668841472884,
-      "loadSeconds": 8.57284790003905,
+      "rtf": 0.005823782867649691,
+      "loadSeconds": 8.160918700043112,
       "medianStagesMs": {
-        "encoderMs": 8.548950019758195,
-        "totalMs": 42.41359999286942,
-        "decoderMs": 25.032300007296726,
-        "preprocessingMs": 5.927999998675659
+        "encoderMs": 8.139249956002459,
+        "decoderMs": 25.468200037721545,
+        "totalMs": 39.47719998541288,
+        "preprocessingMs": 4.948100016918033
       },
       "sampleSize": 2620,
       "seed": 1337
@@ -67,18 +67,18 @@
       "engine": "aligner-trt-bf16",
       "utterances": 2620,
       "items": 52576,
-      "elapsedSeconds": 84.14062049996573,
-      "meanMs": 31.960573359010457,
-      "medianMs": 26.099200011231005,
-      "p90Ms": 47.209649987053126,
+      "elapsedSeconds": 77.90101269999286,
+      "meanMs": 29.576894618439283,
+      "medianMs": 25.8975499891676,
+      "p90Ms": 45.25311997858807,
       "audioSeconds": 19452.480625,
-      "rtf": 0.00430467989223906,
-      "loadSeconds": 4.904821400006767,
+      "rtf": 0.003983628895161072,
+      "loadSeconds": 7.86264280002797,
       "medianStagesMs": {
-        "totalMs": 26.067550003062934,
-        "preprocessingMs": 4.338150029070675,
-        "encoderMs": 8.918200008338317,
-        "decoderMs": 12.633400008780882
+        "encoderMs": 8.205249963793904,
+        "decoderMs": 12.541650037746876,
+        "preprocessingMs": 4.508949990849942,
+        "totalMs": 25.866150012006983
       },
       "sampleSize": 2620,
       "seed": 1337
@@ -87,18 +87,18 @@
       "engine": "aligner-trt-fp16",
       "utterances": 2620,
       "items": 52576,
-      "elapsedSeconds": 78.30955330003053,
-      "meanMs": 29.740650381471692,
-      "medianMs": 24.117149965604767,
-      "p90Ms": 43.01547999493778,
+      "elapsedSeconds": 73.44343189999927,
+      "meanMs": 27.874577634026764,
+      "medianMs": 24.54559996840544,
+      "p90Ms": 40.722490003099665,
       "audioSeconds": 19452.480625,
-      "rtf": 0.004005684699118205,
-      "loadSeconds": 4.756198599992786,
+      "rtf": 0.0037543486000079294,
+      "loadSeconds": 7.072932999988552,
       "medianStagesMs": {
-        "preprocessingMs": 5.353549990104511,
-        "encoderMs": 9.071649983525276,
-        "totalMs": 24.08264999394305,
-        "decoderMs": 9.510350006166846
+        "totalMs": 24.49959999648854,
+        "preprocessingMs": 5.6055499881040305,
+        "encoderMs": 8.385349996387959,
+        "decoderMs": 9.7453499911353
       },
       "sampleSize": 2620,
       "seed": 1337
@@ -121,24 +121,24 @@
     },
     "TRT+EXL3 4 bpw": {
       "tokenMismatchUtterances": 0,
-      "boundaryMaeSeconds": 0.008241222230675594,
+      "boundaryMaeSeconds": 0.0047126350426049905,
       "boundaryP90Seconds": 0.0,
-      "boundaryMaxSeconds": 2.4800000000000004,
-      "exactBoundaryFraction": 0.9670952525867316
+      "boundaryMaxSeconds": 1.9999999999999998,
+      "exactBoundaryFraction": 0.9803807821059038
     },
     "TRT bf16": {
       "tokenMismatchUtterances": 0,
-      "boundaryMaeSeconds": 0.006602775030432137,
+      "boundaryMaeSeconds": 0.0015047074710894707,
       "boundaryP90Seconds": 0.0,
-      "boundaryMaxSeconds": 2.4800000000000004,
-      "exactBoundaryFraction": 0.97400905356056
+      "boundaryMaxSeconds": 1.9999999999999998,
+      "exactBoundaryFraction": 0.9919640139987828
     },
     "TRT fp16": {
       "tokenMismatchUtterances": 0,
-      "boundaryMaeSeconds": 0.007016842285453439,
+      "boundaryMaeSeconds": 0.0020869122793670107,
       "boundaryP90Seconds": 0.0,
-      "boundaryMaxSeconds": 2.4800000000000004,
-      "exactBoundaryFraction": 0.9726300973828362
+      "boundaryMaxSeconds": 2.24,
+      "exactBoundaryFraction": 0.9897576841144249
     }
   }
 }

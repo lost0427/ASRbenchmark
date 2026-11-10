@@ -567,47 +567,68 @@ with the reference transcript as input.
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | — | — |
 | GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 96.2% | 8.73 ms |
-| TensorRT + EXL3 4 bpw | 42.96 | 74.65 | 0.0067 | 96.7% | 8.24 ms |
-| TensorRT bf16 decoder | 26.10 | 47.21 | 0.0043 | 97.4% | 6.60 ms |
-| **TensorRT fp16 decoder** | **24.12** | **43.02** | **0.0040** | 97.3% | 7.02 ms |
+| TensorRT + EXL3 4 bpw | 39.52 | 63.87 | 0.0058 | 98.0% | 4.71 ms |
+| **TensorRT bf16 decoder** | **25.90** | **45.25** | **0.0040** | **99.2%** | **1.50 ms** |
+| TensorRT fp16 decoder | 24.55 | 40.72 | 0.0038 | 98.98% | 2.09 ms |
 
-The TensorRT decoder is 3.86× faster than the official backend and 6.08× faster
+The TensorRT decoder is 3.60× faster than the official backend and 5.67× faster
 than GGUF by median latency. All five backends produced the same token sequence
-on every utterance. The TensorRT decoder stage drops from 25.0 ms with EXL3 to
-9.5 ms with the fp16 engine, because the same forward pass went from 956 kernel
+on every utterance. The TensorRT decoder stage drops from 25.5 ms with EXL3 to
+12.5 ms with the bf16 engine, because the same forward pass went from 956 kernel
 launches to a single engine call.
 
-### Where the residual boundary differences come from
+### Whole-utterance audio encoding
 
-Decoder precision is not the source. Feeding PyTorch audio embeddings into the
-TensorRT decoder produced zero argmax differences over 1,486 timestamp positions,
-and an fp32 TensorRT decoder scored 97.9% exact against an fp32 official run,
-versus 97.8% for the bf16 engine. Building the encoder in fp16 or fp32 instead of
-bf16 did not change the agreement either.
+The encoder originally split audio into independent 800-frame inference windows.
+Profiling showed that the reference implementation never windows: it runs with the
+`sdpa` attention backend, which ignores the `cu_seqlens` argument, so every audio
+token attends to every other token. Encoding the same 800 frames as part of a
+longer utterance therefore changes their embeddings, and independent windows
+cannot reproduce that result:
 
-Splitting the full benchmark by audio length isolates the real cause:
+| Comparison (1,043-frame utterance) | cos mean |
+| --- | ---: |
+| Reference global attention: first 104 tokens vs standalone 800 frames | 0.9973 |
+| Reference with windowed attention patched in: same comparison | 1.0000 |
 
-| Audio length | Encoder windows | Exact boundaries | Boundary MAE |
-| --- | ---: | ---: | ---: |
-| ≤ 8 s | 1 | 99.4% | 1.15 ms |
-| > 8 s | 2+ | 95.9% | 10.57 ms |
+The encoder now runs one pass over the whole utterance, padded to a multiple of
+100 frames, with full attention over all tokens. Agreement against the reference
+moved from 97.3% to 99.2% exact boundaries and from 7.0 ms to 1.5 ms MAE, and the
+gap between short and long utterances disappeared:
 
-Audio longer than the 800-frame inference window is encoded as independent
-windows, and the tokens from the second window onward diverge from the official
-single-pass result. Decoder-side precision only contributes the remaining
-fraction of a percent. Fixing the multi-window encoder path is the next accuracy
-item; it affects the ASR audio encoder too, which shares this code.
+| Audio length | Exact boundaries | Boundary MAE |
+| --- | ---: | ---: |
+| ≤ 8 s | 99.1% | 1.69 ms |
+| > 8 s | 98.9% | 2.37 ms |
 
-The stage chart shows the TensorRT fp16 run's median 24.1 ms split into
-preprocessing 5.4 ms, encoder 9.1 ms, decoder 9.5 ms, and a small remainder.
+Padding to a 100-frame chunk instead of an 800-frame window also made short
+utterances cheaper: the encoder stage is unchanged at 8.4 ms median, but audio
+under 3 s now costs about 6 ms instead of a flat 8.7 ms.
+
+The remaining differences are bf16 rounding between two different execution
+graphs: feeding PyTorch audio embeddings into the TensorRT decoder produces zero
+argmax differences over 1,486 timestamp positions, and an fp32 TensorRT decoder
+scores the same as the bf16 engine.
+
+The ASR audio encoder shares this code, so both ASR encoders were rebuilt and the
+full corpora re-run. WER for 0.6B is unchanged at 2.423% (1,287 edits); 1.7B
+improves from 1.986% to 1.939% (1,030 edits). 233 of the 2,620 0.6B transcripts
+changed, mostly punctuation, which the WER normalisation drops. The encoder stage
+moves by about 1 ms in both directions: 0.6B 5.63 → 6.82 ms, 1.7B 9.25 → 8.99 ms,
+because the dynamic engine trades some kernel specialisation for correctness. The
+ASR stage charts in this document were produced before this encoder change.
+
+The stage chart shows the TensorRT bf16 run's median 25.9 ms split into
+preprocessing 4.5 ms, encoder 8.2 ms, decoder 12.5 ms, and a small remainder.
 GGUF's 146.7 ms is dominated by its 116.0 ms encoder; its decoder contributes
 8.9 ms. The official backend is shown as a 93.1 ms reference line because it does
 not expose a stage profile.
 
 The CLI supports `--format json`, `--format srt`, and `--format txt` for the same
 aligned item list, so the output can be consumed directly or converted to subtitles.
-`--decoder-precision fp16` is the default; `--backend tensorrt-exllama` selects the
-EXL3 decoder instead.
+`--decoder-precision bf16` is the default, which matches the reference dtype;
+`--decoder-precision fp16` is about 5% faster with a slightly larger boundary
+difference. `--backend tensorrt-exllama` selects the EXL3 decoder instead.
 
 
 ## What changed from the single clip

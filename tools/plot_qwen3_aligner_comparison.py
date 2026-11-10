@@ -15,9 +15,9 @@ DOCS = ROOT / "docs"
 BACKENDS = {
     "official": ("Official Transformers", RUNS / "qwen3-asr-aligner-official-full-test-clean", "official"),
     "gguf": ("GGUF INT4 + Q4_K", RUNS / "qwen3-asr-aligner-gguf-full-test-clean", "gguf"),
-    "exllama": ("TRT+EXL3 4 bpw", RUNS / "qwen3-asr-aligner-tensorrt-full-test-clean", "tensorrt"),
-    "trt-bf16": ("TRT bf16", RUNS / "qwen3-asr-aligner-trt-bf16-full-test-clean", "trt-bf16"),
-    "trt-fp16": ("TRT fp16", RUNS / "qwen3-asr-aligner-trt-fp16-full-test-clean", "trt-fp16"),
+    "exllama": ("TRT+EXL3 4 bpw", RUNS / "qwen3-asr-aligner-exl3-dyn-full-test-clean", "exllama"),
+    "trt-bf16": ("TRT bf16", RUNS / "qwen3-asr-aligner-trt-bf16-dyn-full-test-clean", "trt-bf16"),
+    "trt-fp16": ("TRT fp16", RUNS / "qwen3-asr-aligner-trt-fp16-dyn-full-test-clean", "trt-fp16"),
 }
 
 
