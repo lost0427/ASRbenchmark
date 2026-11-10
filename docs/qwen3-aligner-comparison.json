@@ -8,7 +8,7 @@
     "warmupUtterances": 2
   },
   "backends": {
-    "official": {
+    "Official Transformers": {
       "engine": "aligner-official",
       "utterances": 2620,
       "items": 52576,
@@ -23,7 +23,27 @@
       "sampleSize": 2620,
       "seed": 1337
     },
-    "tensorrt": {
+    "GGUF INT4 + Q4_K": {
+      "engine": "aligner-gguf",
+      "utterances": 2620,
+      "items": 52576,
+      "elapsedSeconds": 416.5466410999652,
+      "meanMs": 158.82086755773622,
+      "medianMs": 146.72664998215623,
+      "p90Ms": 186.8802299548406,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.021391136741012375,
+      "loadSeconds": 2.3489151999820024,
+      "medianStagesMs": {
+        "totalMs": 143.59056949615479,
+        "preprocessingMs": 19.23823356628418,
+        "encoderMs": 116.01579189300537,
+        "decoderMs": 8.861184120178223
+      },
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 4 bpw": {
       "engine": "aligner-tensorrt",
       "utterances": 2620,
       "items": 52576,
@@ -45,10 +65,26 @@
     }
   },
   "agreement": {
-    "tokenMismatchUtterances": 0,
-    "boundaryMaeSeconds": 0.008241222230675594,
-    "boundaryP90Seconds": 0.0,
-    "boundaryMaxSeconds": 2.4800000000000004,
-    "exactBoundaryFraction": 0.9670952525867316
+    "GGUF INT4 + Q4_K": {
+      "tokenMismatchUtterances": 0,
+      "boundaryMaeSeconds": 0.008725036138161899,
+      "boundaryP90Seconds": 0.0,
+      "boundaryMaxSeconds": 2.08,
+      "exactBoundaryFraction": 0.9623877814972611
+    },
+    "TensorRT BF16 + EXL3 4 bpw": {
+      "tokenMismatchUtterances": 0,
+      "boundaryMaeSeconds": 0.008241222230675594,
+      "boundaryP90Seconds": 0.0,
+      "boundaryMaxSeconds": 2.4800000000000004,
+      "exactBoundaryFraction": 0.9670952525867316
+    },
+    "Official Transformers": {
+      "tokenMismatchUtterances": 0,
+      "boundaryMaeSeconds": 0.0,
+      "boundaryP90Seconds": 0.0,
+      "boundaryMaxSeconds": 0.0,
+      "exactBoundaryFraction": 1.0
+    }
   }
 }

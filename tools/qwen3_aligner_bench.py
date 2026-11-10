@@ -13,7 +13,7 @@ DEFAULT_DATA = ROOT / ".native/librispeech"
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--backend", choices=("official", "tensorrt"), required=True)
+    parser.add_argument("--backend", choices=("official", "tensorrt", "gguf"), required=True)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_DATA / "manifest.jsonl")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -24,6 +24,10 @@ def main():
     parser.add_argument("--trt-repo", type=Path, default=ROOT.parent / "Qwen3-ASR-TensorRT")
     parser.add_argument("--engine", type=Path)
     parser.add_argument("--decoder-dir", type=Path)
+    parser.add_argument("--gguf-repo", type=Path, default=ROOT / ".native/qwen3-asr-gguf")
+    parser.add_argument("--gguf-model-dir", type=Path)
+    parser.add_argument("--gguf-llm-fn", default="qwen3_aligner_llm.q4_k.gguf")
+    parser.add_argument("--gguf-provider", default="DML")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
@@ -37,10 +41,9 @@ def main():
         encoding="utf-8",
     )
 
-    import torch
-
     load_started = time.perf_counter()
     if args.backend == "official":
+        import torch
         from qwen_asr import Qwen3ForcedAligner
 
         runner = Qwen3ForcedAligner.from_pretrained(
@@ -53,7 +56,46 @@ def main():
                 {"text": item.text, "start_time": item.start_time, "end_time": item.end_time}
                 for item in result
             ], None
+    elif args.backend == "gguf":
+        import soundfile as sf
+
+        sys.path.insert(0, str(args.gguf_repo))
+        from qwen_asr_gguf.inference import AlignerConfig, QwenForcedAligner
+
+        model_dir = args.gguf_model_dir or args.gguf_repo / "aligner-model"
+        runner = QwenForcedAligner(
+            AlignerConfig(
+                model_dir=str(model_dir),
+                llm_fn=args.gguf_llm_fn,
+                onnx_provider=args.gguf_provider,
+                llm_use_gpu=True,
+            )
+        )
+
+        def align(audio, text):
+            pcm, sample_rate = sf.read(str(audio), dtype="float32", always_2d=False)
+            if sample_rate != 16000:
+                raise ValueError(f"expected 16 kHz audio, got {sample_rate}")
+            result = runner.align(pcm, text, args.language)
+            items = [
+                {"text": item.text, "start_time": float(item.start_time),
+                 "end_time": float(item.end_time)}
+                for item in result
+                if item.text.strip()
+            ]
+            performance = result.performance
+            total_ms = performance["total_time"] * 1000
+            encoder_ms = performance["encoder_time"] * 1000
+            decoder_ms = performance["decoder_time"] * 1000
+            return items, {
+                "preprocessingMs": max(0.0, total_ms - encoder_ms - decoder_ms),
+                "encoderMs": encoder_ms,
+                "decoderMs": decoder_ms,
+                "totalMs": total_ms,
+            }
     else:
+        import torch
+
         sys.path.insert(0, str(args.trt_repo / "src"))
         from qwen3_asr_trt.aligner import TensorRTExLlamaAligner
 
