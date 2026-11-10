@@ -549,8 +549,9 @@ The Qwen3-ForcedAligner 0.6B encoder was exported to ONNX and built with
 TensorRT BF16. Its text decoder was exported to EXL3 4 bpw with a zero-padded
 152,064-row LM head kept at 16 bits, because the aligner classification head
 only has 5,000 real rows. The runtime performs one full-prompt forward pass and
-takes the argmax at every `<timestamp>` position. Both backends were run on all
-2,620 test-clean utterances with the reference transcript as input.
+takes the argmax at every `<timestamp>` position. The official Transformers,
+GGUF, and TensorRT+EXL3 backends were run on all 2,620 test-clean utterances
+with the reference transcript as input.
 
 ![Qwen3 aligner comparison](windows-librispeech-qwen3-aligner-comparison.png)
 
@@ -563,17 +564,22 @@ takes the argmax at every `<timestamp>` position. Both backends were run on all
 | Backend | Median ms | P90 ms | RTF | Items |
 | --- | ---: | ---: | ---: | ---: |
 | Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | 52,576 |
+| GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 52,576 |
 | TensorRT BF16 + EXL3 4 bpw | **42.96** | **74.65** | **0.0067** | 52,576 |
 
-The tensor timing is 2.17× faster by median latency and 1.53× faster by P90.
-All 2,620 utterances produced the same token sequence; 96.7% of start/end
-boundaries are exactly equal, the mean absolute boundary difference is 8.24 ms,
-and P90 is 0.0 ms. The largest single boundary difference is 2.48 s, from one
-utterance where the timestamp LIS correction diverges.
+The TensorRT timing is 2.17× faster than the official backend and 3.41× faster
+than GGUF by median latency. All three backends produced the same token sequence
+on every utterance. Against the official backend, 96.7% of TensorRT start/end
+boundaries and 96.2% of GGUF boundaries are exactly equal; the mean absolute
+boundary difference is 8.24 ms and 8.73 ms respectively, and P90 is 0.0 ms for
+both. The largest single boundary difference is 2.48 s for TensorRT and 2.08 s
+for GGUF.
 
 The stage chart shows the TensorRT run's median 43.0 ms split into preprocessing
-5.9 ms, encoder 8.5 ms, decoder 25.0 ms, and 3.4 ms other. The official backend
-is shown as a 93.1 ms reference line.
+5.9 ms, encoder 8.5 ms, decoder 25.0 ms, and 3.4 ms other. GGUF's 146.7 ms is
+dominated by its 116.0 ms encoder; its decoder contributes 8.9 ms. The official
+backend is shown as a 93.1 ms reference line because it does not expose a stage
+profile.
 
 The CLI supports `--format json`, `--format srt`, and `--format txt` for the same
 aligned item list, so the output can be consumed directly or converted to subtitles.
