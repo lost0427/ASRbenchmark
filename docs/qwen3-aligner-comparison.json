@@ -1,0 +1,54 @@
+{
+  "benchmark": "LibriSpeech test-clean",
+  "model": "Qwen3-ForcedAligner-0.6B",
+  "conditions": {
+    "utterances": 2620,
+    "items": 52576,
+    "seed": 1337,
+    "warmupUtterances": 2
+  },
+  "backends": {
+    "official": {
+      "engine": "aligner-official",
+      "utterances": 2620,
+      "items": 52576,
+      "elapsedSeconds": 254.09837070002686,
+      "meanMs": 96.80578767149602,
+      "medianMs": 93.12754997517914,
+      "p90Ms": 114.05750002595596,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.013038499746575102,
+      "loadSeconds": 11.01283429999603,
+      "medianStagesMs": {},
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "tensorrt": {
+      "engine": "aligner-tensorrt",
+      "utterances": 2620,
+      "items": 52576,
+      "elapsedSeconds": 131.0680965000065,
+      "meanMs": 49.83152980922423,
+      "medianMs": 42.95750000164844,
+      "p90Ms": 74.65205995831639,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.006711668841472884,
+      "loadSeconds": 8.57284790003905,
+      "medianStagesMs": {
+        "encoderMs": 8.548950019758195,
+        "totalMs": 42.41359999286942,
+        "decoderMs": 25.032300007296726,
+        "preprocessingMs": 5.927999998675659
+      },
+      "sampleSize": 2620,
+      "seed": 1337
+    }
+  },
+  "agreement": {
+    "tokenMismatchUtterances": 0,
+    "boundaryMaeSeconds": 0.008241222230675594,
+    "boundaryP90Seconds": 0.0,
+    "boundaryMaxSeconds": 2.4800000000000004,
+    "exactBoundaryFraction": 0.9670952525867316
+  }
+}
