@@ -562,14 +562,14 @@ with the reference transcript as input.
 | Backend | Median ms | P90 ms | RTF | Exact boundaries | Boundary MAE |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Official Transformers BF16 | 93.13 | 114.06 | 0.0130 | — | — |
-| GGUF INT4 + Q4_K | 146.73 | 186.88 | 0.0214 | 96.2% | 8.73 ms |
+| GGUF INT4 + Q4_K | 139.55 | 182.02 | 0.0190 | 96.2% | 8.73 ms |
 | TensorRT + EXL3 4 bpw | 39.52 | 63.87 | 0.0058 | 98.0% | 4.71 ms |
 | **TensorRT bf16 (encoder + decoder)** | 25.06 | 42.02 | 0.0039 | **99.2%** | **1.50 ms** |
 | **TensorRT fp16 (encoder + decoder)** | **23.91** | **34.38** | **0.0035** | 99.0% | 1.72 ms |
 
 Both TensorRT columns run the audio encoder and the text decoder in the same
 precision, so each column measures one dtype end to end. The TensorRT decoder is
-3.90× faster than the official backend and 6.14× faster than GGUF by median
+3.90× faster than the official backend and 5.84× faster than GGUF by median
 latency. All five backends produced the same token sequence on every utterance.
 The TensorRT decoder stage drops from 25.5 ms with EXL3 to 11.5 ms with the bf16
 engine and 9.7 ms with the fp16 engine, because the same forward pass went from
@@ -621,9 +621,18 @@ correctness and computes every token once instead of padding to whole windows.
 
 The stage chart shows the TensorRT bf16 run's median 25.1 ms split into
 preprocessing 5.1 ms, encoder 8.1 ms, decoder 11.5 ms, and a small remainder.
-GGUF's 146.7 ms is dominated by its 116.0 ms encoder; its decoder contributes
-8.9 ms. The official backend is shown as a 93.1 ms reference line because it does
-not expose a stage profile.
+GGUF's 139.5 ms is dominated by its 108.2 ms encoder and 26.6 ms decoder. The
+official backend is shown as a 93.1 ms reference line because it does not expose
+a stage profile.
+
+The GGUF stage split was re-measured because its original decoder figure covered
+only `ctx.decode`. The embedding-table gather, the `LlamaBatch` construction, and
+the timestamp argmax all sat outside that timer and were folded into the
+preprocessing bucket, which reported 19.2 ms. Timing them separately gives
+decoder 26.6 ms (embed 1.1 ms + decode 25.5 ms), argmax 0.3 ms, and 0.7 ms of
+remaining preprocessing, with the same 139.5 ms end to end. The corrected split
+is now the one plotted, so the decoder comparison uses the same window for all
+four backends.
 
 The CLI supports `--format json`, `--format srt`, and `--format txt` for the same
 aligned item list, so the output can be consumed directly or converted to subtitles.

@@ -93,6 +93,9 @@ def main():
                 "preprocessingMs": max(0.0, total_ms - encoder_ms - decoder_ms),
                 "encoderMs": encoder_ms,
                 "decoderMs": decoder_ms,
+                "embedMs": performance.get("embed_time", 0.0) * 1000,
+                "decodeMs": performance.get("decode_time", 0.0) * 1000,
+                "argmaxMs": performance.get("argmax_time", 0.0) * 1000,
                 "totalMs": total_ms,
             }
     else:
