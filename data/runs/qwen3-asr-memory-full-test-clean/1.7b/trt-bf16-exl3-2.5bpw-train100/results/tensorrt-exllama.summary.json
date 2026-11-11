@@ -1,0 +1,31 @@
+{
+  "engine": "tensorrt-exllama",
+  "provider": "CUDA (TensorRT + ExLlamaV3)",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "hypothesisWords": 53048,
+  "edits": 1171,
+  "corpusWER": 0.022044427710843372,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 624.635079700005,
+  "meanMs": 237.23370801513695,
+  "medianMs": 200.4690500034485,
+  "p90Ms": 433.0869300029008,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.03195234206792373,
+  "medianStagesMs": {
+    "promptTokens": 93.0,
+    "encoderMs": 9.23125000554137,
+    "preprocessingMs": 5.699350003851578,
+    "totalMs": 200.42124999599764,
+    "decoderPrefillMs": 33.9350700378418,
+    "decoderMs": 183.3485000024666,
+    "decodeTokens": 21.0,
+    "otherMs": 0.23475000489270315,
+    "decoderGenerationMs": 148.00190925598145
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

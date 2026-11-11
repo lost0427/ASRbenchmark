@@ -1,0 +1,247 @@
+{
+  "dataset": "LibriSpeech test-clean",
+  "model": "Qwen3-ASR-1.7B",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "idAlignment": "all IDs and references match the shared sample",
+  "engines": {
+    "GGUF INT4 + Q4_K, DML adapter 1": {
+      "engine": "gguf",
+      "provider": "DML device 1+Vulkan",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 53026,
+      "edits": 1110,
+      "corpusWER": 0.020896084337349397,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 1099.4416352999979,
+      "meanMs": 419.0195737404779,
+      "medianMs": 391.8084999968414,
+      "p90Ms": 568.4054300028947,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.05643656993489755,
+      "medianStagesMs": {
+        "prefillMs": 79.2001485824585,
+        "encoderMs": 169.5842742919922,
+        "decodeMs": 129.4175386428833
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 2.5 bpw, train-clean-100": {
+      "engine": "tensorrt-exllama",
+      "provider": "CUDA (TensorRT + ExLlamaV3)",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 53048,
+      "edits": 1171,
+      "corpusWER": 0.022044427710843372,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 624.635079700005,
+      "meanMs": 237.23370801513695,
+      "medianMs": 200.4690500034485,
+      "p90Ms": 433.0869300029008,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.03195234206792373,
+      "medianStagesMs": {
+        "promptTokens": 93.0,
+        "encoderMs": 9.23125000554137,
+        "preprocessingMs": 5.699350003851578,
+        "totalMs": 200.42124999599764,
+        "decoderPrefillMs": 33.9350700378418,
+        "decoderMs": 183.3485000024666,
+        "decodeTokens": 21.0,
+        "otherMs": 0.23475000489270315,
+        "decoderGenerationMs": 148.00190925598145
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 2 bpw, train-clean-100": {
+      "engine": "tensorrt-exllama",
+      "provider": "CUDA (TensorRT + ExLlamaV3)",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 52998,
+      "edits": 1540,
+      "corpusWER": 0.028990963855421686,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 497.53370110000833,
+      "meanMs": 187.88950576330092,
+      "medianMs": 158.1910999957472,
+      "p90Ms": 336.0962100006873,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.025306310006919665,
+      "medianStagesMs": {
+        "decoderMs": 143.168449998484,
+        "encoderMs": 7.2257500141859055,
+        "preprocessingMs": 6.231449980987236,
+        "decoderPrefillMs": 26.316046714782715,
+        "promptTokens": 93.0,
+        "otherMs": 0.27670002600643784,
+        "decodeTokens": 21.0,
+        "decoderGenerationMs": 115.70847034454346,
+        "totalMs": 158.13865000382066
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 3 bpw": {
+      "engine": "tensorrt-exllama",
+      "provider": "CUDA (TensorRT + ExLlamaV3)",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 53036,
+      "edits": 1075,
+      "corpusWER": 0.02023719879518072,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 618.2413193999964,
+      "meanMs": 235.2238646947258,
+      "medianMs": 194.99595000161207,
+      "p90Ms": 430.45338000374613,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.031681641913995306,
+      "medianStagesMs": {
+        "decoderMs": 181.35864999931073,
+        "encoderMs": 9.210100004565902,
+        "preprocessingMs": 4.2460499971639365,
+        "decoderPrefillMs": 26.142120361328125,
+        "totalMs": 194.9523000002955,
+        "otherMs": 0.20759999824804254,
+        "promptTokens": 93.0,
+        "decoderGenerationMs": 151.74877643585205,
+        "decodeTokens": 21.0
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 3 bpw, train-clean-100": {
+      "engine": "tensorrt-exllama",
+      "provider": "CUDA (TensorRT + ExLlamaV3)",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 53047,
+      "edits": 1120,
+      "corpusWER": 0.02108433734939759,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 624.1997087999916,
+      "meanMs": 237.40934587796022,
+      "medianMs": 196.2213500009966,
+      "p90Ms": 434.297290003451,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.03197599823854115,
+      "medianStagesMs": {
+        "decoderMs": 179.29324999568053,
+        "promptTokens": 93.0,
+        "decodeTokens": 21.0,
+        "decoderPrefillMs": 25.8028507232666,
+        "preprocessingMs": 5.808899994008243,
+        "decoderGenerationMs": 150.9246826171875,
+        "otherMs": 0.23469999723602086,
+        "totalMs": 196.1767000029795,
+        "encoderMs": 9.296799995354377
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    },
+    "TensorRT BF16 + EXL3 4 bpw": {
+      "engine": "tensorrt-exllama",
+      "provider": "CUDA (TensorRT + ExLlamaV3)",
+      "utterances": 2620,
+      "referenceWords": 53120,
+      "hypothesisWords": 53035,
+      "edits": 1055,
+      "corpusWER": 0.019860692771084338,
+      "emptyOutputs": 0,
+      "elapsedSeconds": 644.6811508000028,
+      "meanMs": 245.3098740458817,
+      "medianMs": 207.51225000276463,
+      "p90Ms": 448.2599399991159,
+      "audioSeconds": 19452.480625,
+      "rtf": 0.03304009819571328,
+      "medianStagesMs": {
+        "decoderGenerationMs": 159.5827341079712,
+        "decodeTokens": 22.0,
+        "otherMs": 0.21769999875687063,
+        "encoderMs": 9.248100002878346,
+        "decoderMs": 193.8918999985617,
+        "promptTokens": 93.0,
+        "preprocessingMs": 4.269699995347764,
+        "decoderPrefillMs": 33.574819564819336,
+        "totalMs": 207.466050000221
+      },
+      "threads": 12,
+      "warmups": 2,
+      "sampleSize": 2620,
+      "seed": 1337
+    }
+  },
+  "pairwise": {
+    "TensorRT BF16 + EXL3 2.5 bpw, train-clean-100": {
+      "editWinsTiesLossesVsGGUF": [
+        133,
+        2296,
+        191
+      ],
+      "exactSameNormalizedText": 2216
+    },
+    "TensorRT BF16 + EXL3 2 bpw, train-clean-100": {
+      "editWinsTiesLossesVsGGUF": [
+        147,
+        2056,
+        417
+      ],
+      "exactSameNormalizedText": 1942
+    },
+    "TensorRT BF16 + EXL3 3 bpw": {
+      "editWinsTiesLossesVsGGUF": [
+        150,
+        2341,
+        129
+      ],
+      "exactSameNormalizedText": 2277
+    },
+    "TensorRT BF16 + EXL3 3 bpw, train-clean-100": {
+      "editWinsTiesLossesVsGGUF": [
+        141,
+        2315,
+        164
+      ],
+      "exactSameNormalizedText": 2240
+    },
+    "TensorRT BF16 + EXL3 4 bpw": {
+      "editWinsTiesLossesVsGGUF": [
+        142,
+        2379,
+        99
+      ],
+      "exactSameNormalizedText": 2318
+    },
+    "TensorRT BF16 + EXL3 3 bpw vs 4 bpw": {
+      "editWinsTiesLosses": [
+        90,
+        2422,
+        108
+      ],
+      "exactSameNormalizedText": 2365
+    },
+    "TensorRT BF16 + EXL3 3 bpw, train-clean-100 vs uncalibrated 3 bpw": {
+      "editWinsTiesLosses": [
+        120,
+        2348,
+        152
+      ],
+      "exactSameNormalizedText": 2278
+    }
+  }
+}

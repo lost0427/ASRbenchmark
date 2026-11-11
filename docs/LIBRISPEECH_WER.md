@@ -786,3 +786,10 @@ Each figure reads these directories:
 The GGUF encoders/decoders used for the ASR tables come from the same
 `.native/qwen3-asr-gguf` checkout, with the `aligner-model` replaced by the
 0.6B/1.7B packages from the same release.
+
+The run directories that the plotting scripts read, plus `manifest.jsonl`, are
+committed under `data/runs` and `data/manifest.jsonl`. `tools/run_data.py` picks
+`.native/librispeech` when it exists and falls back to that snapshot otherwise,
+so a fresh clone can regenerate every figure with `python tools/plot_*.py`
+without any ignored data. The aligner, calibration, engine, and memory charts
+were verified to rebuild byte-identically from the snapshot.

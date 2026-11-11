@@ -1,0 +1,15 @@
+{
+  "engine": "aligner-official",
+  "utterances": 2620,
+  "items": 52576,
+  "elapsedSeconds": 254.09837070002686,
+  "meanMs": 96.80578767149602,
+  "medianMs": 93.12754997517914,
+  "p90Ms": 114.05750002595596,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.013038499746575102,
+  "loadSeconds": 11.01283429999603,
+  "medianStagesMs": {},
+  "sampleSize": 2620,
+  "seed": 1337
+}

@@ -11,11 +11,12 @@ import numpy as np
 from windows_benchmark import normalize
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNS = ROOT / ".native/librispeech/qwen3-asr-1.7b-full-test-clean"
-MEMORY_RUNS = ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/1.7b"
+from run_data import resolve_runs  # noqa: E402
+RUNS = resolve_runs() / "qwen3-asr-1.7b-full-test-clean"
+MEMORY_RUNS = resolve_runs() / "qwen3-asr-memory-full-test-clean/1.7b"
 DOCS = ROOT / "docs"
 CONFIGS = [
-    ("GGUF INT4 + Q4_K, DML adapter 1", ROOT / ".native/librispeech/qwen3-asr-1.7b-dml-device-1-full-test-clean", "gguf"),
+    ("GGUF INT4 + Q4_K, DML adapter 1", resolve_runs() / "qwen3-asr-1.7b-dml-device-1-full-test-clean", "gguf"),
     ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100",
      MEMORY_RUNS / "trt-bf16-exl3-2.5bpw-train100/results", "tensorrt-exllama"),
     ("TensorRT BF16 + EXL3 2 bpw, train-clean-100",

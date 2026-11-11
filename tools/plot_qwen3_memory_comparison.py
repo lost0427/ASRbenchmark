@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNS = ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean"
+from run_data import resolve_runs  # noqa: E402
+RUNS = resolve_runs() / "qwen3-asr-memory-full-test-clean"
 DOCS = ROOT / "docs"
 CONFIGS = [
     ("GGUF INT4 + Q4_K", "gguf-int4-q4k", "gguf", "gguf"),
@@ -74,7 +75,7 @@ def load_model(model):
             directory = RUNS / model / "gguf-int4-q4k-0.6b"
         elif folder == "trt-int4-exl3-4bpw":
             directory = (
-                ROOT / ".native/librispeech/qwen3-asr-0.6b-int4-encoder-memory-full-test-clean"
+                resolve_runs() / "qwen3-asr-0.6b-int4-encoder-memory-full-test-clean"
                 if model == "0.6b"
                 else directory
             )

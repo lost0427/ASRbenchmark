@@ -1,0 +1,20 @@
+{
+  "engine": "aligner-trt-fp16",
+  "utterances": 2620,
+  "items": 52576,
+  "elapsedSeconds": 68.72010550001869,
+  "meanMs": 26.056920152529898,
+  "medianMs": 23.906600021291524,
+  "p90Ms": 34.38131997245364,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.003509533417136013,
+  "loadSeconds": 5.38470039999811,
+  "medianStagesMs": {
+    "encoderMs": 7.780299987643957,
+    "decoderMs": 9.73260001046583,
+    "totalMs": 23.863299982622266,
+    "preprocessingMs": 5.908449995331466
+  },
+  "sampleSize": 2620,
+  "seed": 1337
+}

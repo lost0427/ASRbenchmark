@@ -9,12 +9,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
+from run_data import resolve_runs  # noqa: E402
 DOCS = ROOT / "docs"
 RUNS = [
-    ("GGUF DML adapter 1", ROOT / ".native/librispeech/qwen3-asr-0.6b-dml-device-1-full-test-clean/gguf.summary.json"),
-    ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100", ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-2.5bpw/results/tensorrt-exllama.summary.json"),
-    ("TensorRT BF16 + EXL3 3 bpw", ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-3bpw/results/tensorrt-exllama.summary.json"),
-    ("TensorRT BF16 + EXL3 4 bpw", ROOT / ".native/librispeech/qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-4bpw/results/tensorrt-exllama.summary.json"),
+    ("GGUF DML adapter 1", resolve_runs() / "qwen3-asr-0.6b-dml-device-1-full-test-clean/gguf.summary.json"),
+    ("TensorRT BF16 + EXL3 2.5 bpw, train-clean-100", resolve_runs() / "qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-2.5bpw/results/tensorrt-exllama.summary.json"),
+    ("TensorRT BF16 + EXL3 3 bpw", resolve_runs() / "qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-3bpw/results/tensorrt-exllama.summary.json"),
+    ("TensorRT BF16 + EXL3 4 bpw", resolve_runs() / "qwen3-asr-memory-full-test-clean/0.6b/trt-bf16-exl3-4bpw/results/tensorrt-exllama.summary.json"),
 ]
 COLORS = ["#3b6ea5", "#d98b3a", "#c44e52", "#4c956c"]
 

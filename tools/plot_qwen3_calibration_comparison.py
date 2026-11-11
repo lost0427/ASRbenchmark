@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNS = ROOT / ".native/librispeech"
+from run_data import resolve_runs  # noqa: E402
+RUNS = resolve_runs()
 OUTPUT = ROOT / "docs"
 
 COMMON = {

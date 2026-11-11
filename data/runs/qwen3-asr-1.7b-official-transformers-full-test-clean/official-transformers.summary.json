@@ -1,0 +1,21 @@
+{
+  "engine": "official-transformers",
+  "provider": "qwen-asr 0.0.6 \u00b7 bfloat16",
+  "modelPath": "..\\Qwen3-ASR-TensorRT\\models\\Qwen3-ASR-1.7B",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "hypothesisWords": 53038,
+  "edits": 1002,
+  "corpusWER": 0.018862951807228915,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 2688.0575654000277,
+  "meanMs": 1025.7919291984992,
+  "medianMs": 863.52490002173,
+  "p90Ms": 1854.378179990453,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.1381610348988623,
+  "loadSeconds": 6.3405397000024095,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

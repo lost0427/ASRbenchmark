@@ -1,0 +1,23 @@
+{
+  "engine": "aligner-gguf",
+  "utterances": 2620,
+  "items": 52576,
+  "elapsedSeconds": 378.83874880000076,
+  "meanMs": 144.4564532824598,
+  "medianMs": 139.54625000042142,
+  "p90Ms": 182.0225900009973,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.0194564341122455,
+  "loadSeconds": 2.389919799999916,
+  "medianStagesMs": {
+    "preprocessingMs": 0.6901025772094727,
+    "totalMs": 136.95287704467773,
+    "decodeMs": 25.50661563873291,
+    "decoderMs": 26.572585105895996,
+    "encoderMs": 108.18040370941162,
+    "argmaxMs": 0.3211498260498047,
+    "embedMs": 1.0805130004882812
+  },
+  "sampleSize": 2620,
+  "seed": 1337
+}

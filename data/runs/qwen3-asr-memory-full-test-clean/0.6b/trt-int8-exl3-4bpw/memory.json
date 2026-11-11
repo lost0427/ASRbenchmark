@@ -1,0 +1,4413 @@
+{
+  "command": [
+    "..\\Qwen3-ASR-TensorRT\\.venv\\Scripts\\python.exe",
+    "tools\\qwen3_wer.py",
+    "--output-dir",
+    ".native\\librispeech\\qwen3-asr-memory-full-test-clean\\0.6b\\trt-int8-exl3-4bpw\\results",
+    "--engines",
+    "tensorrt-exllama",
+    "--sample-size",
+    "3000",
+    "--trt-artifact-dir",
+    "..\\Qwen3-ASR-TensorRT\\artifacts\\qwen3-asr-0.6b",
+    "--trt-model",
+    "Qwen/Qwen3-ASR-0.6B-hf",
+    "--trt-engine",
+    "..\\Qwen3-ASR-TensorRT\\artifacts\\qwen3-asr-0.6b\\encoder-window.int8.engine",
+    "--trt-decoder",
+    "..\\Qwen3-ASR-TensorRT\\artifacts\\qwen3-asr-0.6b\\decoder-exl3-4bpw"
+  ],
+  "startedAt": "2026-11-07T09:07:40.810115+08:00",
+  "finishedAt": "2026-11-07T09:13:50.965982+08:00",
+  "exitCode": 0,
+  "samplingIntervalMs": 500,
+  "measurement": "whole-GPU memory used; includes Windows and other GPU clients",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "totalMiB": 8188,
+  "idleBaselineMedianMiB": 1908,
+  "peakUsedMiB": 3597,
+  "peakDeltaOverIdleMiB": 1689,
+  "sampleCount": 730,
+  "samples": [
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:41.278",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:41.780",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:42.295",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:42.809",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:43.325",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:43.826",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:44.327",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:44.831",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:45.332",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:45.838",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:46.340",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:46.851",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:47.352",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:47.866",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:48.379",
+      "usedMiB": 1908,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:48.881",
+      "usedMiB": 2211,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:49.383",
+      "usedMiB": 3491,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:49.884",
+      "usedMiB": 3491,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:50.387",
+      "usedMiB": 3543,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:50.902",
+      "usedMiB": 3575,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:51.418",
+      "usedMiB": 3575,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:51.925",
+      "usedMiB": 3575,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:52.430",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:52.945",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:53.445",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:53.959",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:54.463",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:54.978",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:55.493",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:56.008",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:56.522",
+      "usedMiB": 3577,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:57.027",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:57.531",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:58.045",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:58.556",
+      "usedMiB": 3591,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:59.057",
+      "usedMiB": 3591,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:07:59.565",
+      "usedMiB": 3591,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:00.067",
+      "usedMiB": 3591,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:00.583",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:01.085",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:01.588",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:02.090",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:02.602",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:03.103",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:03.607",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:04.122",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:04.630",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:05.133",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:05.647",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:06.152",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:06.667",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:07.179",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:07.680",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:08.185",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:08.701",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:09.202",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:09.706",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:10.208",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:10.708",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:11.223",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:11.738",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:12.253",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:12.754",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:13.269",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:13.774",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:14.276",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:14.779",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:15.282",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:15.785",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:16.286",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:16.791",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:17.294",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:17.801",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:18.302",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:18.806",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:19.308",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:19.823",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:20.324",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:20.836",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:21.350",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:21.865",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:22.379",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:22.892",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:23.393",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:23.907",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:24.410",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:24.911",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:25.413",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:25.917",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:26.422",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:26.937",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:27.451",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:27.968",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:28.481",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:28.982",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:29.497",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:30.011",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:30.513",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:31.027",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:31.531",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:32.037",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:32.541",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:33.044",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:33.560",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:34.071",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:34.585",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:35.090",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:35.592",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:36.101",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:36.606",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:37.117",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:37.633",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:38.146",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:38.647",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:39.158",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:39.660",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:40.175",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:40.690",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:41.191",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:41.705",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:42.207",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:42.710",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:43.215",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:43.729",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:44.230",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:44.733",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:45.236",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:45.751",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:46.266",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:46.767",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:47.282",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:47.785",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:48.289",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:48.794",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:49.309",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:49.810",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:50.325",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:50.827",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:51.329",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:51.832",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:52.336",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:52.850",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:53.353",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:53.855",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:54.370",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:54.871",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:55.386",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:55.889",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:56.390",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:56.892",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:57.395",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:57.908",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:58.420",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:58.921",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:59.422",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:08:59.925",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:00.426",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:00.939",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:01.451",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:01.955",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:02.469",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:02.983",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:03.484",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:03.987",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:04.502",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:05.017",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:05.530",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:06.033",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:06.547",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:07.049",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:07.551",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:08.066",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:08.569",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:09.073",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:09.580",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:10.080",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:10.583",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:11.087",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:11.589",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:12.102",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:12.616",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:13.118",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:13.618",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:14.131",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:14.631",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:15.147",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:15.661",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:16.176",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:16.681",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:17.185",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:17.688",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:18.192",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:18.695",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:19.210",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:19.724",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:20.237",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:20.742",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:21.245",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:21.748",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:22.250",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:22.754",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:23.270",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:23.773",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:24.275",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:24.777",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:25.289",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:25.790",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:26.305",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:26.819",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:27.334",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:27.839",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:28.353",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:28.855",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:29.357",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:29.857",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:30.363",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:30.865",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:31.369",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:31.871",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:32.386",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:32.888",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:33.395",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:33.911",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:34.417",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:34.933",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:35.438",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:35.939",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:36.442",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:36.944",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:37.444",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:37.947",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:38.448",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:38.963",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:39.465",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:39.966",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:40.471",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:40.975",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:41.476",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:41.981",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:42.495",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:43.010",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:43.525",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:44.029",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:44.544",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:45.046",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:45.552",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:46.056",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:46.556",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:47.069",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:47.584",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:48.088",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:48.603",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:49.111",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:49.611",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:50.116",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:50.631",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:51.147",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:51.652",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:52.159",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:52.662",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:53.167",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:53.679",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:54.195",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:54.709",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:55.210",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:55.723",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:56.236",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:56.749",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:57.251",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:57.755",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:58.269",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:58.776",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:59.277",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:09:59.777",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:00.291",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:00.807",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:01.310",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:01.822",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:02.336",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:02.836",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:03.340",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:03.842",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:04.357",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:04.869",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:05.372",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:05.887",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:06.402",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:06.915",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:07.417",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:07.918",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:08.423",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:08.924",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:09.425",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:09.930",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:10.443",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:10.944",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:11.449",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:11.949",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:12.455",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:12.961",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:13.476",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:13.979",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:14.495",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:14.997",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:15.503",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:16.017",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:16.519",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:17.019",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:17.534",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:18.037",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:18.551",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:19.057",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:19.563",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:20.064",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:20.577",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:21.080",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:21.587",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:22.102",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:22.607",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:23.112",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:23.613",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:24.118",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:24.621",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:25.123",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:25.624",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:26.130",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:26.631",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:27.132",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:27.633",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:28.145",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:28.655",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:29.156",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:29.665",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:30.166",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:30.680",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:31.181",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:31.682",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:32.182",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:32.696",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:33.210",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:33.716",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:34.219",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:34.734",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:35.249",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:35.757",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:36.273",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:36.788",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:37.293",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:37.806",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:38.308",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:38.821",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:39.334",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:39.839",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:40.340",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:40.854",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:41.359",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:41.862",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:42.364",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:42.866",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:43.381",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:43.884",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:44.388",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:44.889",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:45.404",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:45.909",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:46.412",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:46.913",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:47.419",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:47.923",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:48.437",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:48.952",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:49.453",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:49.968",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:50.475",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:50.978",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:51.481",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:51.984",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:52.490",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:53.003",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:53.510",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:54.015",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:54.528",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:55.043",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:55.544",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:56.054",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:56.558",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:57.061",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:57.575",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:58.077",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:58.591",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:59.095",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:10:59.595",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:00.103",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:00.603",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:01.108",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:01.610",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:02.115",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:02.619",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:03.122",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:03.625",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:04.137",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:04.650",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:05.154",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:05.670",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:06.174",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:06.678",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:07.181",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:07.683",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:08.196",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:08.698",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:09.199",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:09.714",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:10.217",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:10.720",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:11.223",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:11.724",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:12.227",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:12.742",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:13.245",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:13.759",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:14.259",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:14.765",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:15.266",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:15.771",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:16.286",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:16.801",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:17.305",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:17.820",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:18.323",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:18.826",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:19.342",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:19.847",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:20.353",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:20.868",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:21.369",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:21.884",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:22.388",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:22.889",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:23.394",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:23.898",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:24.401",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:24.915",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:25.429",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:25.929",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:26.445",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:26.946",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:27.447",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:27.959",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:28.475",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:28.977",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:29.492",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:29.992",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:30.508",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:31.009",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:31.524",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:32.027",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:32.540",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:33.042",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:33.558",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:34.072",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:34.586",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:35.101",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:35.604",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:36.110",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:36.623",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:37.139",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:37.643",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:38.157",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:38.662",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:39.177",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:39.692",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:40.194",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:40.699",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:41.203",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:41.718",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:42.233",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:42.734",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:43.244",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:43.760",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:44.261",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:44.776",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:45.292",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:45.797",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:46.310",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:46.811",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:47.324",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:47.839",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:48.340",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:48.845",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:49.347",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:49.851",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:50.352",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:50.867",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:51.369",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:51.870",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:52.372",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:52.875",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:53.376",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:53.883",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:54.385",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:54.896",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:55.397",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:55.903",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:56.419",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:56.920",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:57.433",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:57.948",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:58.457",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:58.960",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:59.476",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:11:59.982",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:00.482",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:00.997",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:01.511",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:02.024",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:02.527",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:03.030",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:03.536",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:04.039",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:04.542",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:05.047",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:05.551",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:06.066",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:06.580",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:07.086",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:07.588",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:08.103",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:08.605",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:09.120",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:09.622",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:10.124",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:10.625",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:11.127",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:11.642",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:12.154",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:12.664",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:13.168",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:13.669",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:14.171",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:14.671",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:15.186",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:15.700",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:16.201",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:16.702",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:17.205",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:17.720",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:18.223",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:18.724",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:19.228",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:19.729",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:20.234",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:20.747",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:21.248",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:21.764",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:22.273",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:22.787",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:23.303",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:23.806",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:24.320",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:24.826",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:25.330",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:25.832",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:26.343",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:26.849",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:27.351",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:27.852",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:28.352",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:28.866",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:29.381",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:29.881",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:30.383",
+      "usedMiB": 3597,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:30.884",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:31.387",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:31.903",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:32.404",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:32.918",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:33.420",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:33.933",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:34.434",
+      "usedMiB": 3596,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:34.948",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:35.458",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:35.971",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:36.474",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:36.976",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:37.490",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:37.992",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:38.505",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:39.008",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:39.509",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:40.024",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:40.539",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:41.043",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:41.548",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:42.061",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:42.573",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:43.076",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:43.577",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:44.081",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:44.585",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:45.089",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:45.593",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:46.094",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:46.608",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:47.123",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:47.637",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:48.138",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:48.641",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:49.155",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:49.656",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:50.160",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:50.675",
+      "usedMiB": 3595,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:51.190",
+      "usedMiB": 3594,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:51.692",
+      "usedMiB": 3594,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:52.206",
+      "usedMiB": 3594,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:52.721",
+      "usedMiB": 3594,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:53.223",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:53.724",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:54.227",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:54.728",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:55.242",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:55.743",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:56.246",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:56.756",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:57.257",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:57.772",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:58.273",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:58.773",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:59.277",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:12:59.783",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:00.298",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:00.813",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:01.318",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:01.825",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:02.329",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:02.842",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:03.346",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:03.847",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:04.350",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:04.855",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:05.361",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:05.862",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:06.377",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:06.891",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:07.391",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:07.896",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:08.400",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:08.902",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:09.402",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:09.917",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:10.420",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:10.926",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:11.441",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:11.944",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:12.456",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:12.961",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:13.476",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:13.989",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:14.490",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:15.003",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:15.510",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:16.015",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:16.516",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:17.027",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:17.541",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:18.046",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:18.550",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:19.051",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:19.562",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:20.074",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:20.578",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:21.085",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:21.586",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:22.100",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:22.615",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:23.116",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:23.622",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:24.124",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:24.637",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:25.138",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:25.639",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:26.140",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:26.642",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:27.143",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:27.645",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:28.157",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:28.664",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:29.168",
+      "usedMiB": 3590,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:29.672",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:30.176",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:30.677",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:31.191",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:31.691",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:32.195",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:32.699",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:33.202",
+      "usedMiB": 3589,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:33.712",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:34.226",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:34.726",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:35.229",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:35.732",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:36.248",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:36.762",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:37.267",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:37.770",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:38.285",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:38.786",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:39.290",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:39.791",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:40.306",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:40.818",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:41.325",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:41.828",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:42.329",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:42.831",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:43.345",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:43.847",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:44.362",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:44.864",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:45.369",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:45.885",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:46.387",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:46.888",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:47.389",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:47.890",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:48.405",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:48.905",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:49.417",
+      "usedMiB": 3588,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:49.921",
+      "usedMiB": 3372,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:50.425",
+      "usedMiB": 3372,
+      "totalMiB": 8188
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "timestamp": "2026/11/07 09:13:50.927",
+      "usedMiB": 1899,
+      "totalMiB": 8188
+    }
+  ]
+}

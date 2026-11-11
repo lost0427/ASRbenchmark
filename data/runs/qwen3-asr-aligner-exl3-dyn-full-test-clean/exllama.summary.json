@@ -1,0 +1,20 @@
+{
+  "engine": "aligner-exllama",
+  "utterances": 2620,
+  "items": 52576,
+  "elapsedSeconds": 113.72135979996528,
+  "meanMs": 43.23932190731395,
+  "medianMs": 39.517350000096485,
+  "p90Ms": 63.871620007557794,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.005823782867649691,
+  "loadSeconds": 8.160918700043112,
+  "medianStagesMs": {
+    "encoderMs": 8.139249956002459,
+    "decoderMs": 25.468200037721545,
+    "totalMs": 39.47719998541288,
+    "preprocessingMs": 4.948100016918033
+  },
+  "sampleSize": 2620,
+  "seed": 1337
+}

@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNS = ROOT / ".native/librispeech"
+from run_data import resolve_runs  # noqa: E402
+RUNS = resolve_runs()
 DOCS = ROOT / "docs"
 BACKENDS = {
     "official": ("Official Transformers", RUNS / "qwen3-asr-aligner-official-full-test-clean", "official"),

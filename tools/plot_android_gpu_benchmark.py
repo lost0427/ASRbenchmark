@@ -11,7 +11,8 @@ from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-REPORT = ROOT / "models/sensevoice-results-10-GPU.json"
+_live = ROOT / "models/sensevoice-results-10-GPU.json"
+REPORT = _live if _live.is_file() else ROOT / "data/android/sensevoice-results-10-GPU.json"
 
 COLORS = {
     "CPU": "#3b6ea5",

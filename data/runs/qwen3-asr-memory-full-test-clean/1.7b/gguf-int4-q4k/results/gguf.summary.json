@@ -1,0 +1,25 @@
+{
+  "engine": "gguf",
+  "provider": "DML+Vulkan",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "hypothesisWords": 53026,
+  "edits": 1110,
+  "corpusWER": 0.020896084337349397,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 1319.4485459000061,
+  "meanMs": 503.0114255725577,
+  "medianMs": 470.7218000003195,
+  "p90Ms": 676.430889997573,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.06774919664006097,
+  "medianStagesMs": {
+    "encoderMs": 202.7881145477295,
+    "decodeMs": 171.0585355758667,
+    "prefillMs": 83.41515064239502
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}
