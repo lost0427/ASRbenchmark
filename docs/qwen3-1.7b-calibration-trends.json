@@ -9,48 +9,48 @@
     "warmupUtterances": 2,
     "runsPerVariant": 1
   },
-  "sessionNote": "All EXL3 points are from the same 2026-11-09 session.",
+  "sessionNote": "All EXL3 points are from the 2026-11-11 session; GGUF is the 2026-11-09 run.",
   "recommendation": "Legacy decoders use ExLlamaV3 default calibration data and remain the default for general-purpose and Chinese ASR. The train-clean-100 variants are tuned for LibriSpeech-style English read speech.",
   "variants": [
     {
       "calibration": "legacy",
       "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 3.0,
-      "corpusWER": 0.02023719879518072,
-      "edits": 1075,
-      "medianMs": 189.1907499957597,
-      "p90Ms": 414.3868199927965,
-      "elapsedSeconds": 608.2994018000027
+      "corpusWER": 0.020256024096385543,
+      "edits": 1076,
+      "medianMs": 189.06495000010182,
+      "p90Ms": 408.24678999979363,
+      "elapsedSeconds": 593.5416136000003
     },
     {
       "calibration": "train-clean-100",
       "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 3.0,
-      "corpusWER": 0.021329066265060242,
-      "edits": 1133,
-      "medianMs": 194.2496999981813,
-      "p90Ms": 437.1738399961032,
-      "elapsedSeconds": 623.3257371000072
+      "corpusWER": 0.021178463855421686,
+      "edits": 1125,
+      "medianMs": 192.17609999986962,
+      "p90Ms": 423.55777000038864,
+      "elapsedSeconds": 604.872652
     },
     {
       "calibration": "legacy",
       "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 4.0,
-      "corpusWER": 0.019841867469879516,
-      "edits": 1054,
-      "medianMs": 191.05434999801219,
-      "p90Ms": 435.14318000816274,
-      "elapsedSeconds": 609.869995999994
+      "corpusWER": 0.019390060240963857,
+      "edits": 1030,
+      "medianMs": 204.3641000000207,
+      "p90Ms": 438.41831999943673,
+      "elapsedSeconds": 629.9869810999999
     },
     {
       "calibration": "train-clean-100",
       "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 4.0,
-      "corpusWER": 0.01948418674698795,
-      "edits": 1035,
-      "medianMs": 196.26379999681376,
-      "p90Ms": 414.76025999872945,
-      "elapsedSeconds": 608.1147582999838
+      "corpusWER": 0.019107680722891568,
+      "edits": 1015,
+      "medianMs": 205.10940000076516,
+      "p90Ms": 440.8432499996706,
+      "elapsedSeconds": 630.0332593000003
     }
   ],
   "gguf": {

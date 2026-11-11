@@ -29,7 +29,7 @@
     {
       "name": "EXL3 3 bpw, legacy",
       "kind": "legacy",
-      "directory": "3bpw-legacy",
+      "directory": "3legacy",
       "decoder": "decoder-exl3-3bpw",
       "calibration": {
         "rows": 250,
@@ -38,17 +38,17 @@
       },
       "summary": {
         "referenceWords": 53120,
-        "edits": 1075,
-        "corpusWER": 0.02023719879518072,
-        "medianMs": 189.1907499957597,
-        "p90Ms": 414.3868199927965,
-        "elapsedSeconds": 608.2994018000027
+        "edits": 1076,
+        "corpusWER": 0.020256024096385543,
+        "medianMs": 189.06495000010182,
+        "p90Ms": 408.24678999979363,
+        "elapsedSeconds": 593.5416136000003
       }
     },
     {
       "name": "EXL3 3 bpw, train-clean-100",
       "kind": "calibrated",
-      "directory": "3bpw-train100",
+      "directory": "3train",
       "decoder": "decoder-exl3-3bpw-train-clean-100",
       "calibration": {
         "dataset": "LibriSpeech train-clean-100",
@@ -58,17 +58,17 @@
       },
       "summary": {
         "referenceWords": 53120,
-        "edits": 1133,
-        "corpusWER": 0.021329066265060242,
-        "medianMs": 194.2496999981813,
-        "p90Ms": 437.1738399961032,
-        "elapsedSeconds": 623.3257371000072
+        "edits": 1125,
+        "corpusWER": 0.021178463855421686,
+        "medianMs": 192.17609999986962,
+        "p90Ms": 423.55777000038864,
+        "elapsedSeconds": 604.872652
       }
     },
     {
       "name": "EXL3 4 bpw, legacy",
       "kind": "legacy",
-      "directory": "4bpw-legacy",
+      "directory": "4legacy",
       "decoder": "decoder-exl3-4bpw",
       "calibration": {
         "rows": 250,
@@ -77,17 +77,17 @@
       },
       "summary": {
         "referenceWords": 53120,
-        "edits": 1054,
-        "corpusWER": 0.019841867469879516,
-        "medianMs": 191.05434999801219,
-        "p90Ms": 435.14318000816274,
-        "elapsedSeconds": 609.869995999994
+        "edits": 1030,
+        "corpusWER": 0.019390060240963857,
+        "medianMs": 204.3641000000207,
+        "p90Ms": 438.41831999943673,
+        "elapsedSeconds": 629.9869810999999
       }
     },
     {
       "name": "EXL3 4 bpw, train-clean-100",
       "kind": "calibrated",
-      "directory": "4bpw-train100",
+      "directory": "4train",
       "decoder": "decoder-exl3-4bpw-train-clean-100",
       "calibration": {
         "dataset": "LibriSpeech train-clean-100",
@@ -97,24 +97,24 @@
       },
       "summary": {
         "referenceWords": 53120,
-        "edits": 1035,
-        "corpusWER": 0.01948418674698795,
-        "medianMs": 196.26379999681376,
-        "p90Ms": 414.76025999872945,
-        "elapsedSeconds": 608.1147582999838
+        "edits": 1015,
+        "corpusWER": 0.019107680722891568,
+        "medianMs": 205.10940000076516,
+        "p90Ms": 440.8432499996706,
+        "elapsedSeconds": 630.0332593000003
       }
     }
   ],
   "pairedUtteranceEditCounts": {
-    "3bpw-legacy vs 3bpw-train100": {
-      "fewerWithCalibration": 97,
-      "same": 2380,
-      "moreWithCalibration": 143
+    "3legacy vs 3train": {
+      "fewerWithCalibration": 99,
+      "same": 2379,
+      "moreWithCalibration": 142
     },
-    "4bpw-legacy vs 4bpw-train100": {
-      "fewerWithCalibration": 75,
-      "same": 2472,
-      "moreWithCalibration": 73
+    "4legacy vs 4train": {
+      "fewerWithCalibration": 69,
+      "same": 2481,
+      "moreWithCalibration": 70
     }
   }
 }

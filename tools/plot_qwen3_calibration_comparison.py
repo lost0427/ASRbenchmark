@@ -35,7 +35,7 @@ MODELS = {
         "title": "Qwen3-ASR 0.6B",
         "figure": "windows-librispeech-qwen3-0.6b-4bpw-calibration-comparison",
         "report": "qwen3-0.6b-4bpw-calibration-comparison.json",
-        "runs": RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined",
+        "runs": RUNS / "qwen3-asr-0.6b-final2-rerun-20261111",
         "variants": [
             {
                 "name": "GGUF INT4 + Q4_K",
@@ -75,7 +75,7 @@ MODELS = {
         "title": "Qwen3-ASR 1.7B",
         "figure": "windows-librispeech-qwen3-1.7b-calibration-comparison",
         "report": "qwen3-1.7b-calibration-comparison.json",
-        "runs": RUNS / "qwen3-asr-1.7b-calibration-compare-20261109",
+        "runs": RUNS / "qwen3-asr-1.7b-planB-rerun-20261111",
         "variants": [
             {
                 "name": "GGUF INT4 + Q4_K",
@@ -86,7 +86,7 @@ MODELS = {
             {
                 "name": "EXL3 3 bpw, legacy",
                 "kind": "legacy",
-                "directory": "3bpw-legacy",
+                "directory": "3legacy",
                 "decoder": "decoder-exl3-3bpw",
                 "calibration": {
                     "rows": 250,
@@ -97,7 +97,7 @@ MODELS = {
             {
                 "name": "EXL3 3 bpw, train-clean-100",
                 "kind": "calibrated",
-                "directory": "3bpw-train100",
+                "directory": "3train",
                 "decoder": "decoder-exl3-3bpw-train-clean-100",
                 "calibration": {
                     "dataset": "LibriSpeech train-clean-100",
@@ -109,7 +109,7 @@ MODELS = {
             {
                 "name": "EXL3 4 bpw, legacy",
                 "kind": "legacy",
-                "directory": "4bpw-legacy",
+                "directory": "4legacy",
                 "decoder": "decoder-exl3-4bpw",
                 "calibration": {
                     "rows": 250,
@@ -120,7 +120,7 @@ MODELS = {
             {
                 "name": "EXL3 4 bpw, train-clean-100",
                 "kind": "calibrated",
-                "directory": "4bpw-train100",
+                "directory": "4train",
                 "decoder": "decoder-exl3-4bpw-train-clean-100",
                 "calibration": {
                     "dataset": "LibriSpeech train-clean-100",
@@ -138,7 +138,7 @@ MODELS = {
             "EXL3 4 bpw\ntrain-clean-100",
         ],
         "colors": ["#8c8c8c", "#7aa6c2", "#4c956c", "#3b6ea5", "#2f6b4f"],
-        "pairs": [("3bpw-legacy", "3bpw-train100"), ("4bpw-legacy", "4bpw-train100")],
+        "pairs": [("3legacy", "3train"), ("4legacy", "4train")],
     },
 }
 
@@ -148,12 +148,12 @@ TRENDS = {
         "figure": "windows-librispeech-qwen3-0.6b-calibration-speed-accuracy",
         "report": "qwen3-0.6b-calibration-trends.json",
         "gguf": GGUF_06B,
-        "sessionNote": "All four EXL3 configurations are from the 2026-11-10 two-pass rerun; GGUF is the 2026-11-09 run.",
+        "sessionNote": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF is the 2026-11-09 run.",
         "runs": {
-            ("legacy", 3.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/3legacy/tensorrt-exllama.summary.json",
-            ("train-clean-100", 3.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/3train/tensorrt-exllama.summary.json",
-            ("legacy", 4.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/4legacy/tensorrt-exllama.summary.json",
-            ("train-clean-100", 4.0): RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined/4train/tensorrt-exllama.summary.json",
+            ("legacy", 3.0): RUNS / "qwen3-asr-0.6b-final2-rerun-20261111/3legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 3.0): RUNS / "qwen3-asr-0.6b-final2-rerun-20261111/3train/tensorrt-exllama.summary.json",
+            ("legacy", 4.0): RUNS / "qwen3-asr-0.6b-final2-rerun-20261111/4legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 4.0): RUNS / "qwen3-asr-0.6b-final2-rerun-20261111/4train/tensorrt-exllama.summary.json",
         },
     },
     "1.7b": {
@@ -161,12 +161,12 @@ TRENDS = {
         "figure": "windows-librispeech-qwen3-1.7b-calibration-speed-accuracy",
         "report": "qwen3-1.7b-calibration-trends.json",
         "gguf": GGUF_17B,
-        "sessionNote": "All EXL3 points are from the same 2026-11-09 session.",
+        "sessionNote": "All EXL3 points are from the 2026-11-11 session; GGUF is the 2026-11-09 run.",
         "runs": {
-            ("legacy", 3.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-legacy/tensorrt-exllama.summary.json",
-            ("train-clean-100", 3.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/3bpw-train100/tensorrt-exllama.summary.json",
-            ("legacy", 4.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/4bpw-legacy/tensorrt-exllama.summary.json",
-            ("train-clean-100", 4.0): RUNS / "qwen3-asr-1.7b-calibration-compare-20261109/4bpw-train100/tensorrt-exllama.summary.json",
+            ("legacy", 3.0): RUNS / "qwen3-asr-1.7b-planB-rerun-20261111/3legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 3.0): RUNS / "qwen3-asr-1.7b-planB-rerun-20261111/3train/tensorrt-exllama.summary.json",
+            ("legacy", 4.0): RUNS / "qwen3-asr-1.7b-planB-rerun-20261111/4legacy/tensorrt-exllama.summary.json",
+            ("train-clean-100", 4.0): RUNS / "qwen3-asr-1.7b-planB-rerun-20261111/4train/tensorrt-exllama.summary.json",
         },
     },
 }
@@ -537,7 +537,7 @@ def plot_06b_3bpw():
           "rows": 200, "columns": 2048}),
     ]
     summaries = [
-        json.loads((RUNS / "qwen3-asr-0.6b-speed-rerun-20261110/combined" / folder
+        json.loads((RUNS / "qwen3-asr-0.6b-final2-rerun-20261111" / folder
                     / "tensorrt-exllama.summary.json").read_text(encoding="utf-8"))
         for _, _, folder, _ in runs
     ]

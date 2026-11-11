@@ -105,16 +105,14 @@ utterances. Per-utterance latency includes audio loading and inference.
 | Engine | Configuration | Corpus WER | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML adapter 1 + Vulkan | 2.982% | 299.2 | 406.3 | 830.5 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.903% | 105.7 | 233.3 | 338.2 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.878% | 103.4 | 217.6 | 323.3 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw decoder, train-clean-100 calibration | 3.259% | 108.7 | 236.8 | 347.1 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.423%** | **104.1** | **231.2** | **335.0** |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **2.341%** | **96.7** | **208.4** | **305.7** |
 
 The GGUF encoder used DirectML adapter 1 (RTX 4060 Laptop); its Q4_K decoder
-used Vulkan. EXL3 3 and 4 bpw were 2.83x and 2.88x faster by median latency,
-with WER lower by 0.079 and 0.559 percentage points. The calibrated 2.5 bpw row
-was 2.75x faster than GGUF and had WER 0.277 points higher. Among the EXL3
-reruns, 4 bpw was 1.5% faster than 3 bpw and had 0.480 points lower WER. The
-2.5 bpw decoder was 4.4% slower than 4 bpw and had 0.835 points higher WER.
+used Vulkan. EXL3 3 and 4 bpw were 2.89x and 3.09x faster by median latency,
+with WER lower by 0.104 and 0.641 percentage points. Among the EXL3 variants,
+4 bpw was 6.9% faster than 3 bpw and had 0.537 points lower WER.
 
 The earlier GGUF run did not specify a DirectML adapter and had a 277.9 ms
 median. The pinned run had a 299.2 ms median, but all 2,620 hypotheses,
@@ -138,18 +136,18 @@ tokens. The new decoder uses 200 rows × 2,048 tokens packed from
 
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.9029% | 1,542 | 115.17 | 253.28 | 368.79 |
-| EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.5715%** | **1,366** | 114.37 | 248.50 | 361.20 |
+| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.8784% | 1,529 | 103.43 | 217.62 | 323.31 |
+| EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.5527%** | **1,356** | 98.32 | 209.28 | 308.53 |
 
-The new calibration reduced WER by 0.3313 percentage points (176 fewer total
-edits). At utterance level it had fewer edits on 253 samples, the same count on
-2,155, and more edits on 212. In the two-pass 2026-11-10 rerun, median latency
-was 0.80 ms lower and full-run time was 7.59 seconds shorter for the calibrated
-variant; these single-pass timings are not a repeated-run average. Aggregate
+The new calibration reduced WER by 0.3257 percentage points (173 fewer total
+edits). At utterance level it had fewer edits on 208 samples, the same count on
+2,170, and more edits on 242. Median latency was 5.11 ms lower and full-run time
+was 14.78 seconds shorter for the calibrated variant; these are single-pass
+timings from the 2026-11-11 session. Aggregate
 results and plotting code are in `docs/qwen3-0.6b-calibration-comparison.json`
 and `tools/plot_qwen3_calibration_comparison.py`; per-utterance outputs remain
 in the ignored
-`.native/librispeech/qwen3-asr-0.6b-speed-rerun-20261110/` directory.
+`.native/librispeech/qwen3-asr-0.6b-final2-rerun-20261111/` directory.
 
 The `train-clean-100` variants are tuned for LibriSpeech-style English read
 speech. For general-purpose audio and Chinese ASR, the legacy decoders, which
@@ -180,16 +178,16 @@ two-pass rerun; GGUF is the 2026-11-09 run.
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | INT4 encoder, Q4_K decoder | 2.9819% | 1,584 | 299.15 | 403.80 | 827.83 |
-| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 2.4228% | 1,287 | 113.99 | 249.98 | 363.92 |
-| EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.3776%** | **1,263** | 115.05 | 253.18 | 368.06 |
+| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 2.4228% | 1,287 | 96.65 | 208.36 | 305.72 |
+| EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **2.3419%** | **1,244** | 96.83 | 208.79 | 306.16 |
 
-The calibrated 4 bpw decoder reduced WER by 0.0452 percentage points and 24
-total edits. At utterance level it had fewer edits on 118 samples, the same
-count on 2,397, and more edits on 105. In the two-pass rerun its median latency
-was 1.06 ms higher and the full run was 4.14 seconds longer, which is within
-run-to-run variation. The earlier 2026-11-09 single-pass run reported about
-150 ms for both 4 bpw variants; the 2026-11-10 rerun showed that gap was a
-session artifact, not a decoder effect. Aggregate results and plotting code are
+The calibrated 4 bpw decoder reduced WER by 0.0809 percentage points and 43
+total edits. At utterance level it had fewer edits on 98 samples, the same
+count on 2,396, and more edits on 126. Its median latency was 0.17 ms higher and
+the full run 0.44 seconds longer, which is within run-to-run variation. The
+encoder change moved both variants down from the 2026-11-09 figures (2.4228%
+legacy stayed identical; the calibrated variant went from 2.3776% to 2.3419%).
+Aggregate results and plotting code are
 in `docs/qwen3-0.6b-4bpw-calibration-comparison.json`,
 `docs/qwen3-0.6b-calibration-trends.json`, and
 `tools/plot_qwen3_calibration_comparison.py`.
@@ -221,17 +219,17 @@ adds GGUF as a reference. All four EXL3 points are from the same session.
 | Decoder | Calibration | Corpus WER | Edits | Median ms | P90 ms | Full run s |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | GGUF INT4 + Q4_K | INT4 encoder, Q4_K decoder | 2.0896% | 1,110 | 391.81 | 568.41 | 1,099.44 |
-| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.0237% | 1,075 | 189.19 | 414.39 | 608.30 |
-| EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | 2.1329% | 1,133 | 194.25 | 437.17 | 623.33 |
-| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 1.9842% | 1,054 | 191.05 | 435.14 | 609.87 |
-| EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **1.9484%** | **1,035** | 196.26 | 414.76 | 608.11 |
+| Legacy EXL3 3 bpw | 250 × 2,048; ExLlamaV3 default | 2.0256% | 1,076 | 189.06 | 408.25 | 593.54 |
+| EXL3 3 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | 2.1178% | 1,125 | 192.18 | 423.56 | 604.87 |
+| Legacy EXL3 4 bpw | 250 × 2,048; ExLlamaV3 default | 1.9390% | 1,030 | 204.36 | 438.42 | 629.99 |
+| EXL3 4 bpw, `train-clean-100` | 200 × 2,048; 1,603 paired requests | **1.9108%** | **1,015** | 205.11 | 440.84 | 630.03 |
 
-The calibrated 4 bpw decoder reduced WER by 0.0358 percentage points and 19
-total edits, with P90 latency 20.38 ms lower and median latency 5.21 ms higher.
-At utterance level it had fewer edits on 75 samples, the same count on 2,472,
-and more edits on 73. The calibrated 3 bpw decoder moved the other way: WER was
-0.1092 points higher with 58 more edits, and median latency was 5.06 ms higher.
-Its paired counts were 97 wins, 2,380 ties, and 143 losses. Calibration did not
+The calibrated 4 bpw decoder reduced WER by 0.0282 percentage points and 15
+total edits, with P90 latency 2.42 ms higher and median latency 0.75 ms higher.
+At utterance level it had fewer edits on 70 samples, the same count on 2,481,
+and more edits on 69. The calibrated 3 bpw decoder moved the other way: WER was
+0.0922 points higher with 49 more edits, and median latency was 3.11 ms higher.
+Its paired counts were 142 wins, 2,379 ties, and 99 losses. Calibration did not
 improve the 1.7B 3 bpw tradeoff on test-clean. Aggregate results are in
 `docs/qwen3-1.7b-calibration-comparison.json` and
 `docs/qwen3-1.7b-calibration-trends.json`.
@@ -260,10 +258,10 @@ was not tested: vLLM 0.14.0 has no native Windows wheel.
 
 | 0.6B decoder | WER | Median ms | Speed vs GGUF | Speed vs official |
 | --- | ---: | ---: | ---: | ---: |
-| EXL3 3 bpw legacy | 2.9029% | 115.17 | ×2.60 | ×6.83 |
-| EXL3 3 bpw train-clean-100 | 2.5715% | 114.37 | ×2.62 | ×6.88 |
-| EXL3 4 bpw legacy | 2.4228% | 113.99 | ×2.62 | ×6.91 |
-| EXL3 4 bpw train-clean-100 | **2.3776%** | 115.05 | ×2.60 | ×6.84 |
+| EXL3 3 bpw legacy | 2.8784% | 103.43 | ×2.89 | ×7.61 |
+| EXL3 3 bpw train-clean-100 | 2.5527% | 98.32 | ×3.04 | ×8.01 |
+| EXL3 4 bpw legacy | 2.4228% | 96.65 | ×3.10 | ×8.14 |
+| EXL3 4 bpw train-clean-100 | **2.3419%** | 96.83 | ×3.09 | ×8.13 |
 | GGUF Q4_K | 2.9819% | 299.15 | reference | ×2.63 |
 | Official Transformers | **2.3212%** | 787.12 | ×0.38 | reference |
 
@@ -277,21 +275,19 @@ was not tested: vLLM 0.14.0 has no native Windows wheel.
 
 | 1.7B decoder | WER | Median ms | Speed vs GGUF | Speed vs official |
 | --- | ---: | ---: | ---: | ---: |
-| EXL3 3 bpw legacy | 2.0237% | 189.19 | ×2.07 | ×4.56 |
-| EXL3 3 bpw train-clean-100 | 2.1329% | 194.25 | ×2.02 | ×4.45 |
-| EXL3 4 bpw legacy | 1.9842% | 191.05 | ×2.05 | ×4.52 |
-| EXL3 4 bpw train-clean-100 | **1.9484%** | 196.26 | ×2.00 | ×4.40 |
+| EXL3 3 bpw legacy | 2.0256% | 189.06 | ×2.07 | ×4.57 |
+| EXL3 3 bpw train-clean-100 | 2.1178% | 192.18 | ×2.04 | ×4.49 |
+| EXL3 4 bpw legacy | 1.9390% | 204.36 | ×1.92 | ×4.22 |
+| EXL3 4 bpw train-clean-100 | **1.9108%** | 205.11 | ×1.91 | ×4.21 |
 | GGUF Q4_K | 2.0896% | 391.81 | reference | ×2.20 |
 | Official Transformers | **1.8863%** | 863.52 | ×0.45 | reference |
 
-The EXL3 decoder paths are about 2.6× faster than GGUF Q4_K on 0.6B and
-about 2.0–2.1× faster on 1.7B. GGUF Q4_K is itself 2.63× faster than the
+The EXL3 decoder paths are about 2.9–3.1× faster than GGUF Q4_K on 0.6B and
+about 1.9–2.1× faster on 1.7B. GGUF Q4_K is itself 2.63× faster than the
 official backend on 0.6B and 2.20× faster on 1.7B. The official Transformers
-backend has the lowest WER in both tables, but it is 6.8–6.9× slower than EXL3
-on 0.6B and 4.4–4.6× slower on 1.7B. The stage chart shows that most of the gap is in the encoder and decoder
-generation stages; the exact stage values are printed on the bars. For 0.6B,
-all four EXL3 points come from the 2026-11-10 two-pass rerun; GGUF is the
-2026-11-09 run.
+backend has the lowest WER in both tables, but it is 7.6–8.1× slower than EXL3
+on 0.6B and 4.2–4.6× slower on 1.7B. The stage chart shows that most of the gap is in the encoder and decoder
+generation stages; the exact stage values are printed on the bars.
 
 ## Qwen3-ASR 1.7B: full-corpus engine comparison
 
@@ -320,15 +316,15 @@ provider and adapter but not that every ONNX operator ran on DirectML.
 | Qwen3-ASR-GGUF | INT4 encoder + Q4_K decoder, DML adapter 1 + Vulkan | 2.090% | 391.8 | 568.4 | 1,099.4 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2.5 bpw, train-clean-100 calibration | 2.204% | 200.5 | 433.1 | 624.6 |
 | TensorRT + ExLlamaV3 | BF16 encoder + EXL3 2 bpw, train-clean-100 calibration (retired) | 2.899% | 158.2 | 336.1 | 497.5 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.024% | 195.0 | 430.5 | 618.2 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw, train-clean-100 calibration | 2.108% | 196.2 | 434.3 | 624.2 |
-| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.986%** | **207.5** | **448.3** | **644.7** |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw decoder | 2.026% | 189.1 | 408.3 | 593.5 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 3 bpw, train-clean-100 calibration | 2.118% | 192.2 | 423.6 | 604.9 |
+| TensorRT + ExLlamaV3 | BF16 encoder + EXL3 4 bpw decoder | **1.939%** | **204.4** | **438.4** | **630.0** |
 
-EXL3 3 bpw was 2.01x faster than GGUF by median latency and had 0.066
-percentage points lower WER. EXL3 4 bpw was 1.89x faster and had 0.104
-percentage points lower WER. Calibrated EXL3 3 bpw was 2.00x faster than GGUF,
-with WER 0.019 points higher. On this corpus, 4 bpw reduced WER by 0.038
-points versus legacy 3 bpw, while legacy 3 bpw was 6.4% faster by
+EXL3 3 bpw was 2.07x faster than GGUF by median latency and had 0.064
+percentage points lower WER. EXL3 4 bpw was 1.92x faster and had 0.151
+percentage points lower WER. Calibrated EXL3 3 bpw was 2.04x faster than GGUF,
+with WER 0.028 points higher. On this corpus, 4 bpw reduced WER by 0.087
+points versus legacy 3 bpw, while legacy 3 bpw was 8.1% faster by
 median latency. Pairwise edit counts were 133 wins, 2,296 ties, and 191 losses
 for calibrated 2.5 bpw versus GGUF; 150, 2,341, and 129 for 3 bpw versus GGUF;
 142, 2,379, and 99 for 4 bpw versus GGUF; 141, 2,315, and 164 for calibrated
@@ -616,12 +612,12 @@ boundary agreement, so the two TensorRT columns differ by dtype rather than by
 implementation.
 
 The ASR audio encoder shares this code, so both ASR encoders were rebuilt and the
-full corpora re-run. WER for 0.6B is unchanged at 2.423% (1,287 edits); 1.7B
-improves from 1.986% to 1.939% (1,030 edits). 233 of the 2,620 0.6B transcripts
-changed, mostly punctuation, which the WER normalisation drops. The encoder stage
-moves by about 1 ms in both directions: 0.6B 5.63 → 6.82 ms, 1.7B 9.25 → 8.99 ms,
-because the dynamic engine trades some kernel specialisation for correctness. The
-ASR stage charts in this document were produced before this encoder change.
+full corpora re-run on 2026-11-11. WER for 0.6B is unchanged at 2.423% (1,287
+edits); 1.7B improves from 1.986% to 1.939% (1,030 edits). 233 of the 2,620 0.6B
+transcripts changed, mostly punctuation, which the WER normalisation drops. The
+encoder stage moves by about 1 ms in both directions: 0.6B 6.29 → 5.42 ms, 1.7B
+8.34 → 8.64 ms, because the dynamic engine trades some kernel specialisation for
+correctness and computes every token once instead of padding to whole windows.
 
 The stage chart shows the TensorRT bf16 run's median 25.1 ms split into
 preprocessing 5.1 ms, encoder 8.1 ms, decoder 11.5 ms, and a small remainder.

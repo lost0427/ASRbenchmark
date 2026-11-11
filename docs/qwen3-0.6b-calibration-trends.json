@@ -9,28 +9,28 @@
     "warmupUtterances": 2,
     "runsPerVariant": 1
   },
-  "sessionNote": "All four EXL3 configurations are from the 2026-11-10 two-pass rerun; GGUF is the 2026-11-09 run.",
+  "sessionNote": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF is the 2026-11-09 run.",
   "recommendation": "Legacy decoders use ExLlamaV3 default calibration data and remain the default for general-purpose and Chinese ASR. The train-clean-100 variants are tuned for LibriSpeech-style English read speech.",
   "variants": [
     {
       "calibration": "legacy",
       "calibrationSource": "ExLlamaV3 default calibration data",
       "bitrateBpw": 3.0,
-      "corpusWER": 0.029028614457831326,
-      "edits": 1542,
-      "medianMs": 115.1651250111172,
-      "p90Ms": 253.27617496659508,
-      "elapsedSeconds": 368.7932955500146
+      "corpusWER": 0.028783885542168673,
+      "edits": 1529,
+      "medianMs": 103.43310000001793,
+      "p90Ms": 217.61527000003292,
+      "elapsedSeconds": 323.30848390000006
     },
     {
       "calibration": "train-clean-100",
       "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 3.0,
-      "corpusWER": 0.02571536144578313,
-      "edits": 1366,
-      "medianMs": 114.37090000254102,
-      "p90Ms": 248.50318998505827,
-      "elapsedSeconds": 361.20024710000143
+      "corpusWER": 0.02552710843373494,
+      "edits": 1356,
+      "medianMs": 98.31984999999577,
+      "p90Ms": 209.28409999994525,
+      "elapsedSeconds": 308.53325270000005
     },
     {
       "calibration": "legacy",
@@ -38,19 +38,19 @@
       "bitrateBpw": 4.0,
       "corpusWER": 0.02422816265060241,
       "edits": 1287,
-      "medianMs": 113.9916750107659,
-      "p90Ms": 249.9838700081454,
-      "elapsedSeconds": 363.92200399999274
+      "medianMs": 96.65334999999686,
+      "p90Ms": 208.36431000006996,
+      "elapsedSeconds": 305.7205355000001
     },
     {
       "calibration": "train-clean-100",
       "calibrationSource": "LibriSpeech train-clean-100",
       "bitrateBpw": 4.0,
-      "corpusWER": 0.023776355421686747,
-      "edits": 1263,
-      "medianMs": 115.05117501656059,
-      "p90Ms": 253.1811349967029,
-      "elapsedSeconds": 368.05792684998596
+      "corpusWER": 0.023418674698795182,
+      "edits": 1244,
+      "medianMs": 96.82679999991706,
+      "p90Ms": 208.7947600000461,
+      "elapsedSeconds": 306.1585448000001
     }
   ],
   "gguf": {
