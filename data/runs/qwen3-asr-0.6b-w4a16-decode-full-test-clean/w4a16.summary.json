@@ -1,0 +1,30 @@
+{
+  "engine": "w4a16",
+  "provider": "CUDA (TensorRT prefill + W4A16 decode kernels)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52510,
+  "edits": 1543,
+  "corpusWER": 0.029347991479001825,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 232.2406897999972,
+  "meanMs": 88.42894622142339,
+  "medianMs": 73.89039999907254,
+  "p90Ms": 150.28573999879882,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.011910246490741808,
+  "medianStagesMs": {
+    "preprocessingMs": 6.447650001064176,
+    "encoderMs": 7.20279999950435,
+    "decoderMs": 59.92345000413479,
+    "decoderPrefillMs": 11.165949999849545,
+    "decoderGenerationMs": 48.756200001662364,
+    "otherMs": 0.6877500018163119,
+    "totalMs": 73.89039999907254,
+    "decodeTokens": 20.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

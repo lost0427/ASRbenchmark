@@ -25,13 +25,14 @@ MODELS = {
     "0.6b": {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
-        "note": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF and official runs are from 2026-11-09.",
+        "note": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF and official runs are from 2026-11-09. W4A16 decode is a 2026-11-12 run of the TensorRT prefill + hand-written INT4 decode path.",
         "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/3legacy/tensorrt-exllama.summary.json", "exl3"),
             ("3bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/4legacy/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/4train/tensorrt-exllama.summary.json", "exl3"),
+            ("W4A16 decode", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
@@ -248,7 +249,7 @@ def plot_stage(model, records):
         if record["name"].startswith("GGUF"):
             multiple = "  reference"
         else:
-            multiple = f"  ×{gguf_total / total:.2f} faster vs GGUF"
+            multiple = f"  ×{gguf_total / total:.2f}"
         ax.text(index, total + 5, f"{total:.1f} ms{multiple}", ha="center",
                 va="bottom", fontsize=7.8, color="#26313d")
         if stage["decoderPrefillMs"] > 5:
