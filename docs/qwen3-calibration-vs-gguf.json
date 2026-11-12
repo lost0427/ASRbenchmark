@@ -45,59 +45,57 @@
       },
       {
         "name": "4bpw legacy",
-        "corpusWER": 0.02422816265060241,
-        "medianMs": 96.65334999999686,
-        "edits": 1287,
+        "corpusWER": 0.02383216676810712,
+        "medianMs": 99.52165000004243,
+        "edits": 1253,
         "stages": {
-          "otherMs": 0.21060000005945767,
-          "promptTokens": 93.0,
-          "totalMs": 96.60719999999401,
-          "decoderPrefillMs": 14.008760452270508,
-          "preprocessingMs": 4.384350000009363,
-          "decoderMs": 86.71085000003131,
-          "decoderGenerationMs": 72.07012176513672,
-          "encoderMs": 5.4219999999531865,
+          "preprocessingMs": 4.531350000092971,
+          "encoderMs": 4.907250000030672,
+          "decoderMs": 89.8439000000053,
+          "decoderPrefillMs": 14.093160629272461,
+          "decoderGenerationMs": 74.60081577301025,
+          "otherMs": 0.21190000006754417,
+          "totalMs": 99.52165000004243,
           "decodeTokens": 21.0
         },
-        "speedupVsGguf": 3.095099135218363,
-        "speedupVsOfficial": 8.143743077648098
+        "speedupVsGguf": 3.0058957020991968,
+        "speedupVsOfficial": 7.90903336101881
       },
       {
         "name": "4bpw train100",
-        "corpusWER": 0.023418674698795182,
-        "medianMs": 96.82679999991706,
-        "edits": 1244,
+        "corpusWER": 0.023622945830797323,
+        "medianMs": 99.75765000001502,
+        "edits": 1242,
         "stages": {
-          "otherMs": 0.2092000000857297,
-          "totalMs": 96.7534499999374,
-          "decoderGenerationMs": 72.16596603393555,
-          "promptTokens": 93.0,
-          "decoderMs": 86.87110000005305,
-          "decodeTokens": 21.0,
-          "encoderMs": 5.424749999974665,
-          "preprocessingMs": 4.4000999999980195,
-          "decoderPrefillMs": 13.991713523864746
+          "preprocessingMs": 4.486750000012307,
+          "encoderMs": 4.893050000021049,
+          "decoderMs": 90.18939999998565,
+          "decoderPrefillMs": 14.21976089477539,
+          "decoderGenerationMs": 75.4309892654419,
+          "otherMs": 0.2119499999935215,
+          "totalMs": 99.75765000001502,
+          "decodeTokens": 21.0
         },
-        "speedupVsGguf": 3.089554751382926,
-        "speedupVsOfficial": 8.12915484137292
+        "speedupVsGguf": 2.9987845543765617,
+        "speedupVsOfficial": 7.890322696994714
       },
       {
         "name": "W4A16 decode (g64)",
         "corpusWER": 0.029347991479001825,
-        "medianMs": 73.89039999907254,
+        "medianMs": 72.23014999954103,
         "edits": 1543,
         "stages": {
-          "preprocessingMs": 6.447650001064176,
-          "encoderMs": 7.20279999950435,
-          "decoderMs": 59.92345000413479,
-          "decoderPrefillMs": 11.165949999849545,
-          "decoderGenerationMs": 48.756200001662364,
-          "otherMs": 0.6877500018163119,
-          "totalMs": 73.89039999907254,
+          "preprocessingMs": 5.600750000212429,
+          "encoderMs": 6.815250000272499,
+          "decoderMs": 59.31699999973716,
+          "decoderPrefillMs": 11.013399999683315,
+          "decoderGenerationMs": 48.41175000001385,
+          "otherMs": 0.6506000004264934,
+          "totalMs": 72.23014999954103,
           "decodeTokens": 20.0
         },
-        "speedupVsGguf": 4.048586825957133,
-        "speedupVsOfficial": 10.65253470009437
+        "speedupVsGguf": 4.141645836300339,
+        "speedupVsOfficial": 10.897389109658153
       },
       {
         "name": "W4A16 + AWQ (g64)",
@@ -138,20 +136,20 @@
       {
         "name": "AWQ g32 + fp16 prefill",
         "corpusWER": 0.023965307364576992,
-        "medianMs": 81.56030000100145,
+        "medianMs": 72.20599999982369,
         "edits": 1260,
         "stages": {
-          "preprocessingMs": 6.566750002093613,
-          "encoderMs": 6.115500000305474,
-          "decoderMs": 68.56735000474146,
-          "decoderPrefillMs": 10.562399998889305,
-          "decoderGenerationMs": 58.28469999687513,
-          "otherMs": 0.6784499928471632,
-          "totalMs": 81.56030000100145,
+          "preprocessingMs": 5.270950000067387,
+          "encoderMs": 5.431700000144701,
+          "decoderMs": 61.144400000102905,
+          "decoderPrefillMs": 9.419799999932366,
+          "decoderGenerationMs": 51.88645000021097,
+          "otherMs": 0.608899999406276,
+          "totalMs": 72.20599999982369,
           "decodeTokens": 20.0
         },
-        "speedupVsGguf": 3.667859240307783,
-        "speedupVsOfficial": 9.650774334870132
+        "speedupVsGguf": 4.143031050074488,
+        "speedupVsOfficial": 10.901033847545843
       },
       {
         "name": "GGUF Q4_K",
@@ -215,59 +213,57 @@
       },
       {
         "name": "4bpw legacy",
-        "corpusWER": 0.019390060240963857,
-        "medianMs": 204.3641000000207,
-        "edits": 1030,
+        "corpusWER": 0.019837948874010955,
+        "medianMs": 208.78644999993412,
+        "edits": 1043,
         "stages": {
-          "otherMs": 0.22794999949837802,
-          "encoderMs": 8.643850000225939,
-          "decoderGenerationMs": 158.2019329071045,
-          "decoderPrefillMs": 33.10739994049072,
-          "decodeTokens": 22.0,
-          "preprocessingMs": 4.360050000286719,
-          "promptTokens": 93.0,
-          "decoderMs": 191.58460000062405,
-          "totalMs": 204.31870000038543
+          "preprocessingMs": 5.133999999998196,
+          "encoderMs": 8.618699999942692,
+          "decoderMs": 194.88999999998668,
+          "decoderPrefillMs": 33.1575870513916,
+          "decoderGenerationMs": 160.87162494659424,
+          "otherMs": 0.338450000526791,
+          "totalMs": 208.78644999993412,
+          "decodeTokens": 22.0
         },
-        "speedupVsGguf": 1.9172080614785167,
-        "speedupVsOfficial": 4.225423643495323
+        "speedupVsGguf": 1.8765992716336,
+        "speedupVsOfficial": 4.135924050732231
       },
       {
         "name": "4bpw train100",
-        "corpusWER": 0.019107680722891568,
-        "medianMs": 205.10940000076516,
-        "edits": 1015,
+        "corpusWER": 0.01943852708460134,
+        "medianMs": 208.08539999961795,
+        "edits": 1022,
         "stages": {
-          "promptTokens": 93.0,
-          "decodeTokens": 22.0,
-          "encoderMs": 8.65944999986823,
-          "decoderGenerationMs": 158.6095094680786,
-          "decoderPrefillMs": 33.185720443725586,
-          "preprocessingMs": 4.321949999393837,
-          "otherMs": 0.22945000000618165,
-          "decoderMs": 191.9532000001709,
-          "totalMs": 205.06699999896227
+          "preprocessingMs": 4.553950000172335,
+          "encoderMs": 8.466849999422266,
+          "decoderMs": 194.97670000009748,
+          "decoderPrefillMs": 33.39111804962158,
+          "decoderGenerationMs": 160.8257293701172,
+          "otherMs": 0.23579999947287433,
+          "totalMs": 208.08539999961795,
+          "decodeTokens": 22.0
         },
-        "speedupVsGguf": 1.910241558872386,
-        "speedupVsOfficial": 4.210069845743338
+        "speedupVsGguf": 1.8829216273585787,
+        "speedupVsOfficial": 4.149858183338742
       },
       {
         "name": "W4A16 + AWQ (g32)",
         "corpusWER": 0.020028149726110774,
-        "medianMs": 223.55925000010757,
+        "medianMs": 192.65110000037566,
         "edits": 1053,
         "stages": {
-          "preprocessingMs": 6.861049994768109,
-          "encoderMs": 10.435399992275052,
-          "decoderMs": 205.47584999440005,
-          "decoderPrefillMs": 43.73265000322135,
-          "decoderGenerationMs": 161.69319999607978,
-          "otherMs": 0.7517999911215156,
-          "totalMs": 223.55925000010757,
+          "preprocessingMs": 5.225950000067314,
+          "encoderMs": 9.496749999925669,
+          "decoderMs": 177.33079999993606,
+          "decoderPrefillMs": 38.358000000016546,
+          "decoderGenerationMs": 138.88425000004645,
+          "otherMs": 0.6180500001846667,
+          "totalMs": 192.65110000037566,
           "decodeTokens": 21.0
         },
-        "speedupVsGguf": 1.7525935518063014,
-        "speedupVsOfficial": 3.8626221013951088
+        "speedupVsGguf": 2.0337724518369082,
+        "speedupVsOfficial": 4.482325302165656
       },
       {
         "name": "GGUF Q4_K",

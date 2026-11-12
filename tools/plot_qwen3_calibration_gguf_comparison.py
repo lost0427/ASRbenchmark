@@ -25,34 +25,35 @@ MODELS = {
     "0.6b": {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
-        "note": "EXL3 configurations: 2026-11-11 encoder session. GGUF and official runs: 2026-11-09.\n"
-                "Each W4A16 step is a 2026-11-12 run; the final one is calibrated on train-clean-100.\n"
-                "Scatter shows the first working W4A16 decode and the final AWQ g32 + fp16 prefill.\n"
-                "The stage chart shows every step.",
+        "note": "4 bpw EXL3 and all W4A16 entries: re-measured 2026-11-12, one session, windowed encoder.\n"
+                "3 bpw and GGUF entries are the 2026-11-11 runs.\n"
+                "WER is deterministic; latency is only comparable within one session.",
         "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/3legacy/tensorrt-exllama.summary.json", "exl3"),
             ("3bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/4legacy/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/4train/tensorrt-exllama.summary.json", "exl3"),
-            ("W4A16 decode (g64)", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
+            ("4bpw legacy", "qwen3-asr-0.6b-exl3-4bpw-20261112/tensorrt-exllama.summary.json", "exl3"),
+            ("4bpw train100", "qwen3-asr-0.6b-exl3-4bpw-train100-20261112/tensorrt-exllama.summary.json", "exl3"),
+            ("W4A16 decode (g64)", "qwen3-asr-0.6b-w4a16-decode-20261112/w4a16.summary.json", "w4a16"),
             ("W4A16 + AWQ (g64)", "qwen3-asr-0.6b-w4a16-awq-full-test-clean/w4a16-awq.summary.json", "w4a16"),
             ("W4A16 + AWQ (g32)", "qwen3-asr-0.6b-w4a16-awq32-full-test-clean/w4a16-awq32.summary.json", "w4a16"),
-            ("AWQ g32 + fp16 prefill", "qwen3-asr-0.6b-awq32-tc100-fp16prefill-full-test-clean/awq32-tc100.summary.json", "w4a16"),
+            ("AWQ g32 + fp16 prefill", "qwen3-asr-0.6b-awq32-tc100-20261112/w4a16.summary.json", "w4a16"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
     "1.7b": {
         "flat": "qwen3-1.7b-calibration-vs-gguf",
         "stage": "qwen3-1.7b-stage-latency",
-        "note": "All four EXL3 configurations are from the 2026-11-11 session with cooldowns between runs; GGUF and official runs are from 2026-11-09.",
+        "note": "4 bpw EXL3 and all W4A16 entries: re-measured 2026-11-12, one session, windowed encoder.\n"
+                "3 bpw and GGUF entries are the 2026-11-11 runs.\n"
+                "WER is deterministic; latency is only comparable within one session.",
         "official": "qwen3-asr-1.7b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-1.7b-planB-rerun-20261111/3legacy/tensorrt-exllama.summary.json", "exl3"),
             ("3bpw train100", "qwen3-asr-1.7b-planB-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw legacy", "qwen3-asr-1.7b-planB-rerun-20261111/4legacy/tensorrt-exllama.summary.json", "exl3"),
-            ("4bpw train100", "qwen3-asr-1.7b-planB-rerun-20261111/4train/tensorrt-exllama.summary.json", "exl3"),
-            ("W4A16 + AWQ (g32)", "qwen3-asr-1.7b-awq32-tc100-full-test-clean/awq32-tc100.summary.json", "w4a16"),
+            ("4bpw legacy", "qwen3-asr-1.7b-exl3-4bpw-20261112/tensorrt-exllama.summary.json", "exl3"),
+            ("4bpw train100", "qwen3-asr-1.7b-exl3-4bpw-train100-20261112/tensorrt-exllama.summary.json", "exl3"),
+            ("W4A16 + AWQ (g32)", "qwen3-asr-1.7b-awq32-tc100-20261112/w4a16.summary.json", "w4a16"),
             ("GGUF Q4_K", None, "gguf"),
         ],
     },
@@ -245,6 +246,8 @@ def plot_flat(model, records):
 
 def plot_stage(model, records):
     setup()
+    skip = {"W4A16 + AWQ (g64)", "W4A16 + AWQ (g32)"} if model == "0.6b" else set()
+    records = [record for record in records if record["name"] not in skip]
     fig, ax = plt.subplots(figsize=(11.4, 6.4))
     fig.subplots_adjust(left=0.09, right=0.98, top=0.76, bottom=0.25)
     positions = np.arange(len(records))
