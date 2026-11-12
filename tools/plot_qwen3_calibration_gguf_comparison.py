@@ -26,7 +26,7 @@ MODELS = {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
         "note": "EXL3 configurations: 2026-11-11 encoder session. GGUF and official runs: 2026-11-09.\n"
-                "AWQ runs are 2026-11-12 experiments on the TensorRT pipeline.\n"
+                "Each W4A16 step is a 2026-11-12 run; the final one is calibrated on train-clean-100.\n"
                 "Scatter shows the first working W4A16 decode and the final AWQ g32 + fp16 prefill.\n"
                 "The stage chart shows every step.",
         "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
@@ -38,7 +38,7 @@ MODELS = {
             ("W4A16 decode (g64)", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
             ("W4A16 + AWQ (g64)", "qwen3-asr-0.6b-w4a16-awq-full-test-clean/w4a16-awq.summary.json", "w4a16"),
             ("W4A16 + AWQ (g32)", "qwen3-asr-0.6b-w4a16-awq32-full-test-clean/w4a16-awq32.summary.json", "w4a16"),
-            ("AWQ g32 + fp16 prefill", "qwen3-asr-0.6b-awq32-fp16prefill-full-test-clean/awq32-fp16prefill.summary.json", "w4a16"),
+            ("AWQ g32 + fp16 prefill", "qwen3-asr-0.6b-awq32-tc100-fp16prefill-full-test-clean/awq32-tc100.summary.json", "w4a16"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
