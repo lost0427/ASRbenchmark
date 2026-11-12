@@ -25,7 +25,10 @@ MODELS = {
     "0.6b": {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
-        "note": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF and official runs are from 2026-11-09. The three W4A16 runs are 2026-11-12 experiments on the TensorRT prefill + hand-written INT4 decode path (g64 = 64-value weight groups).",
+        "note": "EXL3 configurations: 2026-11-11 encoder session. GGUF and official runs: 2026-11-09.\n"
+                "AWQ runs are 2026-11-12 experiments on the TensorRT pipeline.\n"
+                "Scatter shows the first working W4A16 decode and the final AWQ g32 + fp16 prefill.\n"
+                "The stage chart shows every step.",
         "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/3legacy/tensorrt-exllama.summary.json", "exl3"),
@@ -35,6 +38,7 @@ MODELS = {
             ("W4A16 decode (g64)", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
             ("W4A16 + AWQ (g64)", "qwen3-asr-0.6b-w4a16-awq-full-test-clean/w4a16-awq.summary.json", "w4a16"),
             ("W4A16 + AWQ (g32)", "qwen3-asr-0.6b-w4a16-awq32-full-test-clean/w4a16-awq32.summary.json", "w4a16"),
+            ("AWQ g32 + fp16 prefill", "qwen3-asr-0.6b-awq32-fp16prefill-full-test-clean/awq32-fp16prefill.summary.json", "w4a16"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
@@ -156,10 +160,11 @@ def save(fig, stem):
 
 def plot_flat(model, records):
     setup()
-    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#c07a3c", "#2f8f8f", "#b04a6f",
-              "#8c8c8c", "#8e6eaa"]
-    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (8, 10), (8, 10), (8, 10), (-10, 12)]
-    aligns = ["left", "left", "left", "left", "left", "left", "left", "left", "right"]
+    skip = {"W4A16 + AWQ (g64)", "W4A16 + AWQ (g32)"}
+    records = [record for record in records if record["name"] not in skip]
+    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#c07a3c", "#345d7a", "#8c8c8c", "#8e6eaa"]
+    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (8, 10), (8, 10), (-10, 12)]
+    aligns = ["left", "left", "left", "left", "left", "left", "left", "right"]
     fig, ax = plt.subplots(figsize=(10.4, 6.4))
     fig.subplots_adjust(left=0.11, right=0.97, top=0.82, bottom=0.19)
     gguf_latency = records[-2]["medianMs"]
@@ -168,11 +173,10 @@ def plot_flat(model, records):
     if model == "0.6b":
         callouts = {
             "W4A16 decode (g64)": (430, 2.92),
-            "W4A16 + AWQ (g64)": (430, 2.78),
-            "W4A16 + AWQ (g32)": (430, 2.64),
+            "AWQ g32 + fp16 prefill": (430, 2.34),
             "3bpw legacy": (155, 2.95),
             "3bpw train100": (155, 2.64),
-            "4bpw legacy": (155, 2.43),
+            "4bpw legacy": (168, 2.52),
             "4bpw train100": (155, 2.22),
         }
     else:
@@ -233,7 +237,7 @@ def plot_flat(model, records):
     fig.text(0.02, 0.90,
              "LibriSpeech test-clean · 2,620 utterances · train100 = train-clean-100 · ×N vs GGUF / official",
              fontsize=8.4, color="#5b6675")
-    fig.text(0.02, 0.045, MODELS[model]["note"], fontsize=7.6, color="#6b7685")
+    fig.text(0.02, 0.02, MODELS[model]["note"], fontsize=7.6, color="#6b7685", va="bottom")
     save(fig, f"windows-librispeech-{MODELS[model]['flat']}")
 
 
@@ -278,7 +282,7 @@ def plot_stage(model, records):
     fig.text(0.02, 0.90,
              "LibriSpeech test-clean · 2,620 utterances · labels show total ms and ×N faster than GGUF",
              fontsize=8.6, color="#5b6675")
-    fig.text(0.02, 0.045, MODELS[model]["note"], fontsize=7.8, color="#6b7685")
+    fig.text(0.02, 0.02, MODELS[model]["note"], fontsize=7.8, color="#6b7685", va="bottom")
     save(fig, f"windows-librispeech-{MODELS[model]['stage']}")
 
 

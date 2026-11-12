@@ -1,0 +1,30 @@
+{
+  "engine": "awq32-fp16prefill",
+  "provider": "CUDA (fp16 TensorRT prefill + AWQ g32 W4A16 decode, windowed encoder)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52533,
+  "edits": 1280,
+  "corpusWER": 0.024345709068776627,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 262.3844922999997,
+  "meanMs": 99.93608583977117,
+  "medianMs": 82.93259999845759,
+  "p90Ms": 171.70086999831256,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.01346011081813893,
+  "medianStagesMs": {
+    "preprocessingMs": 5.966799999441719,
+    "encoderMs": 6.604800000786781,
+    "decoderMs": 70.01745000161463,
+    "decoderPrefillMs": 11.070749998907559,
+    "decoderGenerationMs": 59.198799997830065,
+    "otherMs": 0.7387999903585296,
+    "totalMs": 82.93259999845759,
+    "decodeTokens": 20.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

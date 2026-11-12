@@ -1,0 +1,30 @@
+{
+  "engine": "w4a16-awq32-window",
+  "provider": "CUDA (TensorRT prefill + AWQ g32 W4A16 decode, windowed encoder)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52524,
+  "edits": 1327,
+  "corpusWER": 0.02523965307364577,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 269.6972367999988,
+  "meanMs": 102.7336724425944,
+  "medianMs": 85.93035000012605,
+  "p90Ms": 173.97162000561363,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.013836909903083238,
+  "medianStagesMs": {
+    "preprocessingMs": 5.829249999806052,
+    "encoderMs": 6.333749999612337,
+    "decoderMs": 73.47750000553788,
+    "decoderPrefillMs": 14.721100000315346,
+    "decoderGenerationMs": 58.858650001639035,
+    "otherMs": 0.7159999986470211,
+    "totalMs": 85.93035000012605,
+    "decodeTokens": 20.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

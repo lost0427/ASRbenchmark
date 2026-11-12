@@ -136,6 +136,24 @@
         "speedupVsOfficial": 9.941962069433027
       },
       {
+        "name": "AWQ g32 + fp16 prefill",
+        "corpusWER": 0.024345709068776627,
+        "medianMs": 82.93259999845759,
+        "edits": 1280,
+        "stages": {
+          "preprocessingMs": 5.966799999441719,
+          "encoderMs": 6.604800000786781,
+          "decoderMs": 70.01745000161463,
+          "decoderPrefillMs": 11.070749998907559,
+          "decoderGenerationMs": 59.198799997830065,
+          "otherMs": 0.7387999903585296,
+          "totalMs": 82.93259999845759,
+          "decodeTokens": 20.0
+        },
+        "speedupVsGguf": 3.607166542547946,
+        "speedupVsOfficial": 9.49108131191609
+      },
+      {
         "name": "GGUF Q4_K",
         "corpusWER": 0.029819277108433736,
         "medianMs": 299.15170000094804,
