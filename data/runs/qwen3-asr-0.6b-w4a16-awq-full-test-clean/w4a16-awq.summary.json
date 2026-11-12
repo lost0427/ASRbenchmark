@@ -1,0 +1,30 @@
+{
+  "engine": "w4a16-awq",
+  "provider": "CUDA (TensorRT prefill + AWQ W4A16 decode kernels)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52561,
+  "edits": 1434,
+  "corpusWER": 0.027274802191113817,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 231.2632924999998,
+  "meanMs": 88.05875961827306,
+  "medianMs": 72.95709999743849,
+  "p90Ms": 150.35300999807075,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.01186038709651075,
+  "medianStagesMs": {
+    "preprocessingMs": 6.271199996263022,
+    "encoderMs": 6.382750001648674,
+    "decoderMs": 59.972600000037346,
+    "decoderPrefillMs": 10.50905000010971,
+    "decoderGenerationMs": 49.483250000776025,
+    "otherMs": 0.6328499912342522,
+    "totalMs": 72.95709999743849,
+    "decodeTokens": 21.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}
