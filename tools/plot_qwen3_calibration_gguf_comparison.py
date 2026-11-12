@@ -25,15 +25,16 @@ MODELS = {
     "0.6b": {
         "flat": "qwen3-0.6b-calibration-vs-gguf",
         "stage": "qwen3-0.6b-stage-latency",
-        "note": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF and official runs are from 2026-11-09. W4A16 decode and W4A16 + AWQ are 2026-11-12 runs of the TensorRT prefill + hand-written INT4 decode path.",
+        "note": "All four EXL3 configurations are from the 2026-11-11 whole-utterance encoder session; GGUF and official runs are from 2026-11-09. The three W4A16 runs are 2026-11-12 experiments on the TensorRT prefill + hand-written INT4 decode path (g64 = 64-value weight groups).",
         "official": "qwen3-asr-0.6b-official-transformers-full-test-clean/official-transformers.summary.json",
         "runs": [
             ("3bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/3legacy/tensorrt-exllama.summary.json", "exl3"),
             ("3bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw legacy", "qwen3-asr-0.6b-final2-rerun-20261111/4legacy/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw train100", "qwen3-asr-0.6b-final2-rerun-20261111/4train/tensorrt-exllama.summary.json", "exl3"),
-            ("W4A16 decode", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
-            ("W4A16 + AWQ", "qwen3-asr-0.6b-w4a16-awq-full-test-clean/w4a16-awq.summary.json", "w4a16"),
+            ("W4A16 decode (g64)", "qwen3-asr-0.6b-w4a16-decode-full-test-clean/w4a16.summary.json", "w4a16"),
+            ("W4A16 + AWQ (g64)", "qwen3-asr-0.6b-w4a16-awq-full-test-clean/w4a16-awq.summary.json", "w4a16"),
+            ("W4A16 + AWQ (g32)", "qwen3-asr-0.6b-w4a16-awq32-full-test-clean/w4a16-awq32.summary.json", "w4a16"),
             ("GGUF Q4_K", "qwen3-asr-memory-full-test-clean/0.6b/gguf-int4-q4k-0.6b/results/gguf.summary.json", "gguf"),
         ],
     },
@@ -155,9 +156,10 @@ def save(fig, stem):
 
 def plot_flat(model, records):
     setup()
-    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#c07a3c", "#2f8f8f", "#8c8c8c", "#8e6eaa"]
-    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (8, 10), (8, 10), (-10, 12)]
-    aligns = ["left", "left", "left", "left", "left", "left", "left", "right"]
+    colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#c07a3c", "#2f8f8f", "#b04a6f",
+              "#8c8c8c", "#8e6eaa"]
+    offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (8, 10), (8, 10), (8, 10), (-10, 12)]
+    aligns = ["left", "left", "left", "left", "left", "left", "left", "left", "right"]
     fig, ax = plt.subplots(figsize=(10.4, 6.4))
     fig.subplots_adjust(left=0.11, right=0.97, top=0.82, bottom=0.19)
     gguf_latency = records[-2]["medianMs"]
@@ -165,8 +167,9 @@ def plot_flat(model, records):
     callouts = None
     if model == "0.6b":
         callouts = {
-            "W4A16 decode": (100, 3.10),
-            "W4A16 + AWQ": (100, 2.82),
+            "W4A16 decode (g64)": (430, 2.92),
+            "W4A16 + AWQ (g64)": (430, 2.78),
+            "W4A16 + AWQ (g32)": (430, 2.64),
             "3bpw legacy": (155, 2.95),
             "3bpw train100": (155, 2.64),
             "4bpw legacy": (155, 2.43),

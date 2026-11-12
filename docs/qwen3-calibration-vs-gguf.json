@@ -82,7 +82,7 @@
         "speedupVsOfficial": 8.12915484137292
       },
       {
-        "name": "W4A16 decode",
+        "name": "W4A16 decode (g64)",
         "corpusWER": 0.029347991479001825,
         "medianMs": 73.89039999907254,
         "edits": 1543,
@@ -100,7 +100,7 @@
         "speedupVsOfficial": 10.65253470009437
       },
       {
-        "name": "W4A16 + AWQ",
+        "name": "W4A16 + AWQ (g64)",
         "corpusWER": 0.027274802191113817,
         "medianMs": 72.95709999743849,
         "edits": 1434,
@@ -116,6 +116,24 @@
         },
         "speedupVsGguf": 4.1003781676005655,
         "speedupVsOfficial": 10.788806709992706
+      },
+      {
+        "name": "W4A16 + AWQ (g32)",
+        "corpusWER": 0.02565809494826537,
+        "medianMs": 79.17150000139372,
+        "edits": 1349,
+        "stages": {
+          "preprocessingMs": 6.669850001344457,
+          "encoderMs": 7.012349997239653,
+          "decoderMs": 64.84734999685315,
+          "decoderPrefillMs": 12.728499998047482,
+          "decoderGenerationMs": 52.223599999706494,
+          "otherMs": 0.6436000003304798,
+          "totalMs": 79.17150000139372,
+          "decodeTokens": 20.0
+        },
+        "speedupVsGguf": 3.778527626679826,
+        "speedupVsOfficial": 9.941962069433027
       },
       {
         "name": "GGUF Q4_K",
