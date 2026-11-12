@@ -1,0 +1,30 @@
+{
+  "engine": "awq32-tc100",
+  "provider": "CUDA (TensorRT prefill + AWQ g32 W4A16 decode, train-clean-100 calibration)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52519,
+  "edits": 1053,
+  "corpusWER": 0.020028149726110774,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 691.5802790999878,
+  "meanMs": 263.7890945419866,
+  "medianMs": 223.55925000010757,
+  "p90Ms": 433.38416000333376,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.035529012521507385,
+  "medianStagesMs": {
+    "preprocessingMs": 6.861049994768109,
+    "encoderMs": 10.435399992275052,
+    "decoderMs": 205.47584999440005,
+    "decoderPrefillMs": 43.73265000322135,
+    "decoderGenerationMs": 161.69319999607978,
+    "otherMs": 0.7517999911215156,
+    "totalMs": 223.55925000010757,
+    "decodeTokens": 21.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

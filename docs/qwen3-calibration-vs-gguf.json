@@ -252,6 +252,24 @@
         "speedupVsOfficial": 4.210069845743338
       },
       {
+        "name": "W4A16 + AWQ (g32)",
+        "corpusWER": 0.020028149726110774,
+        "medianMs": 223.55925000010757,
+        "edits": 1053,
+        "stages": {
+          "preprocessingMs": 6.861049994768109,
+          "encoderMs": 10.435399992275052,
+          "decoderMs": 205.47584999440005,
+          "decoderPrefillMs": 43.73265000322135,
+          "decoderGenerationMs": 161.69319999607978,
+          "otherMs": 0.7517999911215156,
+          "totalMs": 223.55925000010757,
+          "decodeTokens": 21.0
+        },
+        "speedupVsGguf": 1.7525935518063014,
+        "speedupVsOfficial": 3.8626221013951088
+      },
+      {
         "name": "GGUF Q4_K",
         "corpusWER": 0.020896084337349397,
         "medianMs": 391.8084999968414,

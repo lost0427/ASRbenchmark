@@ -1,0 +1,30 @@
+{
+  "engine": "awq32-tc100-fp16prefill",
+  "provider": "CUDA (fp16 prefill + AWQ g32 W4A16 decode, train-clean-100 calibration)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52515,
+  "edits": 1045,
+  "corpusWER": 0.019875989044430917,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 1553.262527800005,
+  "meanMs": 592.6605399619483,
+  "medianMs": 396.57670000451617,
+  "p90Ms": 1018.5995099964202,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.07982378415556471,
+  "medianStagesMs": {
+    "preprocessingMs": 7.615099995746277,
+    "encoderMs": 9.081099997274578,
+    "decoderMs": 378.2926999992924,
+    "decoderPrefillMs": 222.02829999878304,
+    "decoderGenerationMs": 156.8207500022254,
+    "otherMs": 0.7924500023364089,
+    "totalMs": 396.57670000451617,
+    "decodeTokens": 21.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}

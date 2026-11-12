@@ -52,6 +52,7 @@ MODELS = {
             ("3bpw train100", "qwen3-asr-1.7b-planB-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw legacy", "qwen3-asr-1.7b-planB-rerun-20261111/4legacy/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw train100", "qwen3-asr-1.7b-planB-rerun-20261111/4train/tensorrt-exllama.summary.json", "exl3"),
+            ("W4A16 + AWQ (g32)", "qwen3-asr-1.7b-awq32-tc100-full-test-clean/awq32-tc100.summary.json", "w4a16"),
             ("GGUF Q4_K", None, "gguf"),
         ],
     },
@@ -160,7 +161,7 @@ def save(fig, stem):
 
 def plot_flat(model, records):
     setup()
-    skip = {"W4A16 + AWQ (g64)", "W4A16 + AWQ (g32)"}
+    skip = {"W4A16 + AWQ (g64)", "W4A16 + AWQ (g32)"} if model == "0.6b" else set()
     records = [record for record in records if record["name"] not in skip]
     colors = ["#3b6ea5", "#4c956c", "#7aa6c2", "#2f6b4f", "#c07a3c", "#345d7a", "#8c8c8c", "#8e6eaa"]
     offsets = [(8, 8), (8, -20), (8, 8), (8, -20), (8, 10), (8, 10), (8, 10), (-10, 12)]
@@ -181,6 +182,7 @@ def plot_flat(model, records):
         }
     else:
         callouts = {
+            "W4A16 + AWQ (g32)": (330, 2.00),
             "3bpw train100": (240, 2.14),
             "3bpw legacy": (240, 2.05),
             "4bpw legacy": (240, 1.96),
