@@ -1,0 +1,25 @@
+{
+  "engine": "tensorrt-exllama",
+  "provider": "CUDA (TensorRT windowed encoder + ExLlamaV3, GreedySampler)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52520,
+  "edits": 1043,
+  "corpusWER": 0.019837948874010955,
+  "emptyOutputs": 0,
+  "medianMs": 211.46790000784677,
+  "meanMs": 247.7611079392266,
+  "p90Ms": 452.63533001707395,
+  "medianStagesMs": {
+    "preprocessingMs": 6.300949986325577,
+    "encoderMs": 8.608550007920712,
+    "decoderMs": 196.20464998297393,
+    "decoderPrefillMs": 32.51218795776367,
+    "decoderGenerationMs": 162.82236576080322,
+    "otherMs": 0.31924998620525,
+    "totalMs": 211.46790000784677,
+    "decodeTokens": 22.0
+  },
+  "sampleSize": 2620,
+  "warmups": 2
+}

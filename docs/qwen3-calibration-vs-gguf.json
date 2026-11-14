@@ -248,22 +248,22 @@
         "speedupVsOfficial": 4.149858183338742
       },
       {
-        "name": "W4A16 + AWQ (g32)",
-        "corpusWER": 0.020028149726110774,
-        "medianMs": 192.65110000037566,
-        "edits": 1053,
+        "name": "AWQ g32 + fp16 prefill",
+        "corpusWER": 0.019875989044430917,
+        "medianMs": 175.02915000659414,
+        "edits": 1045,
         "stages": {
-          "preprocessingMs": 5.225950000067314,
-          "encoderMs": 9.496749999925669,
-          "decoderMs": 177.33079999993606,
-          "decoderPrefillMs": 38.358000000016546,
-          "decoderGenerationMs": 138.88425000004645,
-          "otherMs": 0.6180500001846667,
-          "totalMs": 192.65110000037566,
+          "preprocessingMs": 6.140950004919432,
+          "encoderMs": 9.336350005469285,
+          "decoderMs": 159.05089996522292,
+          "decoderPrefillMs": 20.6313500093529,
+          "decoderGenerationMs": 138.40750000963453,
+          "otherMs": 0.5747999821323901,
+          "totalMs": 175.02915000659414,
           "decodeTokens": 21.0
         },
-        "speedupVsGguf": 2.0337724518369082,
-        "speedupVsOfficial": 4.482325302165656
+        "speedupVsGguf": 2.238532838570491,
+        "speedupVsOfficial": 4.933606202105175
       },
       {
         "name": "GGUF Q4_K",

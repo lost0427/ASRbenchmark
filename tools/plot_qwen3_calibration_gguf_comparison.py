@@ -44,7 +44,8 @@ MODELS = {
     "1.7b": {
         "flat": "qwen3-1.7b-calibration-vs-gguf",
         "stage": "qwen3-1.7b-stage-latency",
-        "note": "4 bpw EXL3 and all W4A16 entries: re-measured 2026-11-12, one session, windowed encoder.\n"
+        "note": "4 bpw EXL3 entries: 2026-11-12 session; W4A16 entry: 2026-11-14 session.\n"
+                "Re-running the 4 bpw legacy entry in the later session measured 211.5 ms against 208.8 ms (+1.3%).\n"
                 "3 bpw and GGUF entries are the 2026-11-11 runs.\n"
                 "WER is deterministic; latency is only comparable within one session.",
         "official": "qwen3-asr-1.7b-official-transformers-full-test-clean/official-transformers.summary.json",
@@ -53,7 +54,7 @@ MODELS = {
             ("3bpw train100", "qwen3-asr-1.7b-planB-rerun-20261111/3train/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw legacy", "qwen3-asr-1.7b-exl3-4bpw-20261112/tensorrt-exllama.summary.json", "exl3"),
             ("4bpw train100", "qwen3-asr-1.7b-exl3-4bpw-train100-20261112/tensorrt-exllama.summary.json", "exl3"),
-            ("W4A16 + AWQ (g32)", "qwen3-asr-1.7b-awq32-tc100-20261112/w4a16.summary.json", "w4a16"),
+            ("AWQ g32 + fp16 prefill", "qwen3-asr-1.7b-awq32-fp16prefill-20261114/w4a16.summary.json", "w4a16"),
             ("GGUF Q4_K", None, "gguf"),
         ],
     },
@@ -183,7 +184,7 @@ def plot_flat(model, records):
         }
     else:
         callouts = {
-            "W4A16 + AWQ (g32)": (330, 2.00),
+            "AWQ g32 + fp16 prefill": (330, 2.00),
             "3bpw train100": (240, 2.14),
             "3bpw legacy": (240, 2.05),
             "4bpw legacy": (240, 1.96),
