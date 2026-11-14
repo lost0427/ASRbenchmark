@@ -1,0 +1,30 @@
+{
+  "engine": "awq32-autocache",
+  "provider": "CUDA (fp16 prefill + AWQ g32 W4A16 decode, train-clean-100 calibration, per-request KV cache)",
+  "utterances": 2620,
+  "referenceWords": 52576,
+  "hypothesisWords": 52528,
+  "edits": 1260,
+  "corpusWER": 0.023965307364576992,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 229.42469650000567,
+  "meanMs": 87.3552575572025,
+  "medianMs": 71.84989999223035,
+  "p90Ms": 150.18425999151077,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.011765634379079125,
+  "medianStagesMs": {
+    "preprocessingMs": 5.58860000455752,
+    "encoderMs": 5.287399981170893,
+    "decoderMs": 60.52549998275936,
+    "decoderPrefillMs": 9.049549989867955,
+    "decoderGenerationMs": 51.513100013835356,
+    "otherMs": 0.6367500027408823,
+    "totalMs": 71.84989999223035,
+    "decodeTokens": 20.0
+  },
+  "threads": 12,
+  "warmups": 2,
+  "sampleSize": 2620,
+  "seed": 1337
+}
