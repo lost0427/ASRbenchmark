@@ -1,0 +1,29 @@
+{
+  "engine": "w4a16",
+  "provider": "CUDA (TensorRT encoder + fp16 prefill + AWQ g32 W4A16 decode kernels, per-request KV cache) - Python",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "hypothesisWords": 53041,
+  "edits": 1278,
+  "corpusWER": 0.024058734939759036,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 238.98706169999787,
+  "meanMs": 90.89284366430388,
+  "medianMs": 74.70375000411877,
+  "p90Ms": 155.14889999758452,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.01006163834751493,
+  "medianStagesMs": {
+    "preprocessingMs": 7.465200003935024,
+    "encoderMs": 5.917299997236114,
+    "decoderMs": 61.134950003179256,
+    "decoderPrefillMs": 9.643299999879673,
+    "decoderGenerationMs": 51.7452999993111,
+    "otherMs": 0.4910500065307133,
+    "decodeTokens": 20.0,
+    "totalMs": 74.70375000411877
+  },
+  "warmups": 0,
+  "sampleSize": 2620,
+  "seed": 1337
+}

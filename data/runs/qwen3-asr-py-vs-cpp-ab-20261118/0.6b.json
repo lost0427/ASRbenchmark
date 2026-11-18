@@ -1,0 +1,62 @@
+{
+  "size": "0.6b",
+  "utterances": 300,
+  "passes": {
+    "python": [
+      {
+        "medianStagesMs": {
+          "preprocessingMs": 6.487649996415712,
+          "encoderMs": 6.6937500014319085,
+          "decoderPrefillMs": 10.386649992142338,
+          "decoderGenerationMs": 55.73115000152029
+        },
+        "medianMs": 84.0568999919924,
+        "elapsedSeconds": 31.82576279999921,
+        "edits": 119,
+        "referenceWords": 7136,
+        "corpusWER": 0.016676008968609865
+      },
+      {
+        "medianStagesMs": {
+          "preprocessingMs": 5.718749998777639,
+          "encoderMs": 6.5085500027635135,
+          "decoderPrefillMs": 10.25199999276083,
+          "decoderGenerationMs": 55.826099996920675
+        },
+        "medianMs": 80.559150002955,
+        "elapsedSeconds": 30.727777899999637,
+        "edits": 119,
+        "referenceWords": 7136,
+        "corpusWER": 0.016676008968609865
+      }
+    ],
+    "cpp": [
+      {
+        "medianStagesMs": {
+          "preprocessingMs": 0.655,
+          "encoderMs": 4.47,
+          "decoderPrefillMs": 8.425,
+          "decoderGenerationMs": 55.32
+        },
+        "medianMs": 71.6,
+        "elapsedSeconds": 31.932205200006138,
+        "edits": 122,
+        "referenceWords": 7136,
+        "corpusWER": 0.017096412556053812
+      },
+      {
+        "medianStagesMs": {
+          "preprocessingMs": 0.62,
+          "encoderMs": 4.445,
+          "decoderPrefillMs": 8.65,
+          "decoderGenerationMs": 55.43
+        },
+        "medianMs": 71.6,
+        "elapsedSeconds": 31.347355100006098,
+        "edits": 122,
+        "referenceWords": 7136,
+        "corpusWER": 0.017096412556053812
+      }
+    ]
+  }
+}

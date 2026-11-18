@@ -1,0 +1,29 @@
+{
+  "engine": "native-cpp",
+  "provider": "CUDA (TensorRT encoder + prefill, AWQ g32 INT4 decode kernels, CUDA graph) - native C++",
+  "utterances": 2620,
+  "referenceWords": 53120,
+  "hypothesisWords": 53046,
+  "edits": 1280,
+  "corpusWER": 0.024096385542168676,
+  "emptyOutputs": 0,
+  "elapsedSeconds": 268.15752270001394,
+  "meanMs": 85.13736641221374,
+  "medianMs": 65.9,
+  "p90Ms": 156.5,
+  "audioSeconds": 19452.480625,
+  "rtf": 0.008875885977138712,
+  "medianStagesMs": {
+    "preprocessingMs": 0.62,
+    "encoderMs": 4.88,
+    "decoderMs": 60.84,
+    "decoderPrefillMs": 9.44,
+    "decoderGenerationMs": 52.28,
+    "otherMs": 0.07999999999999119,
+    "totalMs": 65.9,
+    "decodeTokens": 20.0
+  },
+  "warmups": 0,
+  "sampleSize": 2620,
+  "seed": 1337
+}
